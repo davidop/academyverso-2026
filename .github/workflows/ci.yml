@@ -1,4 +1,4 @@
-name: CI · AcadeVerso
+name: CI · AcademyVerso
 on:
   push:
     branches: [main, 'feature/**', 'demo/**']

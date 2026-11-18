@@ -1,12 +1,12 @@
-name: "🪐 Crear objeto del AcadeVerso"
-description: "Puebla el universo de Academyverso desde GitHub Mobile"
+name: "🪐 Crear objeto del AcademyVerso"
+description: "Puebla el universo de AcademyVerso desde GitHub Mobile"
 title: "Nuevo objeto cósmico"
 labels: ["cosmic-object"]
 body:
   - type: markdown
     attributes:
       value: |
-        ¡Bienvenido al AcadeVerso! No compartas datos personales. Tu creación será pública y puede mostrarse en la pantalla del evento.
+        ¡Bienvenido al AcademyVerso! No compartas datos personales. Tu creación será pública y puede mostrarse en la pantalla del evento.
   - type: dropdown
     id: tipo
     attributes:
