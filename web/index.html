@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#22263b" />
-  <meta name="description" content="Construye el AcadeVerso con GitHub Mobile, Copilot, Claude y Codex. Una galaxia colaborativa para Academyverso 2026." />
-  <title>AcadeVerso · Construido desde GitHub Mobile</title>
+  <meta name="description" content="Construye el AcademyVerso con GitHub Mobile, Copilot, Claude y Codex. Una galaxia colaborativa para AcademyVerso 2026." />
+  <title>AcademyVerso · Construido desde GitHub Mobile</title>
   <link rel="icon" href="./assets/astronauta.png" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="./style.css" />
@@ -15,7 +15,7 @@
 <body>
   <a class="skip" href="#universe">Saltar al universo</a>
   <header class="nav">
-    <img class="brand" src="./assets/academyverso-logo.png" alt="Academyverso" />
+    <img class="brand" src="./assets/academyverso-logo.png" alt="AcademyVerso" />
     <div class="nav-actions"><span class="pill" id="connection" role="status">Modo demostración</span><a href="https://github.com/davidop/academyverso-2026" target="_blank" rel="noreferrer">Ver GitHub ↗</a></div>
   </header>
   <main>
@@ -24,12 +24,12 @@
       <div class="mission-tag"><span>🚀</span><b>Tu misión</b><small>Ayúdanos a poblar el universo</small></div>
     </section>
     <section id="universe" class="space-section" aria-label="Universo tridimensional interactivo">
-      <div class="space-toolbar"><div><span class="section-tag">GALAXIA COLECTIVA</span><h2>Explora el AcadeVerso</h2></div><div class="counters"><div><strong id="count">0</strong><span>objetos</span></div><div><strong id="explorers">0</strong><span>exploradores</span></div></div></div>
+      <div class="space-toolbar"><div><span class="section-tag">GALAXIA COLECTIVA</span><h2>Explora el AcademyVerso</h2></div><div class="counters"><div><strong id="count">0</strong><span>objetos</span></div><div><strong id="explorers">0</strong><span>exploradores</span></div></div></div>
       <div id="viewport" role="img" aria-label="Vista 3D interactiva del universo creado por asistentes; arrastra para rotar y usa la rueda para acercarte"><div id="fallback-text">Preparando el universo…</div></div>
       <div class="scene-bottom"><span>🖱 Arrastra para explorar · Toca un objeto para descubrir su historia</span><button id="reset-camera" class="tiny">Recentrar vista</button></div>
     </section>
     <section class="gallery" aria-label="Creaciones recientes"><div class="gallery-head"><div><span class="section-tag">CREACIONES DE LA COMUNIDAD</span><h2>Los últimos habitantes</h2></div><span id="last-sync" class="micro">Esperando datos</span></div><div id="cards" class="cards" aria-live="polite"></div></section>
-    <section class="credits"><div><strong>Construido con GitHub Mobile</strong><p>Una sesión de David Oliva y Sergio Valverde · Academyverso 2026 · 26 de noviembre</p></div><p>Copilot + Claude + Codex: tres agentes, un mismo proyecto.</p></section>
+    <section class="credits"><div><strong>Construido con GitHub Mobile</strong><p>Una sesión de David Oliva y Sergio Valverde · AcademyVerso 2026 · 26 de noviembre</p></div><p>Copilot + Claude + Codex: tres agentes, un mismo proyecto.</p></section>
   </main>
   <dialog id="create-dialog" aria-labelledby="dialog-title"><form id="create-form" method="dialog"><button type="button" class="close" id="close-form" aria-label="Cerrar">×</button><p class="eyebrow">MISIÓN EXPLORADOR</p><h2 id="dialog-title">Crea tu objeto cósmico</h2><label>Tu alias<input name="alias" minlength="2" maxlength="28" required placeholder="Comandante Python" autocomplete="nickname" /></label><label>Tipo de objeto<select name="type"><option value="planeta">🪐 Planeta</option><option value="estrella">⭐ Estrella</option><option value="luna">🌙 Luna</option><option value="agujero-negro">🕳️ Agujero negro</option><option value="estacion">🛸 Estación espacial</option><option value="asteroide">☄️ Asteroide</option></select></label><label>Nombre de tu creación<input name="name" minlength="3" maxlength="48" required placeholder="Pythonia" /></label><label>¿Cómo lo imaginas?<textarea name="description" minlength="8" maxlength="280" required placeholder="Un planeta turquesa con tres lunas y anillos de estrellas…"></textarea></label><p class="micro">Tu creación se enviará al repositorio como Issue pública. Evita datos personales.</p><button class="primary submit" id="submit-object" type="submit">Lanzar al universo 🚀</button><p id="form-status" role="status" aria-live="polite"></p></form></dialog>
   <dialog id="detail-dialog" aria-labelledby="detail-title"><div class="detail"><button type="button" class="close" id="close-detail" aria-label="Cerrar">×</button><span class="section-tag" id="detail-type"></span><h2 id="detail-title"></h2><p id="detail-description"></p><p id="detail-alias"></p><a id="detail-issue" target="_blank" rel="noopener noreferrer">Ver la GitHub Issue ↗</a></div></dialog>

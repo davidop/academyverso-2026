@@ -24,6 +24,6 @@ jobs:
           payload=os.environ['GH_EVENT'].encode()
           sig=hmac.new(secret.encode(),payload,hashlib.sha256).hexdigest()
           req=urllib.request.Request(url+'/api/ingest',data=payload,method='POST',headers={
-            'content-type':'application/json', 'x-acadeverso-signature':'sha256='+sig})
+            'content-type':'application/json', 'x-academyverso-signature':'sha256='+sig})
           with urllib.request.urlopen(req,timeout=25) as r: print('ingest status',r.status)
           PY
