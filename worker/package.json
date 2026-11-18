@@ -1,0 +1,6 @@
+{
+  "name":"academyverso-worker",
+  "private":true,
+  "type":"module",
+  "scripts":{"test":"node --test test/*.test.mjs","check":"node --check src/index.mjs && node --check src/validation.mjs","dev":"npx wrangler dev","deploy":"npx wrangler deploy"}
+}

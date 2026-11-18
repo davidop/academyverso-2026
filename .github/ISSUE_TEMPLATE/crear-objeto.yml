@@ -1,0 +1,37 @@
+name: "🪐 Crear objeto del AcadeVerso"
+description: "Puebla el universo de Academyverso desde GitHub Mobile"
+title: "Nuevo objeto cósmico"
+labels: ["cosmic-object"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Bienvenido al AcadeVerso! No compartas datos personales. Tu creación será pública y puede mostrarse en la pantalla del evento.
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo de objeto
+      options: [planeta, estrella, luna, agujero-negro, estacion, asteroide]
+    validations:
+      required: true
+  - type: input
+    id: alias
+    attributes:
+      label: Alias del explorador
+      placeholder: Comandante Python
+    validations:
+      required: true
+  - type: input
+    id: nombre
+    attributes:
+      label: Nombre del objeto
+      placeholder: Pythonia
+    validations:
+      required: true
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción creativa
+      placeholder: "Un planeta turquesa con tres lunas, anillos luminosos y volcanes…"
+    validations:
+      required: true

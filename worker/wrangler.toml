@@ -1,0 +1,17 @@
+name = "academyverso-api"
+main = "src/index.mjs"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[vars]
+GITHUB_REPO = "davidop/academyverso-2026"
+ALLOWED_ORIGIN = "https://davidop.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "academyverso"
+database_id = "REEMPLAZAR_CON_ID_D1"
+
+# Enriquecimiento opcional con IA: requiere habilitar Workers AI y el binding AI.
+# [ai]
+# binding = "AI"

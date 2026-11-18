@@ -1,0 +1,29 @@
+name: Registro de objeto cósmico
+on:
+  issues:
+    types: [opened, edited, reopened]
+permissions:
+  issues: read
+jobs:
+  ingest:
+    if: contains(github.event.issue.labels.*.name, 'cosmic-object')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ingest signed issue event
+        env:
+          WORKER_URL: ${{ secrets.ACADEMYVERSO_WORKER_URL }}
+          INGEST_SECRET: ${{ secrets.ACADEMYVERSO_INGEST_SECRET }}
+          GH_EVENT: ${{ toJSON(github.event) }}
+        run: |
+          python - <<'PY'
+          import os,json,hashlib,hmac,urllib.request
+          url=os.getenv('WORKER_URL','').rstrip('/')
+          secret=os.getenv('INGEST_SECRET','')
+          if not (url and secret):
+              raise SystemExit('Falta ACADEMYVERSO_WORKER_URL / ACADEMYVERSO_INGEST_SECRET')
+          payload=os.environ['GH_EVENT'].encode()
+          sig=hmac.new(secret.encode(),payload,hashlib.sha256).hexdigest()
+          req=urllib.request.Request(url+'/api/ingest',data=payload,method='POST',headers={
+            'content-type':'application/json', 'x-acadeverso-signature':'sha256='+sig})
+          with urllib.request.urlopen(req,timeout=25) as r: print('ingest status',r.status)
+          PY

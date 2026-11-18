@@ -1,0 +1,20 @@
+name: CI · AcadeVerso
+on:
+  push:
+    branches: [main, 'feature/**', 'demo/**']
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Static JavaScript checks
+        run: |
+          node --check web/app.js
+          node --check web/config.js
+          cd worker && npm run check && npm test
