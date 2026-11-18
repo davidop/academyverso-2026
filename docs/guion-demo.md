@@ -1,4 +1,4 @@
-# Guion de ponentes — 55 minutos (Academyverso 2026)
+# Guion de ponentes — 55 minutos (AcademyVerso 2026)
 
 **15:00–15:55** · Sala «Trabaja con IA» · David Oliva + Sergio Valverde.
 
@@ -7,7 +7,7 @@
 | 15:00–15:04 | David | Hook: «¿Puede un móvil dirigir un equipo de desarrollo?» | El móvil no sólo chatea |
 | 15:04–15:08 | Sergio | Mostrar GitHub Mobile: repos, Issues, agents, PRs | GitHub como entorno compartido |
 | 15:08–15:13 | David | Diferenciar modelos vs agentes; cómo comprobar habilitación | Claude como modelo ≠ agente Claude |
-| 15:13–15:16 | Sergio | QR de AcadeVerso y tutorial de Issue | Todos participan |
+| 15:13–15:16 | Sergio | QR de AcademyVerso y tutorial de Issue | Todos participan |
 | 15:16–15:23 | Ambos | El público crea planetas y observa los primeros objetos | Issues → universo compartido |
 | 15:23–15:31 | David | Delegar «viaje interplanetario» a Copilot | Prompt → sesión → PR |
 | 15:31–15:39 | Sergio | Claude mejora animaciones del viaje sobre código integrado | Una tarea encadenada, no tres chats |

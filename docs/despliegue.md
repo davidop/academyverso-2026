@@ -1,4 +1,4 @@
-# Despliegue de AcadeVerso: pasos reales
+# Despliegue de AcademyVerso: pasos reales
 
 ## 1. Repositorio GitHub
 
@@ -25,7 +25,7 @@ wrangler secret put ADMIN_TOKEN
 wrangler deploy
 ```
 
-**GITHUB_TOKEN:** token fine-grained del usuario/robot, sólo al repo Academyverso, permiso **Issues: Read and write**. Usar token con caducidad, guardado **únicamente** como secret del Worker, nunca en la web. Si se automatiza a largo plazo, preferir GitHub App con autenticación de instalación.
+**GITHUB_TOKEN:** token fine-grained del usuario/robot, sólo al repo AcademyVerso, permiso **Issues: Read and write**. Usar token con caducidad, guardado **únicamente** como secret del Worker, nunca en la web. Si se automatiza a largo plazo, preferir GitHub App con autenticación de instalación.
 
 **INGEST_SECRET:** cadena aleatoria de 32+ caracteres, compartida entre Worker y GitHub Actions. **ADMIN_TOKEN:** cadena independiente de alta entropía. No guardar ninguno en `wrangler.toml` ni en commits.
 

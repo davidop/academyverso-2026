@@ -5,7 +5,7 @@
 ## 1 · GitHub Copilot — construir
 
 ```text
-Trabaja en davidop/academyverso-2026. Implementa viajes interplanetarios en el AcadeVerso actual, sin cambiar su estilo visual ni romper la creación de objetos.
+Trabaja en davidop/academyverso-2026. Implementa viajes interplanetarios en el AcademyVerso actual, sin cambiar su estilo visual ni romper la creación de objetos.
 Requisitos: al abrir la ficha de un objeto 3D, añadir botón "Viajar aquí". Animar la cámara durante ~2 segundos hasta una vista cercana del objeto, con botón para regresar. Respetar prefers-reduced-motion, accesibilidad teclado y pantallas móviles. No añadir dependencias nuevas; usar Three.js existente. Crear PR con resumen y riesgos.
 ```
 
@@ -14,7 +14,7 @@ Requisitos: al abrir la ficha de un objeto 3D, añadir botón "Viajar aquí". An
 ## 2 · Claude — mejorar
 
 ```text
-Sobre main después del merge del PR de viajes de Copilot: mejora únicamente la experiencia visual del viaje. Añade estela de una nave espacial estilizada, transición vistosa pero ligera, feedback textual accesible al iniciar y finalizar el viaje y manejo de viajes repetidos. Mantén el diseño original de Academyverso y soporte prefers-reduced-motion. No reescribas toda la escena. Crear PR claro.
+Sobre main después del merge del PR de viajes de Copilot: mejora únicamente la experiencia visual del viaje. Añade estela de una nave espacial estilizada, transición vistosa pero ligera, feedback textual accesible al iniciar y finalizar el viaje y manejo de viajes repetidos. Mantén el diseño original de AcademyVerso y soporte prefers-reduced-motion. No reescribas toda la escena. Crear PR claro.
 ```
 
 **Verificar:** no rompe creación de objetos ni escenas con pocos elementos, rendimiento Android, no introduce recursos remotos inseguros.

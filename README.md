@@ -1,14 +1,14 @@
-# 🚀 AcadeVerso 2026 — programa con IA desde tu móvil
+# 🚀 AcademyVerso 2026 — programa con IA desde tu móvil
 
 > **Un universo. 50 exploradores. Tres agentes de IA.**
 >
-> Proyecto de demostración de **David Oliva y Sergio Valverde** para **Academyverso 2026** (26/11/2026, 15:00–15:55). Se basa en los recursos gráficos originales entregados por Academyverso.
+> Proyecto de demostración de **David Oliva y Sergio Valverde** para **AcademyVerso 2026** (26/11/2026, 15:00–15:55). Se basa en los recursos gráficos originales entregados por AcademyVerso.
 
 [![CI](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml)
 
 ## 🎮 ¿Cómo funciona?
 
-1. Un participante abre **GitHub Mobile** y crea una **GitHub Issue** usando el formulario `🪐 Crear objeto del AcadeVerso`.
+1. Un participante abre **GitHub Mobile** y crea una **GitHub Issue** usando el formulario `🪐 Crear objeto del AcademyVerso`.
 2. Elige **tipo**, **alias**, **nombre** y una descripción en lenguaje natural.
 3. La automatización valida la Issue, la registra en Cloudflare D1 y el planeta aparece en el universo Three.js (sondeo cada 5 s). **El tiempo total depende del arranque de GitHub Actions; no es instantáneo garantizado.**
 4. Quien no tenga GitHub usa un **formulario web**; un Worker con token **servidor** crea la Issue y actualiza D1, sin exponer credenciales.
@@ -18,7 +18,7 @@
 
 - [Repositorio](https://github.com/davidop/academyverso-2026)
 - [Crear objeto desde GitHub Mobile](https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml)
-- [AcadeVerso (URL prevista para GitHub Pages)](https://davidop.github.io/academyverso-2026/)
+- [AcademyVerso (URL prevista para GitHub Pages)](https://davidop.github.io/academyverso-2026/)
 - [Guion de los ponentes](docs/guion-demo.md)
 - [Guía para activar Copilot, Claude y Codex](docs/activar-agentes.md)
 - [Configuración y despliegue](docs/despliegue.md)
@@ -79,4 +79,4 @@ Para ver la web, sirve `web/` mediante un servidor local (`python -m http.server
 
 Los participantes no tienen acceso de escritura a `main`. Las Issues son aportaciones de datos; los agentes sólo proponen cambios de código mediante PR. Todas las peticiones se validan. Se aplican términos, controles y límites de los proveedores. Sin garantías de coste cero para uso de agentes ni Workers AI: verificar los planes antes de activar.
 
-**Licencia:** MIT (ver LICENSE). Gráficos Academyverso: materiales aportados para esta presentación; no cubiertos por MIT ni autorizados para reutilizaciones ajenas al evento.
+**Licencia:** MIT (ver LICENSE). Gráficos AcademyVerso: materiales aportados para esta presentación; no cubiertos por MIT ni autorizados para reutilizaciones ajenas al evento.
