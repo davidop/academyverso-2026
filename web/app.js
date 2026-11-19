@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import { issueDraftUrl } from './issue-prefill.mjs';
 
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
@@ -60,5 +61,22 @@ function refreshUI(){paint(objects);$('count').textContent=objects.length;$('exp
 openDetails=obj=>{$('detail-type').textContent=`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=safe(obj.name);$('detail-description').textContent=safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
 $('close-detail').onclick=()=>$('detail-dialog').close();$('open-form').onclick=()=>$('create-dialog').showModal();$('close-form').onclick=()=>$('create-dialog').close();
 async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];refreshUI();$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
-$('create-form').addEventListener('submit',async e=>{e.preventDefault();const status=$('form-status');if(!API){status.className='error';status.textContent='Modo demostración. El formulario se activa al configurar el Worker. Utiliza el enlace a GitHub Issues.';return}const body=Object.fromEntries(new FormData(e.currentTarget));const btn=$('submit-object');btn.disabled=true;status.className='';status.textContent='Registrando tu Issue pública…';try{const r=await fetch(`${API}/api/create`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw Error(data.error||'No se pudo crear');status.textContent=`¡Registrado! Issue #${data.issue_number}. Busca tu objeto en el universo.`;e.currentTarget.reset();await sync()}catch(err){status.className='error';status.textContent=err.message}finally{btn.disabled=false}});
+$('create-form').addEventListener('submit',async e=>{e.preventDefault();const status=$('form-status');if(!API){
+  const formData=Object.fromEntries(new FormData(e.currentTarget));
+  const url=issueDraftUrl(formData,REPO);
+  status.className='';
+  const link=document.createElement('a');
+  link.href=url;link.target='_blank';link.rel='noopener noreferrer';
+  link.textContent='Abrir la propuesta en GitHub ↗';
+  status.replaceChildren(document.createTextNode('Los datos están preparados. Revisa la propuesta y pulsa «Submit new issue» en GitHub. '),link);
+  const newTab=window.open(url,'_blank','noopener,noreferrer');
+  if(!newTab)window.location.assign(url);
+  return;
+}const body=Object.fromEntries(new FormData(e.currentTarget));const btn=$('submit-object');btn.disabled=true;status.className='';status.textContent='Registrando tu Issue pública…';try{const r=await fetch(`${API}/api/create`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw Error(data.error||'No se pudo crear');status.textContent=`¡Registrado! Issue #${data.issue_number}. Busca tu objeto en el universo.`;e.currentTarget.reset();await sync()}catch(err){status.className='error';status.textContent=err.message}finally{btn.disabled=false}});
+if(!API){
+  $('open-form').textContent='Preparar propuesta para GitHub';
+  $('submit-object').textContent='Continuar en GitHub ↗';
+  const hint=$('create-form').querySelector('.micro');
+  if(hint)hint.textContent='Sin backend: continuaremos en GitHub con tus campos precargados. Debes iniciar sesión y confirmar la creación de la Issue. No se envía automáticamente.';
+}
 refreshUI();if(API){$('connection').textContent='Conectando…';sync();setInterval(sync,Math.max(3000,Number(config.POLL_MS)||5000));}else{$('connection').textContent='Modo demostración';$('last-sync').textContent='6 objetos de ejemplo · Backend pendiente';}

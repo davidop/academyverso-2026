@@ -81,3 +81,10 @@ Para ver la web, sirve `web/` mediante un servidor local (`python -m http.server
 Los participantes no tienen acceso de escritura a `main`. Las Issues son aportaciones de datos; los agentes sólo proponen cambios de código mediante PR. Todas las peticiones se validan. Se aplican términos, controles y límites de los proveedores. Sin garantías de coste cero para uso de agentes ni Workers AI: verificar los planes antes de activar.
 
 **Licencia:** MIT (ver LICENSE). Gráficos AcademyVerso: materiales aportados para esta presentación; no cubiertos por MIT ni autorizados para reutilizaciones ajenas al evento.
+
+
+## Formulario web sin Worker (modo de respaldo)
+
+Mientras no esté desplegado Cloudflare Worker + D1, el formulario guiado **prepara una GitHub Issue con campos precargados**. El usuario debe iniciar sesión en GitHub y **confirmar** la creación; no se envía automáticamente y el objeto no aparecerá en directo hasta conectar el backend. En algunos dispositivos GitHub Mobile no conserva los parámetros precargados: abrir el enlace en Chrome o en modo navegador.
+
+El modo anónimo y la actualización rápida de la galaxia siguen requiriendo Cloudflare Worker + D1. No guardar tokens GitHub en la web pública.
