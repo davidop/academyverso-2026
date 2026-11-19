@@ -4,3 +4,7 @@ node_modules/
 .dev.vars
 .DS_Store
 *.log
+
+# APM — dependencias y skill desplegada
+apm_modules/
+/.agents/skills/academyverso-presentation/

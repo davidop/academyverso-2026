@@ -1,0 +1,26 @@
+lockfile_version: '1'
+dependencies: []
+deployments:
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/academyverso-presentation
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/academyverso-presentation/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:18f7a00e02a0c64b10551009f954439370f2c162b3751c15955ff1f71d9def14
+local_deployed_files:
+- .agents/skills/academyverso-presentation
+- .agents/skills/academyverso-presentation/SKILL.md
+local_deployed_file_hashes:
+  .agents/skills/academyverso-presentation/SKILL.md: sha256:18f7a00e02a0c64b10551009f954439370f2c162b3751c15955ff1f71d9def14

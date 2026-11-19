@@ -18,9 +18,26 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-16 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
+17 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
+
+## Rediseño en revisión
+
+- [Guion de la charla y demo](storytelling.md)
+- [Sistema de diseño](DESIGN.md)
+- [Plan visual y de movimiento por escena](plan-visual.md)
+
+Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
+
+### Kit reutilizable
+
+- [Archivo de maquetas](../docs/design/academyverso-mockups/README.md): referencias para revisión, nunca se importan al bundle.
+- MissionBrand.vue: logo oficial local, 144 px en escenario 1280; reutilizar en portada, portal y cierre.
+- MissionSky.vue: horizonte del planeta común y destellos SVG; el prop orbit activa una órbita decorativa. Para otro encuadre, importar assets/mission-planet.webp sin generar ni duplicar la textura.
+- MissionCover.vue: ejemplo de escena a sangre completa. Usa layout default en S01: el layout cover de Slidev envuelve el componente en un contenedor sin altura si el contenido es solo absoluto. En presentación, activar la entrada solo en la escena activa y anularla con movimiento reducido y en impresión.
+
+Para revisar S01: abre /#/1, avanza y vuelve con el mando, prueba a 1280 × 720 y en móvil, y activa movimiento reducido. S11 y S17 pueden avanzar en archivos de escena separados. S14 depende de fijar la geometría del viaje en S13.
 
 ## Riesgos y plan de respaldo
 
@@ -30,3 +47,24 @@ Guía de agentes: ../docs/activar-agentes.md
 Guion: ../docs/guion-demo.md
 
 Branding original: materiales de Academyverso, fuera de la licencia MIT del repositorio.
+
+## Pruebas visuales reproducibles
+
+En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S08, S11 y S17 con Playwright y capturando además las 17 escenas. Comprueba los campos del formulario, navegación reversible por teclado, enlaces y decodificación real de ambos QR, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
+
+Para ejecutarlo localmente:
+
+```bash
+cd presentation
+npm install
+npx playwright install chromium
+npm run test:visual
+```
+
+**Importante:** el navegador automatizado no reemplaza una prueba con proyector, mando y dos móviles físicos. No mover este PR fuera de Draft antes del visto bueno de ambos ponentes.
+
+[Checklist del ensayo con proyector y mando](ensayo-sala.md)
+
+La diapositiva S10 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
+
+Las fotografías de S04 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
