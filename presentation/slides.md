@@ -4,6 +4,7 @@ title: AcademyVerso 2026 · Programa con IA desde tu móvil
 colorSchema: dark
 aspectRatio: 16/9
 canvasWidth: 1280
+routerMode: hash
 transition: fade
 fonts:
   sans: Arial
