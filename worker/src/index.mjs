@@ -8,7 +8,14 @@ async function rateLimit(env,ip){const since=Date.now()-3600_000;const key=`ip:$
 async function verifyHmac(request,raw,secret){const sig=request.headers.get('x-academyverso-signature')||'';const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const bytes=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(raw));const expected='sha256='+Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');return sig.length===expected.length&&[...sig].reduce((a,ch,i)=>a|(ch.charCodeAt(0)^expected.charCodeAt(i)),0)===0}
 export default {async fetch(request,env,ctx){const url=new URL(request.url);const origin=request.headers.get('origin');const cors=originHeaders(origin,env);const respond=(obj,code=200)=>json(obj,code,cors);if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors});if(origin&&origin!==env.ALLOWED_ORIGIN)return respond({error:'Origen no permitido'},403);
  try{
- if(url.pathname==='/api/health')return respond({ok:true,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI});
+ if(url.pathname==='/api/health'){
+   if(!env.DB)return respond({ok:false,database_connected:false,error:'D1 no vinculada'},503);
+   try{
+     const check=await env.DB.prepare("SELECT COUNT(*) AS total FROM sqlite_master WHERE type='table' AND name IN ('objects','rates')").first();
+     const ready=Number(check?.total||0)===2;
+     return respond({ok:ready,database_connected:ready,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI},ready?200:503);
+   }catch(err){console.warn('D1 health check failed',err?.message);return respond({ok:false,database_connected:false,error:'D1 no disponible'},503)}
+ }
  if(url.pathname==='/api/objects'&&request.method==='GET'){const result=await env.DB.prepare('SELECT issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();return respond({objects:result.results||[]})}
  if(url.pathname==='/api/create'&&request.method==='POST'){
   if(!env.GITHUB_TOKEN)throw new Error('Falta configurar GITHUB_TOKEN');
