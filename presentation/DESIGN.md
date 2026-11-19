@@ -82,7 +82,7 @@ Lienzo Slidev de 1280 × 720. Mantener los márgenes para información y permiti
 
 ## Elevation & Depth
 
-Profundidad por recorte, escala, solapamiento y contraste. Tres planos como máximo en una composición normal. Evitar repetir tarjetas translúcidas, brillos detrás de texto o ruido que compita con un enlace. Solo las escenas de acción necesitan una superficie blanca para el QR.
+Profundidad por recorte, escala, solapamiento y contraste. Tres planos como máximo en una composición normal. Portada, portal, viaje y cierre comparten el planeta violeta: recorte, giro y escala cambian el encuadre sin cambiar el cuerpo. Evitar repetir tarjetas translúcidas, brillos detrás de texto o ruido que compita con un enlace. Solo las escenas de acción necesitan una superficie blanca para el QR.
 
 ## Shapes
 
@@ -100,7 +100,7 @@ Español claro, técnico cuando hace falta: «abre una Issue», «revisa la PR»
 
 ## Components
 
-- **Marca:** usar los archivos oficiales existentes sin redibujar ni cambiar proporción; priorizar portada, portal y cierre. Mantener la atribución de marca del repositorio.
+- **Marca:** usar los archivos oficiales existentes sin redibujar ni cambiar proporción; usar 144 px de ancho en el lienzo de 1280 px para portada y cierre; reducir o retirar en escenas de contenido para no competir con el titular. Mantener la atribución de marca del repositorio.
 - **Portal/QR:** volver a usar el componente de QR y su enlace accesible. Mantener margen blanco de al menos cuatro módulos, verificado sobre el QR real; 20 px es un punto de partida, no sustituto de la prueba. Sin desplazamiento, escala u opacidad durante la escena.
 - **Órbita:** una trayectoria que conserva el objeto; etiquetas DOM y estado activo también visible mediante posición o texto, no solo color.
 - **Cinta de misión:** mismo encuadre y objeto entre cortes; rótulo de agente y PR superpuesto en HTML, no generado dentro de la ilustración.

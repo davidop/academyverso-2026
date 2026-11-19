@@ -30,6 +30,15 @@ La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin r
 
 Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
 
+### Kit reutilizable
+
+- [Archivo de maquetas](../docs/design/academyverso-mockups/README.md): referencias para revisión, nunca se importan al bundle.
+- MissionBrand.vue: logo oficial local, 144 px en escenario 1280; reutilizar en portada, portal y cierre.
+- MissionSky.vue: horizonte del planeta común y destellos SVG; el prop orbit activa una órbita decorativa. Para otro encuadre, importar assets/mission-planet.webp sin generar ni duplicar la textura.
+- MissionCover.vue: ejemplo de escena a sangre completa. Usa layout default en S01: el layout cover de Slidev envuelve el componente en un contenedor sin altura si el contenido es solo absoluto. En presentación, activar la entrada solo en la escena activa y anularla con movimiento reducido y en impresión.
+
+Para revisar S01: abre /#/1, avanza y vuelve con el mando, prueba a 1280 × 720 y en móvil, y activa movimiento reducido. S11 y S17 pueden avanzar en archivos de escena separados. S14 depende de fijar la geometría del viaje en S13.
+
 ## Riesgos y plan de respaldo
 
 La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva 14 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.

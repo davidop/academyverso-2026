@@ -1,5 +1,6 @@
 ---
 theme: default
+layout: default
 title: AcademyVerso 2026 · Programa con IA desde tu móvil
 colorSchema: dark
 aspectRatio: 16/9
@@ -11,12 +12,7 @@ fonts:
   mono: Consolas
 ---
 
-<div class="kicker">ACADEMYVERSO 2026 · MISIÓN INTERACTIVA</div>
-<div class="hero-title">PROGRAMA<br><span class="gradient">CON IA</span><br>DESDE TU <span class="mint">MÓVIL</span></div>
-<div class="subline">Un móvil. Tres agentes. Un universo creado por todos.</div>
-<div class="hero-platforms"><span>◈ GitHub Mobile</span><span>◉ Copilot</span><span>✳ Claude</span><span>◎ Codex</span></div>
-<img class="astronaut" src="https://davidop.github.io/academyverso-2026/assets/astronauta.png" alt="Astronauta oficial AcademyVerso" />
-<div class="footer-stamp">DAVID OLIVA + SERGIO VALVERDE · 26 NOVIEMBRE · 15:00</div>
+<MissionCover />
 
 <!-- David abre preguntando quién ha programado desde el móvil. Sergio anuncia que juntos poblaremos una galaxia. -->
 
