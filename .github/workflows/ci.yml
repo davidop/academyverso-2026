@@ -26,9 +26,8 @@ jobs:
         run: |
           npm install --no-audit --no-fund
           npm run build
-      - name: Install Chromium for visual validation
-        working-directory: presentation
-        run: npx playwright install --with-deps chromium
+      - name: Verify preinstalled Google Chrome
+        run: google-chrome --version
       - name: Smoke test Slidev in Chromium
         working-directory: presentation
         run: npm run test:visual
