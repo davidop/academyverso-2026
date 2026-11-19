@@ -10,7 +10,7 @@ ALLOWED_ORIGIN = "https://davidop.github.io"
 [[d1_databases]]
 binding = "DB"
 database_name = "academyverso"
-database_id = "REEMPLAZAR_CON_ID_D1"
+database_id = "738e3af8-dd3a-40c5-9db1-3ba152ee0208"
 
 # Enriquecimiento opcional con IA: requiere habilitar Workers AI y el binding AI.
 # [ai]
