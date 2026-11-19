@@ -128,8 +128,7 @@ transition: fade
 
 <div class="kicker">09 · ACADEMYVERSO 3D</div>
 <div class="headline compact">Un universo<br><span class="gradient">para explorar.</span></div>
-<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
-<div class="live-note">Hasta activar Cloudflare Worker y D1, la galaxia muestra objetos de ejemplo: no son contribuciones del público en directo.</div>
+<LiveUniverse />
 
 <!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
 

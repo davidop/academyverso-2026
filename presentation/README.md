@@ -64,3 +64,5 @@ npm run test:visual
 **Importante:** el navegador automatizado no reemplaza una prueba con proyector, mando y dos móviles físicos. No mover este PR fuera de Draft antes del visto bueno de ambos ponentes.
 
 [Checklist del ensayo con proyector y mando](ensayo-sala.md)
+
+La diapositiva S10 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.

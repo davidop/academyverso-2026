@@ -73,6 +73,24 @@ test('S17 · cierre, enlace galaxia y QR repositorio decodificable', async ({ pa
   await screenshot(page, testInfo, 'S17-cierre-1280x720.png')
 })
 
+test('S10 · galaxia integrada y enlace alternativo siempre disponible', async ({ page }, testInfo) => {
+  const frame = await slide(page, 10, '.live-frame')
+  const link = frame.getByRole('link', { name: /ABRIR EN PANTALLA COMPLETA/i })
+  await expect(link).toHaveAttribute('href', galaxyUrl)
+  await screenshot(page, testInfo, 'S10-iframe-con-fallback-1280x720.png')
+})
+
+test('Capturas de escenas tras completar sus revelados por clic', async ({ page }, testInfo) => {
+  const clickCounts = { 2: 1, 4: 1, 5: 4, 6: 3, 7: 3, 8: 1, 11: 3, 12: 3, 16: 3 }
+  for (const [no, clicks] of Object.entries(clickCounts)) {
+    await page.goto('/#/' + no, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
+    for (let i = 0; i < clicks; i++) await page.keyboard.press('ArrowRight')
+    await page.waitForTimeout(220)
+    await screenshot(page, testInfo, 'S' + String(no).padStart(2,'0') + '-completa-1280x720.png')
+  }
+})
+
 test('Recorrido completo · 17 escenas 16:9 renderizadas en Chrome', async ({ page }, testInfo) => {
   for (let number = 1; number <= 17; number++) {
     await page.goto('/#/' + number, { waitUntil: 'domcontentloaded' })

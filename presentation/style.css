@@ -94,3 +94,13 @@
   background-repeat:no-repeat!important;
   background-color:#182039!important;
 }
+
+/* S10 · Estado de carga y alternativa visible si la galaxia no carga dentro del iframe. */
+.live-frame .live-loading { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:1; background:radial-gradient(ellipse at 50% 60%,#31446c 0%,#18213c 64%,#121b30 100%); color:#f5f7ff; text-align:center; }
+.live-frame .live-loading strong { font-size:30px; line-height:1.15; }
+.live-frame .live-loading p { font-size:18px; color:#d6dfff; }
+.live-frame .live-loading .loading-orbit { font-size:70px; filter:drop-shadow(0 0 23px #73dfd7); animation:float 3.5s ease-in-out infinite; }
+.live-frame .live-loading .live-backup { border:2px solid var(--mint); border-radius:14px; padding:12px 18px; font-size:18px; font-weight:850; color:var(--mint); background:#16223f; }
+.live-frame .live-loading .live-backup:focus-visible { outline:4px solid var(--orange); outline-offset:5px; }
+.live-frame .live-flag { z-index:2; }
+@media(prefers-reduced-motion:reduce){.live-frame .live-loading .loading-orbit{animation:none;}}
