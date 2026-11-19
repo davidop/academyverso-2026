@@ -31,6 +31,13 @@ test('S01 · portada visible, logo oficial y título legible', async ({ page }, 
   await screenshot(page, testInfo, 'S01-portada-1280x720.png')
 })
 
+test('S04 · ambos ponentes visibles sin clic adicional', async ({ page }, testInfo) => {
+  const speakers = await slide(page, 4, '.speaker-grid')
+  await expect(speakers.getByText('DAVID OLIVA')).toBeVisible()
+  await expect(speakers.getByText('SERGIO VALVERDE')).toBeVisible()
+  await screenshot(page, testInfo, 'S04-dos-ponentes-1280x720.png')
+})
+
 test('S08 · portal, campos, QR decodificable y clic reversible', async ({ page }, testInfo) => {
   const portal = await slide(page, 8, '.portal-scene')
   await expect(portal.getByText('nombre, alias y descripción')).toBeVisible()
@@ -81,7 +88,7 @@ test('S10 · galaxia integrada y enlace alternativo siempre disponible', async (
 })
 
 test('Capturas de escenas tras completar sus revelados por clic', async ({ page }, testInfo) => {
-  const clickCounts = { 2: 1, 4: 1, 5: 4, 6: 3, 7: 3, 8: 1, 11: 3, 12: 3, 16: 3 }
+  const clickCounts = { 2: 1, 5: 4, 6: 3, 7: 3, 8: 1, 11: 3, 12: 3, 16: 3 }
   for (const [no, clicks] of Object.entries(clickCounts)) {
     await page.goto('/#/' + no, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()

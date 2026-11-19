@@ -52,7 +52,7 @@ transition: fade
 <div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
 <div class="speaker-grid">
  <div class="speaker"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><small>Arquitectura · agentes · demo</small></div></div>
- <div class="speaker" v-click><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><small>GitHub · experiencia · demo</small></div></div>
+ <div class="speaker"><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><small>GitHub · experiencia · demo</small></div></div>
 </div>
 
 <!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->
