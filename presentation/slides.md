@@ -212,12 +212,6 @@ transition: slide-left
 transition: fade
 ---
 
-<div class="kicker">16 · EL UNIVERSO CONTINÚA</div>
-<div class="final-title">ESTO NO<br><span class="gradient">TERMINA HOY.</span></div>
-<div class="final-layout">
- <QrPortal url="https://github.com/davidop/academyverso-2026" label="CÓDIGO Y DOCUMENTACIÓN"/>
- <div><p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p><a class="action-link" href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR ACADEMYVERSO ↗</a></div>
-</div>
-<div class="footer-stamp">DAVID OLIVA × SERGIO VALVERDE · ACADEMYVERSO 2026</div>
+<MissionClosing />
 
 <!-- Cierre conjunto con QR persistente del repositorio; animar a seguir aprendiendo y revisando pull requests. -->
