@@ -17,6 +17,7 @@ test('health returns 200 only when D1 schema is initialized',async()=>{
   const body=await res.json();
   assert.equal(body.ok,true);
   assert.equal(body.database_connected,true);
+  assert.equal(body.create_enabled,false);
 });
 test('health returns 503 when D1 binding is missing',async()=>{
   const res=await worker.fetch(request(),{ALLOWED_ORIGIN:'https://davidop.github.io'},{});
@@ -27,4 +28,10 @@ test('health returns 503 when D1 tables are missing',async()=>{
   const res=await worker.fetch(request(),makeEnv(1),{});
   assert.equal(res.status,503);
   assert.equal((await res.json()).ok,false);
+});
+
+test('creation returns a controlled unavailable response until GitHub token is configured',async()=>{
+  const res=await worker.fetch(new Request('https://academyverso-api.example.workers.dev/api/create',{method:'POST',headers:{origin:'https://davidop.github.io','content-type':'application/json'},body:JSON.stringify({type:'estacion',alias:'davidop',name:'Thanos',description:'Una estacion espacial disparando cohetes'})}),makeEnv(2),{});
+  assert.equal(res.status,503);
+  assert.equal((await res.json()).code,'CREATE_NOT_READY');
 });

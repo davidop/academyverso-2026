@@ -65,3 +65,7 @@ Cuando facilites únicamente la URL pública `workers.dev`, puedo actualizar `we
 **Aclaración:** crear cuenta Cloudflare con GitHub no equivale a autorizar el repositorio a Workers Builds: eso se hace en el paso 3. Hasta completar el circuito, el formulario de la web sigue ofreciendo la alternativa de preparar una Issue para GitHub.
 
 Documentación: [Cloudflare D1](https://developers.cloudflare.com/d1/get-started/) · [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/) · [Secrets de Workers](https://developers.cloudflare.com/workers/configuration/secrets/).
+
+## Conexión real completada (19/11/2026)
+
+URL confirmada en la cuenta Cloudflare: **https://academyverso-api.david-oliva-paredes.workers.dev**. El usuario verificó `/api/health` con `ok: true` y `database_connected: true`; queda pendiente activar `GITHUB_TOKEN`, `INGEST_SECRET`, `ADMIN_TOKEN` y los secretos correspondientes de GitHub Actions. La web queda configurada para consumir D1 y mostrar un plan B para creación si el Worker no tiene token GitHub.

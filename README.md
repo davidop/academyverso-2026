@@ -92,3 +92,12 @@ Los participantes no tienen acceso de escritura a `main`. Las Issues son aportac
 Mientras no esté desplegado Cloudflare Worker + D1, el formulario guiado **prepara una GitHub Issue con campos precargados**. El usuario debe iniciar sesión en GitHub y **confirmar** la creación; no se envía automáticamente y el objeto no aparecerá en directo hasta conectar el backend. En algunos dispositivos GitHub Mobile no conserva los parámetros precargados: abrir el enlace en Chrome o en modo navegador.
 
 El modo anónimo y la actualización rápida de la galaxia siguen requiriendo Cloudflare Worker + D1. No guardar tokens GitHub en la web pública.
+
+
+## Estado de la integración Cloudflare (19/11/2026)
+
+- API pública: https://academyverso-api.david-oliva-paredes.workers.dev
+- D1 `academyverso`: usuario confirmó `/api/health` con `ok: true` y `database_connected: true`.
+- La web consulta objetos reales en `/api/objects` cada 5 s; si D1 está vacía se muestra una galaxia sin objetos comunitarios, no objetos ficticios.
+- El endpoint de salud expone `create_enabled` para permitir que la interfaz distinga lectura y escritura. Mientras falte el token de GitHub en Cloudflare, el formulario abre una Issue precargada en GitHub como alternativa.
+- No publicar el token GitHub ni los secretos de ingestión en código, consola de Chrome o capturas.
