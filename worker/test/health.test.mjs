@@ -35,3 +35,21 @@ test('creation returns a controlled unavailable response until GitHub token is c
   assert.equal(res.status,503);
   assert.equal((await res.json()).code,'CREATE_NOT_READY');
 });
+
+test('ingest updates D1 for a previously closed Issue after an edit',async()=>{
+  const secret='integration-test-secret';
+  const incoming={action:'edited',issue:{number:3,state:'closed',html_url:'https://github.com/davidop/academyverso-2026/issues/3',body:'### Tipo de objeto\n\nestacion\n\n### Alias del explorador\n\nComandante Dev\n\n### Nombre del objeto\n\nNexus de los Tres Agentes\n\n### Descripción creativa\n\nEstación orbital de los tres agentes con anillos luminosos.'}};
+  const raw=JSON.stringify(incoming);
+  const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  const sig=Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(raw)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+  let writes=0;
+  const env={GITHUB_REPO:'davidop/academyverso-2026',INGEST_SECRET:secret,DB:{prepare(sql){
+    assert.match(sql,/INSERT INTO objects/);
+    return {bind(...values){assert.equal(values[0],3);return {async run(){writes++;return {success:true}}}}};
+  }}};
+  const req=new Request('https://academyverso-api.example.workers.dev/api/ingest',{method:'POST',headers:{'content-type':'application/json','x-academyverso-signature':'sha256='+sig},body:raw});
+  const res=await worker.fetch(req,env,{waitUntil(){}});
+  assert.equal(res.status,200);
+  assert.equal((await res.json()).issue_number,3);
+  assert.equal(writes,1);
+});

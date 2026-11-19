@@ -3,7 +3,7 @@ on:
   issues:
     types: [opened, edited, reopened]
 permissions:
-  issues: read
+  issues: write
 jobs:
   ingest:
     if: contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador')
@@ -30,7 +30,11 @@ jobs:
             'x-academyverso-signature':'sha256='+sig})
           try:
               with urllib.request.urlopen(req,timeout=25) as r:
-                  print('ingest status',r.status,'body',r.read(500).decode('utf-8',errors='replace'))
+                  reply=json.loads(r.read(500).decode('utf-8'))
+                  expected=json.loads(os.environ['GH_EVENT'])['issue']['number']
+                  if not reply.get('ok') or reply.get('issue_number')!=expected:
+                      raise SystemExit('Respuesta de ingesta no confirmada; no se cerrará la Issue')
+                  print('ingest status',r.status,'issue_number',expected,'confirmed',True)
           except urllib.error.HTTPError as e:
               # Only print the public HTTP status and a short, bounded error body.
               # Never print the signature, payload, or configured secret.
@@ -38,3 +42,13 @@ jobs:
               print('response',e.read(350).decode('utf-8',errors='replace'))
               raise SystemExit(1)
           PY
+      - name: Close Issue after confirmed D1 ingestion
+        if: ${{ github.event.issue.state == 'open' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh api --method PATCH "repos/${GH_REPO}/issues/${ISSUE_NUMBER}" \
+            --field state=closed --field state_reason=completed \
+            --jq '{number: .number, state: .state, state_reason: .state_reason}'

@@ -26,7 +26,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
  }
  if(url.pathname==='/api/ingest'&&request.method==='POST'){
   const raw=await request.text();if(!env.INGEST_SECRET||!await verifyHmac(request,raw,env.INGEST_SECRET))return respond({error:'Firma incorrecta'},401);
-  const incoming=JSON.parse(raw);if(!incoming.issue||incoming.issue.state!=='open')return respond({ignored:true});
+  const incoming=JSON.parse(raw);if(!incoming.issue||!['open','closed'].includes(incoming.issue.state))return respond({ignored:true});
   const data=parseIssue(incoming.issue.body);await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data);ctx.waitUntil(enrich(env,incoming.issue.number,data));return respond({ok:true,issue_number:incoming.issue.number})
  }
  if(url.pathname==='/api/admin/hide'&&request.method==='POST'){
