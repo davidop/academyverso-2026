@@ -1,7 +1,6 @@
 name: "🪐 Crear objeto del AcademyVerso"
 description: "Puebla el universo de AcademyVerso desde GitHub Mobile"
 title: "Nuevo objeto cósmico"
-labels: ["cosmic-object"]
 body:
   - type: markdown
     attributes:

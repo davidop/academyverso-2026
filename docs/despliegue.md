@@ -1,9 +1,12 @@
 # Despliegue de AcademyVerso: pasos reales
 
+**Ruta recomendada para la sesión:** [Despliegue desde el navegador con Cloudflare + GitHub](cloudflare-desde-github.md). No requiere instalar Wrangler en el móvil.
+
+
 ## 1. Repositorio GitHub
 
 - [ ] Mantener `davidop/academyverso-2026` público.
-- [ ] Activar **Issues** si están deshabilitadas y crear la etiqueta `cosmic-object`.
+- [ ] Mantener **Issues** activadas. El flujo procesa formularios cósmicos validados sin depender de etiquetas precreadas.
 - [ ] En **Settings → Pages → Build and deployment**, elegir **GitHub Actions**.
 - [ ] En **Settings → Collaborators**, invitar a Sergio (@svg153, verificar su GitHub username antes de conceder acceso).
 - [ ] Configurar branch protection/ruleset para `main`: PR obligatorio, CI requerido, no push del público.

@@ -14,7 +14,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   if(!env.GITHUB_TOKEN)throw new Error('Falta configurar GITHUB_TOKEN');
   const raw=await request.text();if(raw.length>2400)return respond({error:'Solicitud demasiado grande'},413);
   const data=validate(JSON.parse(raw));const ip=request.headers.get('cf-connecting-ip')||'unverified';await rateLimit(env,ip);
-  const result=await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues`,{method:'POST',headers:{'accept':'application/vnd.github+json','authorization':`Bearer ${env.GITHUB_TOKEN}`,'x-github-api-version':'2022-11-28','user-agent':'AcademyVerso-Worker','content-type':'application/json'},body:JSON.stringify({title:`${data.type}: ${data.name}`,body:issueBody(data),labels:['cosmic-object']})});
+  const result=await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues`,{method:'POST',headers:{'accept':'application/vnd.github+json','authorization':`Bearer ${env.GITHUB_TOKEN}`,'x-github-api-version':'2022-11-28','user-agent':'AcademyVerso-Worker','content-type':'application/json'},body:JSON.stringify({title:`${data.type}: ${data.name}`,body:issueBody(data)})});
   if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();await upsert(env,issue,data);ctx.waitUntil(enrich(env,issue.number,data));return respond({issue_number:issue.number,issue_url:issue.html_url},201)
  }
  if(url.pathname==='/api/ingest'&&request.method==='POST'){

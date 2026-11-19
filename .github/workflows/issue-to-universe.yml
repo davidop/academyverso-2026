@@ -6,7 +6,7 @@ permissions:
   issues: read
 jobs:
   ingest:
-    if: contains(github.event.issue.labels.*.name, 'cosmic-object')
+    if: contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador')
     runs-on: ubuntu-latest
     steps:
       - name: Ingest signed issue event
