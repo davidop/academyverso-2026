@@ -73,6 +73,15 @@ test('S17 · cierre, enlace galaxia y QR repositorio decodificable', async ({ pa
   await screenshot(page, testInfo, 'S17-cierre-1280x720.png')
 })
 
+test('Recorrido completo · 17 escenas 16:9 renderizadas en Chrome', async ({ page }, testInfo) => {
+  for (let number = 1; number <= 17; number++) {
+    await page.goto('/#/' + number, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
+    await page.waitForTimeout(180)
+    await screenshot(page, testInfo, 'S' + String(number).padStart(2, '0') + '-1280x720.png')
+  }
+})
+
 test('Accesibilidad · movimiento reducido y pantalla móvil', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   const cover = await slide(page, 1, '.mission-cover')
