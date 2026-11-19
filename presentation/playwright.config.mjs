@@ -15,7 +15,7 @@ export default defineConfig({
     trace: 'retain-on-failure'
   },
   webServer: {
-    command: 'npx slidev --host 127.0.0.1 --port 3030',
+    command: 'npx slidev --port 3030',
     url: 'http://127.0.0.1:3030/',
     timeout: 120_000,
     reuseExistingServer: !process.env.CI
