@@ -35,6 +35,12 @@ test('S04 · ambos ponentes visibles sin clic adicional', async ({ page }, testI
   const speakers = await slide(page, 4, '.speaker-grid')
   await expect(speakers.getByText('DAVID OLIVA')).toBeVisible()
   await expect(speakers.getByText('SERGIO VALVERDE')).toBeVisible()
+  for (const name of ['David Oliva', 'Sergio Valverde']) {
+    const portrait = speakers.getByRole('img', { name })
+    await expect(portrait).toBeVisible()
+    await expect.poll(() => portrait.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true)
+    expect(await portrait.getAttribute('src')).not.toContain('github.com')
+  }
   await screenshot(page, testInfo, 'S04-dos-ponentes-1280x720.png')
 })
 

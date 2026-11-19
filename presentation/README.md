@@ -66,3 +66,5 @@ npm run test:visual
 [Checklist del ensayo con proyector y mando](ensayo-sala.md)
 
 La diapositiva S10 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
+
+Las fotografías de S04 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
