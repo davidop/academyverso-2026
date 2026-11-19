@@ -1,0 +1,16 @@
+{
+  "name": "academyverso-slidev",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build --base /academyverso-2026/presentation/",
+    "export": "slidev export --format pdf --output AcademyVerso_2026.pdf"
+  },
+  "devDependencies": {
+    "@slidev/cli": "53.1.0",
+    "@slidev/theme-default": "0.25.0",
+    "qrcode.vue": "3.6.0"
+  }
+}
