@@ -69,8 +69,7 @@ $('create-form').addEventListener('submit',async e=>{e.preventDefault();const st
   link.href=url;link.target='_blank';link.rel='noopener noreferrer';
   link.textContent='Abrir la propuesta en GitHub ↗';
   status.replaceChildren(document.createTextNode('Los datos están preparados. Revisa la propuesta y pulsa «Submit new issue» en GitHub. '),link);
-  const newTab=window.open(url,'_blank','noopener,noreferrer');
-  if(!newTab)window.location.assign(url);
+  window.location.assign(url);
   return;
 }const body=Object.fromEntries(new FormData(e.currentTarget));const btn=$('submit-object');btn.disabled=true;status.className='';status.textContent='Registrando tu Issue pública…';try{const r=await fetch(`${API}/api/create`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw Error(data.error||'No se pudo crear');status.textContent=`¡Registrado! Issue #${data.issue_number}. Busca tu objeto en el universo.`;e.currentTarget.reset();await sync()}catch(err){status.className='error';status.textContent=err.message}finally{btn.disabled=false}});
 if(!API){
