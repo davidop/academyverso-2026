@@ -14,7 +14,7 @@ No se encontró configuración TDD en la rama de destino; no se activa TDD por i
 
 - [x] F01 · Archivar las ocho maquetas como WebP, con procedencia, ID, tamaño y política de uso. No usar imágenes de slide completa en el runtime.
 - [x] F02 · Crear la base compartida (logo real reducido, planeta, estrellas) y montar S01. Verificar 16:9, proyección, móvil, entrada, retroceso, acceso directo, estado reducido e impresión.
-- [ ] F03 · Publicar corte verificable para revisión mediante GitHub; no mezclarlo. Preparar handoff para S11/S17 con API del kit, criterios y archivos disjuntos.
+- [x] F03 · Publicar corte verificable para revisión mediante GitHub; no mezclarlo. Preparar handoff para S11/S17 con API del kit, criterios y archivos disjuntos.
 
 ## Evidencia y próximo paso
 
@@ -22,4 +22,6 @@ Estado inicial: rama aislada codex/academyverso-motion-foundation desde b8f5407 
 
 F01: be60fb0. Ocho originales convertidos a WebP de 1280 × 720, relación 16:9 comprobada al decodificar, sin incorporar archivos al runtime.
 
-F02: build Slidev y DESIGN.md lint limpios; Chromium comprobó logo 144 px, tres imágenes locales, entrada, PageDown/PageUp, recarga, reducción, impresión y móvil. S17 intacta. Riesgo: ninguno fuera de S01; no se modificó el estilo global ni la aplicación.
+F02: a3ba077 (remoto b3a4766). Build Slidev y DESIGN.md lint limpios; Chromium comprobó logo 144 px, tres imágenes locales, entrada, PageDown/PageUp, recarga, reducción, impresión y móvil. S17 intacta. Riesgo: ninguno fuera de S01; no se modificó el estilo global ni la aplicación.
+
+F03: PR #2 en borrador abierta sobre rama de planificación con sus dos commits verificados por árbol Git. Los borradores S11/S17 se preparan fuera de este corte en codex/academyverso-scenes-preview. Sin merge.
