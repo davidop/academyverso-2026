@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useIsSlideActive } from '@slidev/client'
-import astronaut from '../../web/assets/astronauta.png'
+import astronaut from '../assets/mission-astronaut.webp'
 import MissionBrand from './MissionBrand.vue'
 import MissionSky from './MissionSky.vue'
 
@@ -10,7 +10,7 @@ const active = useIsSlideActive()
 <template>
   <section class="mission-cover" :data-active="active">
     <MissionSky orbit />
-    <img class="mission-astronaut" :src="astronaut" alt="" />
+    <img class="mission-astronaut" :src="astronaut" alt="" aria-hidden="true" />
     <div class="mission-copy">
       <MissionBrand />
       <h1>¿Y si dirigieras<br />un repo<br /><em>desde el móvil?</em></h1>
@@ -31,42 +31,51 @@ const active = useIsSlideActive()
 
 .mission-astronaut {
   position: absolute;
-  width: 390px;
-  right: 65px;
-  top: 120px;
-  transform: rotate(8deg);
+  width: 414px;
+  right: 54px;
+  top: 81px;
+  transform: rotate(5deg);
+  transform-origin: 50% 60%;
 }
 
-.mission-copy { position: relative; padding: 42px 58px; }
+.mission-copy { position: relative; width: 862px; padding: 42px 58px; }
 .mission-copy h1 {
-  margin-top: 37px;
-  font-size: 86px;
-  line-height: .98;
+  margin-top: 52px;
+  font-size: 96px;
+  line-height: .96;
   font-weight: 900;
-  letter-spacing: -4px;
+  letter-spacing: -4.5px;
 }
 
-.mission-copy h1 em { color: var(--orange); font-style: normal; }
+.mission-copy h1 em { color: var(--orange); font-style: normal; white-space: nowrap; }
 .mission-copy .mission-subtitle {
-  margin-top: 24px;
+  margin-top: 22px;
   color: var(--lav);
   opacity: 1;
-  font-size: 30px;
+  font-size: 35px;
   font-weight: 700;
   line-height: 1.15;
 }
-.mission-copy .mission-speakers { margin-top: 36px; font-size: 24px; font-weight: 700; }
+.mission-copy .mission-speakers { margin-top: 36px; font-size: 29px; font-weight: 700; }
 
 [data-active="true"] h1 { animation: cover-reveal 440ms cubic-bezier(.22, 1, .36, 1) both; }
-[data-active="true"] .mission-astronaut { animation: cover-drift 680ms cubic-bezier(.22, 1, .36, 1) both; }
+[data-active="true"] .mission-astronaut { animation: cover-drift 1450ms cubic-bezier(.22, 1, .36, 1) both; }
+
+/* Keep this horizon enlargement local to S01; MissionSky is shared by other scenes. */
+.mission-cover :deep(.mission-horizon) {
+  width: 1200px;
+  left: 520px;
+  top: 472px;
+}
 
 @keyframes cover-reveal {
   from { clip-path: inset(0 0 100%); transform: translateY(12px); }
   to { clip-path: inset(0 0 0); transform: none; }
 }
 @keyframes cover-drift {
-  from { opacity: 0; transform: translate(22px, 15px) rotate(3deg); }
-  to { opacity: 1; transform: rotate(8deg); }
+  0% { opacity: 0; transform: translate(20px, 28px) rotate(2deg); }
+  68% { opacity: 1; transform: translate(-3px, -5px) rotate(6deg); }
+  100% { opacity: 1; transform: translate(0, 0) rotate(5deg); }
 }
 
 @media (prefers-reduced-motion: reduce), print {
