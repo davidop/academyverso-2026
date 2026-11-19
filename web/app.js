@@ -91,13 +91,17 @@ async function checkCreateCapability(){
 }
 $('create-form').addEventListener('submit',async e=>{
  e.preventDefault();
+ // currentTarget is only guaranteed while this event is being dispatched.
+ // Capture the form before the first await; after fetch it becomes null.
+ const form=e.currentTarget;
  const status=$('form-status');
- const body=Object.fromEntries(new FormData(e.currentTarget));
+ const body=Object.fromEntries(new FormData(form));
  if(!API||!createEnabled){
    draftIssue(status,body,'Los datos están preparados. Confirma la creación de tu Issue en GitHub.',true);
    return;
  }
  const btn=$('submit-object');
+ let registeredIssue=null;
  btn.disabled=true;status.className='';status.textContent='Registrando tu Issue pública…';
  try{
    const r=await fetch(`${API}/api/create`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
@@ -108,10 +112,24 @@ $('create-form').addEventListener('submit',async e=>{
      return;
    }
    if(!r.ok)throw Error(data.error||'No se pudo crear');
-   status.textContent=`¡Registrado! Issue #${data.issue_number}. Busca tu objeto en el universo.`;
-   e.currentTarget.reset();
+   // GitHub creation and D1 persistence have succeeded at this point.
+   registeredIssue=Number(data.issue_number);
+   if(!Number.isInteger(registeredIssue)||registeredIssue<1)throw new Error('Respuesta de creación inválida');
+   form.reset();
+   const issueLink=document.createElement('a');
+   issueLink.href=`https://github.com/${REPO}/issues/${registeredIssue}`;
+   issueLink.target='_blank';
+   issueLink.rel='noopener noreferrer';
+   issueLink.textContent=`Ver Issue #${registeredIssue} en GitHub ↗`;
+   status.replaceChildren(document.createTextNode('¡Registrado! Tu creación ya forma parte de AcademyVerso. '),issueLink);
    await sync();
  }catch(err){
+   if(registeredIssue){
+     // Never suggest creating the same Issue again after the server confirmed it.
+     status.className='';
+     status.textContent=`¡Registrado! Issue #${registeredIssue}. La actualización visual no se ha completado; recarga la galaxia.`;
+     return;
+   }
    status.className='error';
    const link=document.createElement('a');
    link.href=issueDraftUrl(body,REPO);link.target='_blank';link.rel='noopener noreferrer';
