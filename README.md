@@ -16,9 +16,10 @@
 
 ## 🔗 Enlaces
 
+- [Presentación web interactiva en Slidev](https://davidop.github.io/academyverso-2026/presentation/) · [Código](presentation/README.md)
 - [Repositorio](https://github.com/davidop/academyverso-2026)
 - [Crear objeto desde GitHub Mobile](https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml)
-- [AcademyVerso (URL prevista para GitHub Pages)](https://davidop.github.io/academyverso-2026/)
+- [Universo 3D publicado en GitHub Pages](https://davidop.github.io/academyverso-2026/)
 - [Guion de los ponentes](docs/guion-demo.md)
 - [Guía para activar Copilot, Claude y Codex](docs/activar-agentes.md)
 - [Configuración y despliegue](docs/despliegue.md)

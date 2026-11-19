@@ -85,3 +85,12 @@
 @keyframes rocket{0%,100%{transform:translateX(-14px) rotate(-7deg)}50%{transform:translateX(65px) rotate(6deg)}}
 @keyframes ring{to{transform:rotate(335deg)}}@keyframes twinkle{50%{opacity:.27}}
 @media(prefers-reduced-motion:reduce){.slidev-layout *{animation:none!important;transition:none!important}}
+
+/* Marca oficial AcademyVerso en todas las diapositivas. */
+.slidev-layout{
+  background-image:url('https://davidop.github.io/academyverso-2026/assets/academyverso-logo.png'),radial-gradient(ellipse at 73% 30%,#424879 0%,transparent 52%)!important;
+  background-position:right 26px bottom 17px, center!important;
+  background-size:140px auto, cover!important;
+  background-repeat:no-repeat!important;
+  background-color:#182039!important;
+}
