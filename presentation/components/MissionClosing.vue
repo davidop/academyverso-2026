@@ -6,6 +6,7 @@ import QrPortal from './QrPortal.vue'
 
 const active = useIsSlideActive()
 const repository = 'https://github.com/davidop/academyverso-2026'
+const galaxy = 'https://davidop.github.io/academyverso-2026/'
 </script>
 
 <template>
@@ -15,6 +16,7 @@ const repository = 'https://github.com/davidop/academyverso-2026'
       <MissionBrand />
       <h1>Tu móvil delega.<br /><em>Tú decides qué entra.</em></h1>
       <p class="closing-steps">Delegar · Revisar · Validar</p>
+      <a class="galaxy-link" :href="galaxy" target="_blank" rel="noopener noreferrer">🌌 Explorar el universo 3D ↗</a>
     </div>
     <div class="closing-qr">
       <QrPortal :url="repository" label="Código y documentación" label-below />
@@ -53,6 +55,9 @@ const repository = 'https://github.com/davidop/academyverso-2026'
   line-height: 1.2;
   font-weight: 800;
 }
+.galaxy-link { display: inline-block; margin-top: 26px; padding: 13px 20px; border: 2px solid var(--mint); border-radius: 12px; color: var(--mint); background: #121b30dc; font-size: 22px; line-height: 1.25; font-weight: 800; text-decoration: none; }
+.galaxy-link:hover, .galaxy-link:focus-visible { background: var(--mint); color: #121b30; }
+.galaxy-link:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; }
 .closing-qr { justify-self: center; width: 390px; text-align: center; }
 .closing-qr :deep(.qr-label) { white-space: nowrap; }
 .closing-qr :deep(.qr-panel:focus-visible) {

@@ -22,7 +22,7 @@ const issueUrl = 'https://github.com/davidop/academyverso-2026/issues/new?templa
           <ol>
             <li>Abre el QR con el móvil o selecciona el enlace.</li>
             <li>Elige un planeta, estrella, luna o estación.</li>
-            <li>Escribe un alias y una descripción. Envía la Issue.</li>
+            <li>Indica nombre, alias y descripción; envía la Issue.</li>
           </ol>
           <p>Necesitas iniciar sesión en GitHub.</p>
         </div>
