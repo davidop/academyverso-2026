@@ -104,15 +104,11 @@ transition: fade
 <!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. -->
 
 ---
-transition: slide-left
+transition: fade
+clicks: 1
 ---
 
-<div class="kicker">07 · TU PRIMERA CONTRIBUCIÓN</div>
-<div class="headline">Escanea. Imagina.<br><span class="gradient">Crea tu planeta.</span></div>
-<div class="qr-layout">
- <QrPortal url="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml" label="CREAR OBJETO EN GITHUB"/>
- <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta necesita activar el servicio seguro de integración.</small></div>
-</div>
+<ContributionPortal :clicks="$clicks" />
 
 <!-- Sergio facilita el QR. David revisa las Issues reales. Una Issue sí se crea aunque aún no esté desplegado el Worker. -->
 
