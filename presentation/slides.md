@@ -138,19 +138,11 @@ transition: fade
 <!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
 
 ---
-transition: slide-left
+transition: fade
+clicks: 3
 ---
 
-<div class="kicker">10 · DE LA ISSUE A LA GALAXIA</div>
-<div class="headline compact">Cada objeto tiene<br><span class="mint">una historia en GitHub.</span></div>
-<div class="architecture">
- <div class="arch" v-click><span>📱</span><b>GitHub Mobile</b><small>Formulario</small></div><em v-after>→</em>
- <div class="arch" v-click><span>📋</span><b>GitHub Issues</b><small>Trazabilidad</small></div><em v-after>→</em>
- <div class="arch" v-click><span>⚙️</span><b>GitHub Actions</b><small>Validación</small></div><em v-after>→</em>
- <div class="arch amber" v-click><span>☁️</span><b>Worker + D1</b><small>Pendiente de activar</small></div><em v-after>→</em>
- <div class="arch" v-click><span>🌌</span><b>Three.js</b><small>Visualización</small></div>
-</div>
-<div class="footnote">La web funciona desde GitHub Pages; la sincronización de contribuciones necesita el backend.</div>
+<MissionTrace :clicks="$clicks" />
 
 <!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
 
