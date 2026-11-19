@@ -17,7 +17,7 @@ const repository = 'https://github.com/davidop/academyverso-2026'
       <p class="closing-steps">Delegar · Revisar · Validar</p>
     </div>
     <div class="closing-qr">
-      <QrPortal :url="repository" label="Código y documentación" />
+      <QrPortal :url="repository" label="Código y documentación" label-below />
     </div>
   </section>
 </template>
@@ -53,19 +53,8 @@ const repository = 'https://github.com/davidop/academyverso-2026'
   line-height: 1.2;
   font-weight: 800;
 }
-.closing-qr { justify-self: center; width: 290px; text-align: center; }
-.closing-qr :deep(.qr-panel) {
-  display: grid;
-  justify-items: center;
-  gap: 16px;
-  padding: 20px;
-  border-radius: 4px;
-  color: #000;
-  background: #fff;
-  font-size: 20px;
-  font-weight: 700;
-  text-decoration: none;
-}
+.closing-qr { justify-self: center; width: 390px; text-align: center; }
+.closing-qr :deep(.qr-label) { white-space: nowrap; }
 .closing-qr :deep(.qr-panel:focus-visible) {
   outline: 4px solid var(--mint);
   outline-offset: 6px;
