@@ -1,19 +1,23 @@
 <script setup lang="ts">
+import { useIsSlideActive } from '@slidev/client'
 import MissionSky from './MissionSky.vue'
 
-defineProps<{ clicks: number }>()
+const props = defineProps<{ clicks: number }>()
+const active = useIsSlideActive()
 
 const steps = ['Issue', 'Validación', 'Worker + D1', 'Three.js']
+const progress = () => `${Math.min(Math.max(props.clicks, 0), 3) / 3 * 100}%`
 </script>
 
 <template>
-  <section class="mission-trace" :data-step="Math.min(Math.max(clicks, 0), 3)">
+  <section class="mission-trace" :data-step="Math.min(Math.max(clicks, 0), 3)" :data-active="active" :style="{ '--trace-progress': progress() }">
     <MissionSky />
     <h1>Cada mundo tiene<br /><em>una historia en GitHub.</em></h1>
 
     <svg class="route" viewBox="0 0 1280 713" preserveAspectRatio="none" aria-hidden="true">
       <path class="route-base" d="M 55 516 Q 110 492 157 479 Q 325 440 493 440 T 870 420" />
       <path class="route-pending" d="M 870 420 Q 1050 397 1165 402 L 1200 404" />
+      <circle class="trace-pulse" r="8" />
     </svg>
     <ol class="trace" aria-label="Recorrido de una Issue hasta el universo Three.js">
       <li v-for="(step, index) in steps" :key="step" :class="`step step-${index}`" :aria-current="clicks === index ? 'step' : undefined">
@@ -34,6 +38,7 @@ h1 em { color:var(--mint); font-style:normal; }
 .route { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
 .route path { fill:none; stroke:var(--mint); stroke-width:4; stroke-linecap:round; }
 .route-pending { stroke-dasharray:11 14; opacity:.72; }
+.trace-pulse { fill:var(--orange); stroke:#121b30; stroke-width:3; offset-path:path("M 55 516 Q 110 492 157 479 Q 325 440 493 440 T 870 420 Q 1050 397 1165 402 L 1200 404"); offset-distance:var(--trace-progress); transition:offset-distance 420ms cubic-bezier(.22, 1, .36, 1); }
 .step { position:absolute; width:200px; text-align:center; transform:translateX(-50%); }
 .step-0 { left:12.3%; top:465px; }
 .step-1 { left:38.5%; top:426px; }
@@ -48,6 +53,8 @@ h1 em { color:var(--mint); font-style:normal; }
 .step .marker, .step .label { transition:transform 220ms ease, color 220ms ease, background-color 220ms ease; }
 .step[aria-current="step"] .marker { background:var(--mint); transform:scale(1.2); }
 .step[aria-current="step"] .label { color:var(--mint); transform:translateY(-2px); }
-@media (prefers-reduced-motion:reduce), print { .step .marker,.step .label { transition:none; } }
+[data-active="true"] :deep(.mission-horizon) { animation: trace-planet-roll 680ms cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes trace-planet-roll { from { opacity:.72; transform:translateX(44px) rotate(-18deg); } to { opacity:1; transform:rotate(-13deg); } }
+@media (prefers-reduced-motion:reduce), print { .step .marker,.step .label,.trace-pulse { transition:none; } [data-active="true"] :deep(.mission-horizon) { animation:none; } }
 @media print { .mission-trace { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }
 </style>
