@@ -47,3 +47,18 @@ Guía de agentes: ../docs/activar-agentes.md
 Guion: ../docs/guion-demo.md
 
 Branding original: materiales de Academyverso, fuera de la licencia MIT del repositorio.
+
+## Pruebas visuales reproducibles
+
+En el PR, el workflow CI instala Chromium y ejecuta `npm run test:visual`, comprobando las escenas S01, S08, S11 y S17 con Playwright. Comprueba los campos del formulario, navegación reversible por teclado, enlaces y decodificación real de ambos QR, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
+
+Para ejecutarlo localmente:
+
+```bash
+cd presentation
+npm install
+npx playwright install chromium
+npm run test:visual
+```
+
+**Importante:** el navegador automatizado no reemplaza una prueba con proyector, mando y dos móviles físicos. No mover este PR fuera de Draft antes del visto bueno de ambos ponentes.

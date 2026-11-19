@@ -25,3 +25,18 @@ jobs:
         run: |
           npm install --no-audit --no-fund
           npm run build
+      - name: Install Chromium for visual validation
+        working-directory: presentation
+        run: npx playwright install --with-deps chromium
+      - name: Smoke test Slidev in Chromium
+        working-directory: presentation
+        run: npm run test:visual
+      - name: Upload Slidev visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: academyverso-visual-${{ github.run_id }}
+          path: |
+            presentation/test-results/
+            presentation/playwright-report/
+          if-no-files-found: warn
