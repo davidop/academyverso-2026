@@ -18,9 +18,17 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-16 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
+17 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
+
+## Rediseño en revisión
+
+- [Guion de la charla y demo](storytelling.md)
+- [Sistema de diseño](DESIGN.md)
+- [Plan visual y de movimiento por escena](plan-visual.md)
+
+Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
 
 ## Riesgos y plan de respaldo
 
