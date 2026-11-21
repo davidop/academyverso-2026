@@ -18,5 +18,7 @@ jobs:
           node --check web/app.js
           node --check web/config.js
           node --check web/issue-prefill.mjs
+          node --check web/terraforming.mjs
+          node --test web/test/terraforming.test.mjs
           node --test worker/test/issue-prefill.test.mjs
           cd worker && npm run check && npm test

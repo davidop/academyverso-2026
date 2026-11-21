@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
+import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
 
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
@@ -40,8 +41,10 @@ function makeBody(obj,i,total){const h=numberHash(`${obj.issue_number}-${obj.nam
  const group=new THREE.Group();group.position.copy(pos);
  const size=t==='estrella'?7:t==='planeta'?6:t==='agujero-negro'?6:t==='estacion'?4:3.6;
  const mat=new THREE.MeshStandardMaterial({color:t==='agujero-negro'?0x101020:color,roughness:.76,metalness:t==='estacion'?.5:.1,emissive:t==='estrella'?color:0x0f1524,emissiveIntensity:t==='estrella'?.85:.07});
+ const mission=terraformMissionFor(obj.description);
+ if(mission){mat.color.setHex(mission.id==='vice-nebula'?0xee78b8:0x4edfc4);mat.emissive.setHex(mission.id==='vice-nebula'?0x621d5c:0x116b64);mat.emissiveIntensity=.37;}
  const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(size,t==='asteroide'?0:2),mat);group.add(mesh);
- if(t==='planeta'||t==='agujero-negro'){const ring=new THREE.Mesh(new THREE.TorusGeometry(size*1.6,.35,7,56),new THREE.MeshBasicMaterial({color:t==='agujero-negro'?0x72e6db:0xe7badb,side:THREE.DoubleSide,transparent:true,opacity:.8}));ring.rotation.x=.8;ring.rotation.y=.2;group.add(ring)}
+ if(t==='planeta'||t==='agujero-negro'){const ring=new THREE.Mesh(new THREE.TorusGeometry(size*1.6,.35,7,56),new THREE.MeshBasicMaterial({color:t==='agujero-negro'?0x72e6db:mission?(mission.id==='vice-nebula'?0xff9fda:0x8bffea):0xe7badb,side:THREE.DoubleSide,transparent:true,opacity:.8}));ring.rotation.x=.8;ring.rotation.y=.2;group.add(ring)}
  if(t==='estacion'){const solar=new THREE.Mesh(new THREE.BoxGeometry(size*5,.35,2),new THREE.MeshStandardMaterial({color:0x6ac9f2,metalness:.5,roughness:.4}));group.add(solar)}
  if(t==='estrella'){const glow=new THREE.PointLight(color,350,80);group.add(glow)}
  mesh.userData={obj,group};clickables.push(mesh);meshes.push({group,phase:h%100/20});scene.add(group);
@@ -58,9 +61,26 @@ renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();dist=Math.ma
 $('reset-camera').addEventListener('click',()=>{yaw=0;pitch=.12;dist=190;updateCamera()});
 updateCamera();
 function animate(){requestAnimationFrame(animate);if(!reduced){center.rotation.y+=.001;meshes.forEach((m,i)=>{m.group.rotation.y+=.0025;m.group.position.y+=Math.sin(performance.now()/1100+m.phase)*.006})}renderer.render(scene,camera)}animate();
-function refreshUI(){paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
+function refreshUI(){paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
 openDetails=obj=>{$('detail-type').textContent=`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=safe(obj.name);$('detail-description').textContent=safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
 $('close-detail').onclick=()=>$('detail-dialog').close();$('open-form').onclick=()=>$('create-dialog').showModal();$('close-form').onclick=()=>$('create-dialog').close();
+for(const mission of TERRAFORMING_MISSIONS){
+  $(mission.id+'-github').href=terraformGitHubUrl(mission.id,REPO);
+}
+document.querySelectorAll('[data-mission]').forEach(button=>button.addEventListener('click',()=>{
+  const missionId=button.dataset.mission;
+  const mission=TERRAFORMING_MISSIONS.find(m=>m.id===missionId);
+  if(!mission)return;
+  const draft=terraformProposal(missionId);
+  const form=$('create-form');
+  form.elements.namedItem('type').value=draft.type;
+  form.elements.namedItem('name').value=draft.name;
+  form.elements.namedItem('description').value=draft.description;
+  $('form-status').textContent='';
+  $('mission-feedback').textContent='Misión '+mission.label+' preparada. Añade tu alias y modifica el nombre y los detalles si quieres; conserva el marcador [GTA:...] al principio para que cuente como creación de esta misión.';
+  $('create-dialog').showModal();
+  form.elements.namedItem('alias').focus();
+}));
 async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];refreshUI();$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
 function draftIssue(status,body,message,redirect=false){
  const url=issueDraftUrl(body,REPO);
