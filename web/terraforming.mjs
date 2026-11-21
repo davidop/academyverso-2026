@@ -28,7 +28,7 @@ export function terraformProposal(missionId){
   return {type:mission.type,name:mission.name,description:`${mission.tag} ${mission.description}`};
 }
 export function terraformGitHubUrl(missionId,repo='davidop/academyverso-2026'){
-  if(!/^[-\\w]+\\/[-\\w.]+$/.test(repo))throw new Error('Repositorio inválido');
+  if(!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo))throw new Error('Repositorio inválido');
   const proposal=terraformProposal(missionId);
   const query=new URLSearchParams({template:'crear-objeto.yml',tipo:proposal.type,nombre:proposal.name,descripcion:proposal.description,title:'Nuevo objeto cósmico: '+proposal.name});
   return `https://github.com/${repo}/issues/new?${query.toString()}`;
