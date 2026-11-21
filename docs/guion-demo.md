@@ -12,7 +12,7 @@
 | 15:24–15:32 | David | Solicitar a Copilot un viaje a un planeta de GTA mediante PR | Prompt → código → revisión |
 | 15:32–15:40 | Sergio | Claude propone ambiente visual de un escenario sobre rama actualizada | Agentes encadenados, no tres chats aislados |
 | 15:40–15:48 | Ambos | Codex comprueba escenarios, accesibilidad, tests y CI | El resultado necesita verificación |
-| 15:48–15:52 | Sergio | Mostrar contadores reales, Issues cerradas y universo 3D | Demo de colaboración medible |
+| 15:48–15:52 | Sergio | Mostrar contadores, fichas y viaje 3D (solo tras integrar PR y probar navegador) | Demo de colaboración medible |
 | 15:52–15:55 | David | Repo, aprendizajes, reto comunitario y preguntas | La comunidad continúa el proyecto |
 
 ## Qué funciona ya (no presentarlo como promesa)
@@ -20,7 +20,7 @@
 - La app **Three.js** representa objetos cósmicos recibidos desde **Cloudflare D1**.
 - Una Issue creada en la web o GitHub Mobile entra en el circuito Worker/Actions; la Issue se cierra tras confirmar ingesta.
 - Las tarjetas Vice Nebula y Colonia Centinela precargan un marcador en la descripción y los contadores muestran **número de objetos**, no votos de personas únicas.
-- La tematización visual y el 3D actual **no contienen ciudades visitables, vehículos voladores, persecuciones ni sistema jugable de cinco estrellas**. Son propuestas de mejora para los agentes, sujetas a PR, pruebas y revisión.
+- La tematización visual y el 3D **no contienen ciudades visitables, vehículos voladores, persecuciones ni sistema jugable de cinco estrellas**. La Fase 1 propone un **viaje de cámara** hasta los planetas etiquetados y regreso (PR separado, pendiente de merge y ensayo de navegador).
 - Workers AI opcional no implica que Copilot/Claude/Codex hayan generado cada planeta: esos agentes **modifican el código**; las aportaciones llegan como datos validados.
 
 ## Preparación previa
@@ -30,6 +30,7 @@
 3. Crear una Issue de prueba con marcador `[GTA:VICE-NEBULA]`; comprobar objeto en `/api/objects` y que cierre la Issue. No afirmar latencia fija: GitHub Actions es asíncrono.
 4. Ensayar un prompt por agente. Guardar PRs preparados y marcarlos como respaldo; jamás atribuir cambios hechos manualmente a una ejecución de agente.
 5. QRs GitHub Mobile y web verificados en Android/iOS. Para usuarios sin GitHub, el formulario web anónimo usa el Worker seguro.
+6. Revisar PR de viaje 3D, integrar tras CI, comprobar la publicación de Pages y ensayar «Viajar aquí» y «Regresar» con al menos un objeto GTA real; probar teclado, móvil y modo de movimiento reducido.
 
 ## Plan B y criterios de éxito
 
@@ -39,6 +40,6 @@
 | GitHub Actions tarda | Ver Issues existentes y contadores de la última sincronización, sin fingir resultados nuevos |
 | Backend caído | Enseñar código y objetos de ejemplo claramente identificados |
 | No hay suficientes objetos etiquetados | Demostrar con uno real y pedir al público que aporte ideas; nunca inventar votos |
-| Viaje a mundos GTA no integrado | Mostrar ficha y etiqueta 3D, no afirmar que el viaje existe |
+| Viaje a mundos GTA no integrado o con fallo visual | Mostrar ficha/etiqueta 3D y PR preparado; no afirmar que la función está disponible en producción |
 
 **Métricas verificables:** al menos una Issue con marcador, un objeto en D1 con enlace a esa Issue, recuentos actualizados y un PR real de programación revisado por humanos.

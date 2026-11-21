@@ -19,7 +19,7 @@ El próximo universo se construye, no se juega. El público elige una de dos rut
 - No hay nuevo endpoint ni tabla D1. Los objetos conservan `type, name, alias, description, issue_number, issue_url` y las validaciones anteriores.
 - La identificación de la misión depende del prefijo estable en **`description`**. `web/terraforming.mjs` concentra opciones, generación de formularios y conteo determinista.
 - `web/app.js` utiliza las mismas respuestas de `/api/objects`; contadores y distintivos solo muestran la información presente en D1. El modo demo no fabrica votos.
-- La UI crea planetas asociados a cada misión con colores neón originales en Three.js. **No crea ciudades explorables, carreras ni una mecánica real de cinco estrellas**.
+- La UI crea planetas asociados a cada misión con colores neón originales en Three.js. La rama de Fase 1 incorpora navegación de cámara al destino y regreso, pendiente de integrar y ensayar. **No crea ciudades explorables, carreras ni una mecánica real de cinco estrellas**.
 - La ruta GitHub Mobile precarga `tipo`, `nombre`, `descripcion` y deja libre el `alias` para la aportación. Al crear una Issue desde el formulario genérico sin marcador, aparece en el universo, pero **no suma a ninguna misión**.
 - La visualización debe admitir un universo vacío, datos antiguos y descripciones no etiquetadas. Los secretos siguen solo en Cloudflare y GitHub Actions.
 
@@ -29,6 +29,8 @@ El próximo universo se construye, no se juega. El público elige una de dos rut
 - [ ] Crear una aportación real a Vice Nebula y confirmar Issue, D1, contador y cierre automático de Issue.
 - [ ] Crear una aportación real a Colonia Centinela y confirmar el otro contador.
 - [ ] Verificar que una Issue genérica no altera los contadores de misión.
+- [ ] Tras integrar PR Fase 1: abrir ficha GTA, viajar en 3D, regresar durante el vuelo y tras el aterrizaje; repetir en móvil, teclado y reducción de movimiento.
+- [ ] Confirmar que objetos sin marcador GTA no muestran el botón de viaje y que una galaxia vacía no causa errores.
 - [ ] Revisar CI en verde y evitar crear duplicados si hay error visual post-envío.
 - [ ] Probar la presentación Slidev, el iframe y el enlace a la sección.
 - [ ] Confirmar el estado real de agentes Copilot, Claude Code y Codex, incluyendo permisos y políticas.

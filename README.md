@@ -23,7 +23,7 @@ La propuesta de Sergio Valverde se integra sin sustituir los planetas ni el tít
 
 **Backlog por agente:** [Fase 1 · Copilot — viajes](https://github.com/davidop/academyverso-2026/issues/5) · [Fase 2 · Claude — ciudad y estética](https://github.com/davidop/academyverso-2026/issues/6) · [Fase 3 · Codex — misiones y pruebas](https://github.com/davidop/academyverso-2026/issues/7) · [Fase 4 · ensayo E2E](https://github.com/davidop/academyverso-2026/issues/8). Son tareas abiertas para desarrollar mediante PRs, no funciones entregadas.
 
-**Estado actual:** selección + creación + visualización + recuento + enlaces GitHub Mobile implementados. Las ciudades visitables, vehículos y mecánicas tipo videojuego **no están desarrollados**; se proponen como trabajo futuro de agentes mediante PRs verificados. Se incluyen tests deterministas en `web/test/terraforming.test.mjs`.
+**Estado del núcleo GTA:** selección + creación + visualización + recuento + enlaces GitHub Mobile implementados. **Viaje interplanetario:** implementación preparada en rama/PR independiente para revisión, con cámara animada, retorno, controles móviles y tests deterministas; no atribuir estos cambios a Copilot ni mostrarlos como desplegados hasta integrar el PR. Las ciudades visitables, vehículos y mecánicas tipo videojuego **no están desarrollados**; se proponen como trabajo futuro de agentes mediante PRs verificados. Se incluyen tests deterministas en `web/test/terraforming.test.mjs`.
 
 Este material es una **parodia conceptual independiente**. No está afiliado a Rockstar Games ni incorpora imágenes, logotipos, personajes ni recursos protegidos de GTA. La propuesta audiovisual utiliza estilo espacial original y los materiales propios de AcademyVerso.
 
@@ -70,7 +70,7 @@ flowchart TD
 | Enriquecimiento IA | Opcional; hook implementado | Binding Workers AI; revisar cuotas/costes |
 | GitHub Pages | Workflow incluido | Activar Pages → Source: GitHub Actions |
 | Copilot / Claude / Codex | Guion + prompts incluidos | Verificar acceso, planes y permisos manualmente |
-| Viajes interplanetarios | Pendiente: tarea propuesta para agentes | PRs reales y probados o respaldo identificado |
+| Viajes interplanetarios | Implementación en PR de Fase 1, pendiente de revisión e integración | Validar CI y ensayo real tras merge |
 | Grand Terraforming Agents | Dos escenarios, creación, contadores y colores en Three.js | Worker + D1 para recuento real; sin migraciones |
 
 ## ✅ Comprobación local
@@ -115,3 +115,14 @@ El modo anónimo y la actualización rápida de la galaxia siguen requiriendo Cl
 - La web consulta objetos reales en `/api/objects` cada 5 s; si D1 está vacía se muestra una galaxia sin objetos comunitarios, no objetos ficticios.
 - El endpoint de salud expone `create_enabled` para permitir que la interfaz distinga lectura y escritura. Mientras falte el token de GitHub en Cloudflare, el formulario abre una Issue precargada en GitHub como alternativa.
 - No publicar el token GitHub ni los secretos de ingestión en código, consola de Chrome o capturas.
+
+### Viaje 3D: comportamiento y pruebas (Fase 1)
+
+- Al abrir la ficha de **un planeta de Vice Nebula o Colonia Centinela**, aparece **🚀 Viajar a este mundo**. Las fichas de objetos sin marcador GTA conservan el comportamiento anterior.
+- La cámara avanza hacia ese objeto con interpolación suave (aprox. 1,85 s), muestra nombre y estado del vuelo y permite **↩ Regresar a la galaxia** incluso durante el desplazamiento.
+- En el destino se puede rotar y acercar/alejar alrededor del planeta. **Esc** también regresa si no hay un diálogo abierto; el botón de regresar funciona con teclado y móvil.
+- Con `prefers-reduced-motion`, los saltos de cámara son inmediatos y la capa visual de velocidad se desactiva.
+- Los objetos se ordenan por número de Issue al situarlos en la galaxia: la llegada de una nueva aportación no mueve los planetas anteriores. La aplicación no repinta la escena cada 5 segundos si D1 no ha cambiado.
+- No hay dependencia nueva, backend nuevo, secretos adicionales ni migraciones D1. Los tests de `web/test/travel.test.mjs` cubren posiciones estables, límites de destino, finales de vuelo, cancelación/inicio de regreso y movimiento reducido.
+
+**Cómo comprobarlo:** abrir la app **después de integrar el PR y publicar GitHub Pages**, elegir un objeto con marcador `[GTA:VICE-NEBULA]` o `[GTA:COLONIA-CENTINELA]`, pulsar su ficha, viajar y regresar. Si no hay objetos de esa misión en D1, crear una Issue real antes del ensayo; no simular que hay asistentes.

@@ -215,7 +215,7 @@ transition: fade
  <div class="travel"><div class="planet left"></div><div class="dash"></div><span class="rocket">🚀</span><div class="planet right"></div><small>ORIGEN → VIAJE → DESTINO</small></div>
 </div>
 
-<!-- David crea una sesión Copilot y Sergio revisa el PR. La animación es ilustrativa; no representa una ejecución completada. -->
+<!-- Fase 1: existe implementación de referencia preparada en rama/PR por ChatGPT. NO atribuir ese PR a Copilot. Si GitHub Copilot trabaja en directo, exigir una sesión real y un PR nuevo, por ejemplo mejora de teclado/selección. Mostrar el viaje publicado solo después de integrar el PR y probarlo en navegador. -->
 
 ---
 transition: fade
