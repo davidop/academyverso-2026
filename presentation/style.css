@@ -94,3 +94,26 @@
   background-repeat:no-repeat!important;
   background-color:#182039!important;
 }
+
+/* Grand Terraforming Agents · visual originales creados con CSS, sin materiales de GTA. */
+.gta-hero{display:grid;grid-template-columns:1.18fr .82fr;gap:22px;align-items:center;height:520px}
+.gta-roman{font-weight:1000;font-size:clamp(68px,8vw,122px);line-height:1;letter-spacing:-.085em;color:#fff;text-shadow:0 10px 50px #55e7df77}
+.gta-roman span{color:#ffb781}
+.gta-subtitle{font-weight:950;font-size:36px;letter-spacing:.04em;line-height:.96;margin-top:5px;color:#a4f9ed}
+.gta-hero p{font-size:23px;line-height:1.5;max-width:650px;margin-top:24px}
+.gta-hero .gta-mini{font-size:15px;margin-top:20px;font-weight:850;color:#d6c8ff}
+.gta-orbital{position:relative;width:425px;height:425px;margin:auto;display:grid;place-items:center}
+.gta-sphere{width:315px;height:315px;border-radius:50%;background:radial-gradient(circle at 28% 28%,#f4a4de,#ae66cd 25%,#293973 60%,#111630 85%);box-shadow:0 0 75px #ce66df88,inset -30px -28px 55px #080f28;border:1px solid #ffffffaa}
+.gta-orbit{position:absolute;border:6px solid #7eedec;border-radius:50%;width:410px;height:120px;transform:rotate(-29deg);box-shadow:0 0 34px #7eedec75}
+.gta-orbit.o2{width:370px;height:105px;transform:rotate(37deg);border-color:#ffb276c7}
+.gta-city{position:absolute;bottom:110px;right:52px;font-size:90px;filter:drop-shadow(0 0 20px #f7a3e7)}
+.gta-vote{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+.gta-choice{border:2px solid #7bcddc80;border-radius:24px;min-height:295px;padding:25px 30px;background:linear-gradient(145deg,#572456,#20294d)}
+.gta-choice.sentinel{background:linear-gradient(145deg,#0b5960,#20294d)}
+.gta-choice-icon{float:right;font-size:82px;filter:drop-shadow(0 0 25px #e69bff)}
+.gta-choice small{letter-spacing:.17em;font-weight:850;color:#9eede2}
+.gta-choice h2{font-size:44px;letter-spacing:-.05em;margin:37px 0 10px}
+.gta-choice p{font-size:20px;line-height:1.45;color:#e9efff}
+.gta-bottom{display:flex;align-items:center;gap:26px;margin-top:25px}
+.gta-bottom a{white-space:nowrap}
+.gta-bottom span{font-size:15px;color:#d7e2ec;line-height:1.4}

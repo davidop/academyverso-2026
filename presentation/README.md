@@ -18,7 +18,7 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-16 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
+18 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
 
@@ -30,3 +30,7 @@ Guía de agentes: ../docs/activar-agentes.md
 Guion: ../docs/guion-demo.md
 
 Branding original: materiales de Academyverso, fuera de la licencia MIT del repositorio.
+
+## GTA VII: Grand Terraforming Agents
+
+La presentación mantiene el título oficial. Se añaden dos diapositivas originales (hook paródico y elección de escenarios) y se adapta la secuencia de agentes. No se utilizan imágenes, marcas gráficas ni personajes de Rockstar Games. La dinámica real consiste en crear objetos etiquetados y mostrar contadores calculados desde D1; los escenarios jugables complejos son ideas para futuras PRs, no funciones existentes.

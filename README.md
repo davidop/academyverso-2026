@@ -14,6 +14,17 @@
 4. Quien no tenga GitHub usa un **formulario web**; un Worker con token **servidor** crea la Issue y actualiza D1, sin exponer credenciales.
 5. **Copilot, Claude y Codex** trabajan sobre el código del mismo proyecto, con sesiones reales desde GitHub Mobile y PRs revisables. Son agentes distintos del modelo que se escoge dentro del chat de Copilot.
 
+
+## 🎮 GTA VII — Grand Terraforming Agents (concepto paródico)
+
+**[Participa en la misión](https://davidop.github.io/academyverso-2026/#grand-terraforming-agents)** · [Guía técnica y de ensayo](docs/grand-terraforming-agents.md) · [Guion de 55 minutos](docs/guion-demo.md)
+
+La propuesta de Sergio Valverde se integra sin sustituir los planetas ni el título oficial de la sesión: **Vice Nebula** (ciudad orbital neón) y **Colonia Centinela** (colonia sostenible) son dos escenarios entre los que puede elegir el público. Cada botón prepara un **objeto cósmico real**, que se registra como GitHub Issue y aparece en D1/Three.js a través del circuito existente. La elección se guarda como marcador al inicio de la descripción (`[GTA:VICE-NEBULA]` o `[GTA:COLONIA-CENTINELA]`) sin cambiar el esquema de D1. Los contadores son de **objetos por escenario**, no de votantes únicos.
+
+**Estado actual:** selección + creación + visualización + recuento + enlaces GitHub Mobile implementados. Las ciudades visitables, vehículos y mecánicas tipo videojuego **no están desarrollados**; se proponen como trabajo futuro de agentes mediante PRs verificados. Se incluyen tests deterministas en `web/test/terraforming.test.mjs`.
+
+Este material es una **parodia conceptual independiente**. No está afiliado a Rockstar Games ni incorpora imágenes, logotipos, personajes ni recursos protegidos de GTA. La propuesta audiovisual utiliza estilo espacial original y los materiales propios de AcademyVerso.
+
 ## 🔗 Enlaces
 
 - [Presentación web interactiva en Slidev](https://davidop.github.io/academyverso-2026/presentation/) · [Código](presentation/README.md)
@@ -57,7 +68,8 @@ flowchart TD
 | Enriquecimiento IA | Opcional; hook implementado | Binding Workers AI; revisar cuotas/costes |
 | GitHub Pages | Workflow incluido | Activar Pages → Source: GitHub Actions |
 | Copilot / Claude / Codex | Guion + prompts incluidos | Verificar acceso, planes y permisos manualmente |
-| Viajes interplanetarios | Reservado para demo de agentes | PRs reales o respaldo identificado |
+| Viajes interplanetarios | Pendiente: tarea propuesta para agentes | PRs reales y probados o respaldo identificado |
+| Grand Terraforming Agents | Dos escenarios, creación, contadores y colores en Three.js | Worker + D1 para recuento real; sin migraciones |
 
 ## ✅ Comprobación local
 

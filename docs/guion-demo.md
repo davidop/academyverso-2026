@@ -1,45 +1,44 @@
 # Guion de ponentes — 55 minutos (AcademyVerso 2026)
 
-**15:00–15:55** · Sala «Trabaja con IA» · David Oliva + Sergio Valverde.
+**15:00–15:55** · Sala «Trabaja con IA» · David Oliva + Sergio Valverde. Título oficial: **Programa con IA desde tu móvil: GitHub Copilot, Claude y Codex**. Demo con concepto paródico **GTA VII: Grand Terraforming Agents**.
 
 | Hora | Quién abre | Acción en escenario | Mensaje clave |
 |---|---|---|---|
-| 15:00–15:04 | David | Hook: «¿Puede un móvil dirigir un equipo de desarrollo?» | El móvil no sólo chatea |
-| 15:04–15:08 | Sergio | Mostrar GitHub Mobile: repos, Issues, agents, PRs | GitHub como entorno compartido |
-| 15:08–15:13 | David | Diferenciar modelos vs agentes; cómo comprobar habilitación | Claude como modelo ≠ agente Claude |
-| 15:13–15:16 | Sergio | QR de AcademyVerso y tutorial de Issue | Todos participan |
-| 15:16–15:23 | Ambos | El público crea planetas y observa los primeros objetos | Issues → universo compartido |
-| 15:23–15:31 | David | Delegar «viaje interplanetario» a Copilot | Prompt → sesión → PR |
-| 15:31–15:39 | Sergio | Claude mejora animaciones del viaje sobre código integrado | Una tarea encadenada, no tres chats |
-| 15:39–15:47 | Ambos | Codex agrega validaciones y pruebas; revisar PRs y CI | Validación, trazabilidad y seguridad |
-| 15:47–15:51 | Sergio | Mostrar un viaje entre objetos creados | Resultado final medible |
-| 15:51–15:55 | David | Recap, fuentes, repo, preguntas | Los participantes pueden continuar |
+| 15:00–15:04 | David + Sergio | Hook: «¿Y si el próximo mundo abierto no se jugara, sino que lo construyéramos con agentes desde el móvil?» | Parodia independiente; no un GTA real |
+| 15:04–15:08 | Sergio | GitHub Mobile: repositorio, Issues, Agents, PRs | El móvil dirige trabajo real |
+| 15:08–15:13 | David | Diferenciar selector de modelos de agentes de programación | Claude como modelo ≠ Claude Code |
+| 15:13–15:17 | Sergio | Abrir `#grand-terraforming-agents` y mostrar Vice Nebula / Colonia Centinela | El público decide el escenario |
+| 15:17–15:24 | Ambos | QR + formularios; participantes crean objetos con etiqueta de misión | GitHub Issues → Worker → D1 → Three.js |
+| 15:24–15:32 | David | Solicitar a Copilot un viaje a un planeta de GTA mediante PR | Prompt → código → revisión |
+| 15:32–15:40 | Sergio | Claude propone ambiente visual de un escenario sobre rama actualizada | Agentes encadenados, no tres chats aislados |
+| 15:40–15:48 | Ambos | Codex comprueba escenarios, accesibilidad, tests y CI | El resultado necesita verificación |
+| 15:48–15:52 | Sergio | Mostrar contadores reales, Issues cerradas y universo 3D | Demo de colaboración medible |
+| 15:52–15:55 | David | Repo, aprendizajes, reto comunitario y preguntas | La comunidad continúa el proyecto |
 
-**Reparto:** ambos intervienen en cada bloque; la columna «Quién abre» sólo identifica quién inicia el bloque. El otro responde a preguntas y valida el resultado.
+## Qué funciona ya (no presentarlo como promesa)
+
+- La app **Three.js** representa objetos cósmicos recibidos desde **Cloudflare D1**.
+- Una Issue creada en la web o GitHub Mobile entra en el circuito Worker/Actions; la Issue se cierra tras confirmar ingesta.
+- Las tarjetas Vice Nebula y Colonia Centinela precargan un marcador en la descripción y los contadores muestran **número de objetos**, no votos de personas únicas.
+- La tematización visual y el 3D actual **no contienen ciudades visitables, vehículos voladores, persecuciones ni sistema jugable de cinco estrellas**. Son propuestas de mejora para los agentes, sujetas a PR, pruebas y revisión.
+- Workers AI opcional no implica que Copilot/Claude/Codex hayan generado cada planeta: esos agentes **modifican el código**; las aportaciones llegan como datos validados.
 
 ## Preparación previa
 
-- Dos móviles, cuentas verificadas, pantallas enviadas al proyector.
-- Dejar copiado cada prompt. Evitar improvisar un texto largo en el escenario.
-- Cuenta/plan/licencias de Copilot, Claude y Codex no comprobados: validar manualmente desde `Agents` antes del evento.
-- Tres PRs o ramas de respaldo **previamente identificados como respaldo**. No atribuir a agentes cambios escritos manualmente.
-- Dos experiencias preparadas: GitHub Mobile y URL para alumnos sin cuenta.
-- Dos QRs distintos, ambos probados en Android/iOS. QR de creación `/issues/new?template=crear-objeto.yml` y QR de la web `/academyverso-2026/`.
-- Backup de pantalla de la galaxia en modo demostración si falla la red. No atribuirle entradas reales.
+1. Dos móviles y pantalla duplicada. Verificar agentes y permisos en sus cuentas; nunca dar por hecho el acceso a Claude Code/Codex.
+2. Abrir la web en `https://davidop.github.io/academyverso-2026/#grand-terraforming-agents`, la presentación en `/presentation/` y GitHub Actions de ingesta.
+3. Crear una Issue de prueba con marcador `[GTA:VICE-NEBULA]`; comprobar objeto en `/api/objects` y que cierre la Issue. No afirmar latencia fija: GitHub Actions es asíncrono.
+4. Ensayar un prompt por agente. Guardar PRs preparados y marcarlos como respaldo; jamás atribuir cambios hechos manualmente a una ejecución de agente.
+5. QRs GitHub Mobile y web verificados en Android/iOS. Para usuarios sin GitHub, el formulario web anónimo usa el Worker seguro.
 
-## Criterio de éxito
+## Plan B y criterios de éxito
 
-1. Un asistente crea Issue desde GitHub Mobile y puede localizarla.
-2. Un objeto aparece enlazado a su Issue, sin exponer secretos.
-3. Se ve una sesión real de un agente y un PR; se revisa al menos un diff.
-4. El resultado del viaje interplanetario se muestra o, si hay incidencias, se enseña el backup sin engañar.
-
-## Plan B por fallo
-
-| Incidencia | Respuesta inmediata |
+| Incidencia | Respuesta |
 |---|---|
-| Agente sin licencia / no disponible | Usar Copilot disponible, mostrar el PR de respaldo e indicar limitación |
-| Agente tarda > 3 min | Seguir con participación del público; recuperar resultado preparado |
-| Falta señal / GitHub Actions lento | Mostrar Issues ya creadas, explicar cola asíncrona; no fingir sincronización |
-| Worker / D1 sin desplegar | Usar modo demostración y reconocer que no hay creación pública activa |
-| Proyector/streaming móvil falla | Navegador de respaldo abierto en portátil, aclarando que el agente se inició en móvil |
+| Agente no disponible o demora | Mostrar PR de respaldo identificado como tal y explicar limitación |
+| GitHub Actions tarda | Ver Issues existentes y contadores de la última sincronización, sin fingir resultados nuevos |
+| Backend caído | Enseñar código y objetos de ejemplo claramente identificados |
+| No hay suficientes objetos etiquetados | Demostrar con uno real y pedir al público que aporte ideas; nunca inventar votos |
+| Viaje a mundos GTA no integrado | Mostrar ficha y etiqueta 3D, no afirmar que el viaje existe |
+
+**Métricas verificables:** al menos una Issue con marcador, un objeto en D1 con enlace a esa Issue, recuentos actualizados y un PR real de programación revisado por humanos.

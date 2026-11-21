@@ -21,6 +21,23 @@ fonts:
 <!-- David abre preguntando quién ha programado desde el móvil. Sergio anuncia que juntos poblaremos una galaxia. -->
 
 ---
+transition: fade
+---
+
+<div class="kicker">APERTURA · UNA PARODIA TECNOLÓGICA INDEPENDIENTE</div>
+<div class="gta-hero">
+ <div><div class="gta-roman">GTA <span>VII</span></div>
+ <div class="gta-subtitle">GRAND<br>TERRAFORMING<br>AGENTS</div>
+ <p>Todos hablan del próximo gran mundo abierto.<br>¿Y si esta vez <strong>no lo jugáramos, sino que lo construyéramos</strong> con IA desde el móvil?</p>
+ <div class="gta-mini">📱 GITHUB MOBILE　·　🤖 COPILOT　·　✳ CLAUDE　·　◎ CODEX</div></div>
+ <div class="gta-orbital" aria-hidden="true"><div class="gta-sphere"></div><div class="gta-orbit o1"></div><div class="gta-orbit o2"></div><div class="gta-city">🌆</div></div>
+</div>
+<div class="footnote">GTA VII: Grand Terraforming Agents es un concepto paródico propio, no afiliado a Rockstar Games. Sin imágenes ni logotipos del videojuego.</div>
+
+<!-- Sergio lanza el hook de 30 segundos: «No vamos a crear un GTA: vamos a construir mundos mediante Issues y agentes sobre GitHub». David abre la aplicación real. -->
+
+
+---
 transition: slide-left
 ---
 
@@ -84,9 +101,9 @@ transition: slide-left
 <div class="kicker">05 · TRES AGENTES / UN REPO</div>
 <div class="headline">Cada uno aporta<br><span class="gradient">algo diferente.</span></div>
 <div class="agent-grid">
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff" alt="Logo GitHub Copilot"/><h2>COPILOT</h2><b>CONSTRUIR</b><p>Implementar viajes entre planetas.</p></div>
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff" alt="Logo Anthropic"/><h2>CLAUDE</h2><b>MEJORAR</b><p>Enriquecer UI, movimiento y experiencia.</p></div>
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/openai/ffffff" alt="Logo OpenAI"/><h2>CODEX</h2><b>VALIDAR</b><p>Pruebas, accesibilidad y correcciones.</p></div>
+ <div class="agent" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff" alt="Logo GitHub Copilot"/><h2>COPILOT</h2><b>CONSTRUIR</b><p>Programar el viaje a Vice Nebula.</p></div>
+ <div class="agent" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff" alt="Logo Anthropic"/><h2>CLAUDE</h2><b>MEJORAR</b><p>Añadir ambiente neón al viaje.</p></div>
+ <div class="agent" v-click><img src="https://cdn.simpleicons.org/openai/ffffff" alt="Logo OpenAI"/><h2>CODEX</h2><b>VALIDAR</b><p>Tests de misiones y regresión.</p></div>
 </div>
 <div class="footnote warning">Un modelo Claude dentro del chat Copilot no es el agente independiente Claude Code.</div>
 
@@ -107,6 +124,21 @@ transition: fade
 
 <!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. -->
 
+
+---
+transition: slide-left
+---
+
+<div class="kicker">MISIÓN PARTICIPATIVA · EL PÚBLICO DECIDE</div>
+<div class="headline compact">Dos destinos.<br><span class="gradient">Un universo compartido.</span></div>
+<div class="gta-vote">
+ <div class="gta-choice vice" v-click><span class="gta-choice-icon">🌆</span><small>RUTA A · METRÓPOLIS</small><h2>VICE NEBULA</h2><p>Neón, avenidas flotantes y vehículos antigravedad.</p></div>
+ <div class="gta-choice sentinel" v-click><span class="gta-choice-icon">🛰️</span><small>RUTA B · COLONIA</small><h2>COLONIA CENTINELA</h2><p>Cúpulas espaciales, drones de rescate y rutas seguras.</p></div>
+</div>
+<div class="gta-bottom"><a class="action-link" href="https://davidop.github.io/academyverso-2026/#grand-terraforming-agents" target="_blank">ABRIR MISIÓN EN DIRECTO ↗</a><span>Cada creación es una Issue pública; el contador representa objetos creados, no votos de personas únicas.</span></div>
+
+<!-- Sergio enseña dos opciones en la web. David pide al público crear un planeta desde el formulario o GitHub Mobile. El recuento se alimenta de D1; nunca simular participación. -->
+
 ---
 transition: slide-left
 ---
@@ -115,7 +147,7 @@ transition: slide-left
 <div class="headline">Escanea. Imagina.<br><span class="gradient">Crea tu planeta.</span></div>
 <div class="qr-layout">
  <QrPortal url="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml" label="CREAR OBJETO EN GITHUB"/>
- <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta necesita activar el servicio seguro de integración.</small></div>
+ <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta usa un Cloudflare Worker. Abrir el escenario deseado desde la portada rellena la misión y su marcador.</small></div>
 </div>
 
 <!-- Sergio facilita el QR. David revisa las Issues reales. Una Issue sí se crea aunque aún no esté desplegado el Worker. -->
@@ -137,7 +169,7 @@ transition: fade
 <div class="kicker">09 · ACADEMYVERSO 3D</div>
 <div class="headline compact">Un universo<br><span class="gradient">para explorar.</span></div>
 <div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
-<div class="live-note">Hasta activar Cloudflare Worker y D1, la galaxia muestra objetos de ejemplo: no son contribuciones del público en directo.</div>
+<div class="live-note">Datos desde Cloudflare D1. Las nuevas Issues pueden tardar por la cola de GitHub Actions; verificar la URL y el estado real durante la demo.</div>
 
 <!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
 
@@ -151,10 +183,10 @@ transition: slide-left
  <div class="arch" v-click><span>📱</span><b>GitHub Mobile</b><small>Formulario</small></div><em v-after>→</em>
  <div class="arch" v-click><span>📋</span><b>GitHub Issues</b><small>Trazabilidad</small></div><em v-after>→</em>
  <div class="arch" v-click><span>⚙️</span><b>GitHub Actions</b><small>Validación</small></div><em v-after>→</em>
- <div class="arch amber" v-click><span>☁️</span><b>Worker + D1</b><small>Pendiente de activar</small></div><em v-after>→</em>
+ <div class="arch amber" v-click><span>☁️</span><b>Worker + D1</b><small>Registro persistente</small></div><em v-after>→</em>
  <div class="arch" v-click><span>🌌</span><b>Three.js</b><small>Visualización</small></div>
 </div>
-<div class="footnote">La web funciona desde GitHub Pages; la sincronización de contribuciones necesita el backend.</div>
+<div class="footnote">GitHub Pages sirve la experiencia 3D; Worker y D1 sincronizan las aportaciones. Cada propuesta queda trazada en una Issue pública.</div>
 
 <!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
 
@@ -163,11 +195,11 @@ transition: slide-left
 ---
 
 <div class="kicker">11 · TRABAJO ENCADENADO</div>
-<div class="headline">Una función.<br><span class="gradient">Tres agentes. Tres PRs.</span></div>
+<div class="headline">Un escenario.<br><span class="gradient">Tres agentes. PRs revisados.</span></div>
 <div class="agent-chain">
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff"/><b>COPILOT</b><p>Construye viajes interplanetarios</p><small>PR #1</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff"/><b>CLAUDE</b><p>Mejora animaciones y UI</p><small>PR #2</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/openai/ffffff"/><b>CODEX</b><p>Valida y añade pruebas</p><small>PR #3</small></div>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff"/><b>COPILOT</b><p>Programa el viaje al mundo elegido</p><small>PR #1</small></div><span v-after>→</span>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff"/><b>CLAUDE</b><p>Da identidad visual al escenario</p><small>PR #2</small></div><span v-after>→</span>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/openai/ffffff"/><b>CODEX</b><p>Verifica reglas, acceso y CI</p><small>PR #3</small></div>
 </div>
 <div class="footnote">Cada nuevo agente parte de una versión revisada e integrada del trabajo anterior.</div>
 
@@ -179,7 +211,7 @@ transition: fade
 
 <div class="kicker">12 · DEMO COPILOT / CONSTRUIR</div>
 <div class="demo-layout">
- <div><div class="pill">01 · CONSTRUIR</div><div class="headline compact">Viajamos<br><span class="mint">entre planetas.</span></div><div class="prompt-small">«Implementa la navegación interplanetaria: selecciona un planeta, permite viajar a él y muestra su ficha. Mantén accesibilidad y estabilidad».</div></div>
+ <div><div class="pill">01 · CONSTRUIR</div><div class="headline compact">Viajamos<br><span class="mint">a Vice Nebula.</span></div><div class="prompt-small">«Implementa un botón de viaje hacia los planetas etiquetados con la misión GTA. Usa las posiciones 3D actuales, conserva las fichas y respeta accesibilidad y reduced-motion».</div></div>
  <div class="travel"><div class="planet left"></div><div class="dash"></div><span class="rocket">🚀</span><div class="planet right"></div><small>ORIGEN → VIAJE → DESTINO</small></div>
 </div>
 
@@ -191,7 +223,7 @@ transition: fade
 
 <div class="kicker">13 · DEMO CLAUDE / ENRIQUECER</div>
 <div class="demo-layout">
- <div><div class="pill amber-pill">02 · MEJORAR</div><div class="headline compact">Del código<br><span class="gradient">a la experiencia.</span></div><div class="prompt-small">«Mejora el viaje con estelas, partículas, transiciones fluidas y soporte prefers-reduced-motion. Respeta el estilo AcademyVerso».</div></div>
+ <div><div class="pill amber-pill">02 · MEJORAR</div><div class="headline compact">Del código<br><span class="gradient">a la experiencia.</span></div><div class="prompt-small">«Da identidad a Vice Nebula y Colonia Centinela con luces neón, estelas ligeras y feedback accesible; sin copiar recursos ni assets de videojuegos».</div></div>
  <div class="cosmic-art"><div class="ring r1"></div><div class="ring r2"></div><div class="core"></div><span>✦　✧　✦</span></div>
 </div>
 
@@ -203,7 +235,7 @@ transition: fade
 
 <div class="kicker">14 · DEMO CODEX / VALIDAR</div>
 <div class="demo-layout">
- <div><div class="pill blue-pill">03 · VALIDAR</div><div class="headline compact">La IA genera.<br><span class="mint">Tú verificas.</span></div><div class="prompt-small">«Añade pruebas de navegación, teclado, accesibilidad y regresión. Corrige errores y documenta las comprobaciones en el PR».</div></div>
+ <div><div class="pill blue-pill">03 · VALIDAR</div><div class="headline compact">La IA genera.<br><span class="mint">Tú verificas.</span></div><div class="prompt-small">«Prueba el viaje, el conteo de misiones, las URLs precargadas y la accesibilidad. No declares nada como validado sin ejecutar los tests».</div></div>
  <div class="console"><div class="console-header">● ● ●　 academyverso / CI</div><p>✓ navigation · planet-to-planet</p><p>✓ keyboard · accessible</p><p>✓ reduced-motion · supported</p><p>✓ regression · monitored</p><b>CI SUCCESS <i>●</i></b><small>Ejemplo visual. Comprobar el CI real durante la demo.</small></div>
 </div>
 
@@ -214,9 +246,9 @@ transition: slide-left
 ---
 
 <div class="kicker">15 · MISIÓN FINAL</div>
-<div class="headline">¿Quién encuentra<br><span class="gradient">su propio planeta?</span></div>
-<div class="mission-cards"><div v-click><span>📱</span><b>ENVÍA</b><p>Tu descripción en una Issue</p></div><div v-click><span>🌌</span><b>EXPLORA</b><p>Visita un universo compartido</p></div><div v-click><span>🚀</span><b>VIAJA</b><p>Prueba la funcionalidad creada por agentes</p></div></div>
-<div class="footnote warning">Si no está activo el backend, distinguir objetos de muestra e Issues reales. No simular aportaciones en tiempo real.</div>
+<div class="headline">¿Qué mundo hemos<br><span class="gradient">construido entre todos?</span></div>
+<div class="mission-cards"><div v-click><span>📱</span><b>ENVÍA</b><p>Tu descripción en una Issue</p></div><div v-click><span>🌌</span><b>EXPLORA</b><p>Visita un universo compartido</p></div><div v-click><span>🚀</span><b>VIAJA</b><p>Comprueba el viaje si el PR se integró</p></div></div>
+<div class="footnote warning">En la web, los recuentos son creaciones reales por escenario, no personas únicas. Una función de viaje solo se demuestra si está integrada y probada.</div>
 
 <!-- Reto colectivo con condiciones reales comprobadas; si hay incidencias, mostrar la demo ya construida. -->
 

@@ -1,38 +1,37 @@
-# Prompts para GitHub Mobile: desarrollo encadenado
+# Prompts para GitHub Mobile — GTA VII: Grand Terraforming Agents
 
-> **La funcionalidad de viajes interplanetarios no está implementada en `main`**. Cada agente parte de lo integrado por el anterior. No iniciar Claude o Codex sobre una rama que todavía no tenga el trabajo necesario.
+> **El núcleo de creación de mundos funciona ya**: Issues → Worker/D1 → objetos en Three.js. Los escenarios son un concepto de diseño y un marcador en las descripciones, **no un videojuego completo**. Cada tarea siguiente se debe abrir en un agente sobre una rama actualizada, revisar como PR y fusionar tras CI.
 
-## 1 · GitHub Copilot — construir
-
-```text
-Trabaja en davidop/academyverso-2026. Implementa viajes interplanetarios en el AcademyVerso actual, sin cambiar su estilo visual ni romper la creación de objetos.
-Requisitos: al abrir la ficha de un objeto 3D, añadir botón "Viajar aquí". Animar la cámara durante ~2 segundos hasta una vista cercana del objeto, con botón para regresar. Respetar prefers-reduced-motion, accesibilidad teclado y pantallas móviles. No añadir dependencias nuevas; usar Three.js existente. Crear PR con resumen y riesgos.
-```
-
-**Verificar:** botón, navegación en móvil, funcionamiento con 50 planetas, archivo del diff, PR creado.
-
-## 2 · Claude — mejorar
+## 1. Copilot — construir navegación hacia un escenario
 
 ```text
-Sobre main después del merge del PR de viajes de Copilot: mejora únicamente la experiencia visual del viaje. Añade estela de una nave espacial estilizada, transición vistosa pero ligera, feedback textual accesible al iniciar y finalizar el viaje y manejo de viajes repetidos. Mantén el diseño original de AcademyVerso y soporte prefers-reduced-motion. No reescribas toda la escena. Crear PR claro.
+Trabaja sobre davidop/academyverso-2026. A partir de web/terraforming.mjs y la escena Three.js en web/app.js, implementa una navegación de cámara «Viajar a este mundo» para objetos con marcador [GTA:VICE-NEBULA] o [GTA:COLONIA-CENTINELA]. Mantén la ficha del objeto y un botón «Regresar». No alteres el contrato Worker ni la creación de Issues. Soporta teclado, touch, prefers-reduced-motion y un universo vacío. Añade pruebas de funciones puras cuando sea posible. Abre PR con capturas y riesgos; no hagas merge automáticamente.
 ```
 
-**Verificar:** no rompe creación de objetos ni escenas con pocos elementos, rendimiento Android, no introduce recursos remotos inseguros.
+**Aceptar si:** el viaje existe de verdad, el usuario puede volver, la escena con cero objetos no falla, y el PR detalla sus pruebas.
 
-## 3 · Codex — validar
+## 2. Claude Code — dar vida visual al escenario
 
 ```text
-Sobre main después del merge del PR visual de Claude: añade tests y controles de calidad para la navegación interplanetaria. Separa las funciones de cálculo de posiciones/easing para que puedan probarse con node --test. Añade casos de cancelación, objeto inexistente, repetición de viaje, reduced-motion y límite de distancia. Corrige los defectos observados, conserva las animaciones existentes y no amplíes el alcance. Crea PR con pruebas ejecutadas y resultados verificables.
+Sobre main tras integrar el PR de Copilot, añade un ambiente de ciencia ficción independiente a los dos escenarios de Grand Terraforming Agents: luces neón para Vice Nebula, tonalidades turquesa para Colonia Centinela, efectos ligeros sin assets ajenos y sin reutilizar material de GTA/Rockstar. Optimiza móvil, accesibilidad, contraste y prefers-reduced-motion. No inventes un sistema de juego que no exista, ni reescribas el backend. Presenta cambios en un PR separable.
 ```
 
-**Verificar:** pruebas reales ejecutadas por CI, código revisable, no atribuir cobertura a tests inexistentes.
+**Aceptar si:** FPS, uso de memoria, lectura de textos y versión móvil son razonables; nunca bloquear el render por animaciones adicionales.
 
-## Cómo mostrarlo
+## 3. Codex — evaluar, proteger y documentar
 
-1. Iniciar nueva sesión desde GitHub Mobile en `academyverso-2026`.
-2. Seleccionar el **agente de programación** (no el selector de *modelo* de Copilot) cuando esté disponible.
-3. Enviar prompt y mostrar sesión; supervisar cambios y abrir PR.
-4. Revisar el diff y pasar CI, integrar con supervisión humana.
-5. Usar un agente distinto con `main` ya actualizado.
+```text
+Sobre main una vez integrado el PR visual, revisa Grand Terraforming Agents: validación del marcador, URL de GitHub Mobile, recuento de objetos reales, escenarios desconocidos, objetos sin misión, viaje y soporte reduced-motion. Añade tests automatizados deterministas con node --test, ejecuta CI y comprueba regresión de la creación desde formulario. No afirmes que una prueba ha pasado sin logs reales; abre un PR con checklist de validación y hallazgos.
+```
 
-**Importante:** no asumir que Claude y Codex están habilitados porque aparecen modelos Claude/GPT en el selector «Modelos». Los agentes de terceros requieren acceso y permisos específicos.
+**Aceptar si:** CI verde y PR con evidencia; las métricas no se confunden con votos únicos.
+
+## Cómo presentarlo
+
+1. Sergio muestra un planeta enviado desde el móvil y explica cómo llega a D1.
+2. David abre una sesión del agente de programación en GitHub (no solo un selector de modelo) y delega la tarea 1.
+3. Tras revisar el resultado, Sergio mejora el aspecto con Claude Code, **si la integración está habilitada**.
+4. Codex añade pruebas y observaciones en PR separado. Los tiempos de ejecución no se garantizan.
+5. Enseñar el resultado **solo si el código se integró**; si no, usar PRs de respaldo etiquetados como tales.
+
+Misión comunitaria y requisitos funcionales: [grand-terraforming-agents.md](grand-terraforming-agents.md).
