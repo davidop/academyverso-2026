@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
-import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,HOME_ORBIT} from './travel.mjs';
+import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,zoomDistance,HOME_ORBIT} from './travel.mjs';
 
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
@@ -147,32 +147,57 @@ function returnHome(message){
   statusMessage(message||'Regresando a la galaxia.');
   if(reduced)advanceFlight(flight.startedAt);
 }
+// Track multiple pointers so touch gestures zoom rather than accidentally select a planet.
+const activePointers=new Map();
+let previousPinchGap=null;
+function pinchGap(){
+ const [a,b]=[...activePointers.values()];
+ return a&&b?Math.hypot(a.x-b.x,a.y-b.y):null;
+}
 renderer.domElement.addEventListener('pointerdown',e=>{
-  if(flight)return;
-  pointerDown={x:e.clientX,y:e.clientY};dragging=false;
-  renderer.domElement.setPointerCapture(e.pointerId);
+ if(flight)return;
+ activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ renderer.domElement.setPointerCapture(e.pointerId);
+ if(activePointers.size>1){previousPinchGap=pinchGap();pointerDown=null;dragging=true;}
+ else{pointerDown={x:e.clientX,y:e.clientY};dragging=false;}
 });
 renderer.domElement.addEventListener('pointermove',e=>{
-  if(!pointerDown||flight)return;
-  const dx=e.clientX-pointerDown.x,dy=e.clientY-pointerDown.y;
-  if(Math.abs(dx)+Math.abs(dy)>4)dragging=true;
-  yaw-=dx*.004;pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.003));
-  pointerDown={x:e.clientX,y:e.clientY};updateCamera();
+ if(flight||!activePointers.has(e.pointerId))return;
+ const prior=activePointers.get(e.pointerId);
+ activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(activePointers.size>1){
+   const gap=pinchGap();
+   if(gap>0&&previousPinchGap>0){
+     dist=zoomDistance(dist,previousPinchGap/gap,travelMode==='world');
+     updateCamera();
+   }
+   previousPinchGap=gap;pointerDown=null;dragging=true;
+   return;
+ }
+ if(!pointerDown)return;
+ const dx=e.clientX-prior.x,dy=e.clientY-prior.y;
+ if(Math.abs(e.clientX-pointerDown.x)+Math.abs(e.clientY-pointerDown.y)>4)dragging=true;
+ yaw-=dx*.004;pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.003));
+ updateCamera();
 });
 renderer.domElement.addEventListener('pointerup',e=>{
-  if(flight){pointerDown=null;return}
-  pointerDown=null;if(dragging)return;
-  const b=renderer.domElement.getBoundingClientRect();
-  mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;
-  raycaster.setFromCamera(mouse,camera);
-  const found=raycaster.intersectObjects(clickables)[0];
-  if(found)openDetails(found.object.userData.obj);
+ const tap=activePointers.size===1&&pointerDown!==null&&!dragging&&!flight;
+ activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;
+ if(!tap)return;
+ const b=renderer.domElement.getBoundingClientRect();
+ mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;
+ raycaster.setFromCamera(mouse,camera);
+ const found=raycaster.intersectObjects(clickables)[0];
+ if(found)openDetails(found.object.userData.obj);
+});
+renderer.domElement.addEventListener('pointercancel',e=>{
+ activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;dragging=true;
 });
 renderer.domElement.addEventListener('wheel',e=>{
-  e.preventDefault();
-  if(flight)return;
-  dist=Math.max(travelMode==='world'?14:50,Math.min(380,dist+Math.sign(e.deltaY)*10));
-  updateCamera();
+ e.preventDefault();
+ if(flight)return;
+ dist=zoomDistance(dist,(dist+Math.sign(e.deltaY)*10)/dist,travelMode==='world');
+ updateCamera();
 },{passive:false});
 $('return-home').addEventListener('click',()=>returnHome());
 $('reset-camera').addEventListener('click',()=>returnHome());

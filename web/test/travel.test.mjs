@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,easedProgress,flightPose} from '../travel.mjs';
+import {orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,easedProgress,flightPose,zoomDistance} from '../travel.mjs';
 
 const point=(x=0,y=0,z=0)=>({x,y,z});
 test('stable world order preserves earlier objects when new Issues arrive',()=>{
@@ -56,4 +56,14 @@ test('smooth interpolation clamps negative, excessive or NaN progress',()=>{
  assert.equal(easedProgress(99),1);
  assert.equal(easedProgress(NaN),0);
  assert.ok(easedProgress(.5)===.5);
+});
+
+test('pinch zoom keeps independent galaxy and destination bounds',()=>{
+ assert.equal(zoomDistance(190,.5,false),95);
+ assert.equal(zoomDistance(190,2,false),380);
+ assert.equal(zoomDistance(70,.01,false),50);
+ assert.equal(zoomDistance(70,.01,true),14);
+ assert.equal(zoomDistance(50,1.5,true),75);
+ assert.equal(zoomDistance(50,Number.NaN,true),50);
+ assert.equal(zoomDistance(Number.NaN,1,false),190);
 });

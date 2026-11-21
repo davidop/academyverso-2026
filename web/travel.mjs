@@ -49,3 +49,11 @@ export function flightPose(flight,now){
  });
  return {eye:point('eye'),focus:point('focus'),done:progress>=1,progress};
 }
+
+/** Scale the camera orbit; smaller scales zoom in and preserve per-mode bounds. */
+export function zoomDistance(distance,scale,visitingWorld=false){
+ const min=visitingWorld?14:50;
+ const original=Number.isFinite(distance)?distance:HOME_ORBIT.distance;
+ const scaled=original*scale;
+ return between(Number.isFinite(scaled)?scaled:original,min,380);
+}

@@ -31,6 +31,7 @@
 @media(max-width:700px){.terraform{padding:0 15px;margin-bottom:35px}.terraform-grid{grid-template-columns:1fr;gap:16px}.terraform-card{padding-bottom:22px}.terraform-card>p:not(.scenario-kicker){min-height:0}.mission-pipeline{justify-content:start}.scenario-art{height:125px}}
 
 /* Phase 1: an accessible, light 3D camera journey; respects reduced-motion. */
+#viewport canvas{touch-action:none}
 [hidden]{display:none!important}
 .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .travel-panel{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:12px;padding:17px 22px;border-radius:17px;border:1px solid #82eadb85;background:linear-gradient(110deg,#143e4ce8,#292f59ef);box-shadow:0 8px 30px #0b15254d}
