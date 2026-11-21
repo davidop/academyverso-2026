@@ -1,6 +1,6 @@
 // Pure camera math and deterministic scene layout. No THREE, DOM, secrets or network dependency.
 export const HOME_ORBIT=Object.freeze({yaw:0,pitch:0.12,distance:190});
-const lerp=(a,b,t)=>a+(b-a)*t;
+const lerp=(a,b,t)=>t<=0?a:t>=1?b:a+(b-a)*t;
 const between=(n,a,b)=>Math.min(b,Math.max(a,n));
 
 export function numberHash(str){
