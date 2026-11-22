@@ -1,3 +1,4 @@
+import {parseWorldCommand,authorizedWorldComment,evolveWorld,rollbackWorld} from './worldgen/history.mjs';
 import {generateWorldForIssue,worldgenEnabled} from './worldgen/service.mjs';
 import {validate,parseIssue,issueBody} from './validation.mjs';
 const HEAD={'content-type':'application/json;charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'};
@@ -18,6 +19,14 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
    }catch(err){console.warn('D1 health check failed',err?.message);return respond({ok:false,database_connected:false,error:'D1 no disponible'},503)}
  }
  if(url.pathname==='/api/objects'&&request.method==='GET'){const fields=worldgenEnabled(env)?'issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at,world_spec,world_status,world_version':'issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at';const result=await env.DB.prepare('SELECT '+fields+' FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();return respond({objects:result.results||[]})}
+ if(/^\/api\/worlds\/\d+\/history$/.test(url.pathname)&&request.method==='GET'){
+  if(!worldgenEnabled(env))return respond({error:'Historial de mundos desactivado'},503);
+  const id=Number(url.pathname.split('/')[3]);
+  const row=await env.DB.prepare('SELECT issue_number FROM objects WHERE issue_number=? AND hidden=0').bind(id).first();
+  if(!row)return respond({error:'Mundo no encontrado'},404);
+  const history=await env.DB.prepare('SELECT version,world_status,origin,created_at FROM world_revisions WHERE issue_number=? ORDER BY version DESC LIMIT 12').bind(id).all();
+  return respond({issue_number:id,versions:history.results||[]});
+ }
  if(url.pathname==='/api/create'&&request.method==='POST'){
   if(!env.GITHUB_TOKEN)return respond({error:'Creación web pendiente de activar en Cloudflare',code:'CREATE_NOT_READY'},503);
   const raw=await request.text();if(raw.length>2400)return respond({error:'Solicitud demasiado grande'},413);
@@ -27,8 +36,30 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
  }
  if(url.pathname==='/api/ingest'&&request.method==='POST'){
   const raw=await request.text();if(!env.INGEST_SECRET||!await verifyHmac(request,raw,env.INGEST_SECRET))return respond({error:'Firma incorrecta'},401);
-  const incoming=JSON.parse(raw);if(!incoming.issue||!['open','closed'].includes(incoming.issue.state))return respond({ignored:true});
-  const data=parseIssue(incoming.issue.body);await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data);ctx.waitUntil(enrich(env,incoming.issue.number,data));if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,incoming.issue,data));return respond({ok:true,issue_number:incoming.issue.number})
+  const incoming=JSON.parse(raw);
+  if(!incoming.issue)return respond({ignored:true});
+  if(incoming.comment){
+   const command=parseWorldCommand(incoming.comment.body);
+   if(!command)return respond({ignored:true});
+   if(!authorizedWorldComment(incoming))return respond({error:'Solo el autor verificado de la Issue puede evolucionar o restaurar el mundo'},403);
+   const id=Number(incoming.issue.number);
+   const result=command.action==='evolve'
+     ? await evolveWorld(env,id,command.instruction)
+     : await rollbackWorld(env,id,command.version);
+   if(['ready','fallback','restored'].includes(result.status))return respond({ok:true,issue_number:id,...result});
+   const status=result.status==='conflict'?409:result.status==='limit'?429:result.status==='disabled'?503:400;
+   return respond({error:'Operación de mundo no realizada',code:result.status,issue_number:id},status);
+  }
+  if(!['open','closed'].includes(incoming.issue.state))return respond({ignored:true});
+  if(worldgenEnabled(env)&&incoming.action==='edited'){
+    const author=Number(incoming.issue.user?.id),actor=Number(incoming.sender?.id);
+    if(!author||actor!==author)return respond({error:'Solo el autor de la Issue puede modificar su mundo'},403);
+  }
+  const data=parseIssue(incoming.issue.body);
+  await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data);
+  ctx.waitUntil(enrich(env,incoming.issue.number,data));
+  if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,{...incoming.issue,worldgen_action:incoming.action},data));
+  return respond({ok:true,issue_number:incoming.issue.number})
  }
  if(url.pathname==='/api/admin/hide'&&request.method==='POST'){
   if(!env.ADMIN_TOKEN||request.headers.get('authorization')!==`Bearer ${env.ADMIN_TOKEN}`)return respond({error:'No autorizado'},401);
