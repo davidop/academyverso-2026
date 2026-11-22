@@ -46,6 +46,24 @@ try{
   results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested'});
   await page.close();
  }
+ // Load a synthetic 50-object crowd to catch WebGL crashes and gross layout failures.
+ const crowd=Array.from({length:50},(_,i)=>({...objects[i%objects.length],issue_number:2000+i,name:'Objeto de ensayo '+(i+1)}));
+ const stress=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
+ stress.on('pageerror',err=>failures.push('crowd: '+err.message));
+ await stress.route('**/api/objects',route=>route.fulfill({json:{objects:crowd},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+ await stress.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:false,worldgen_enabled:false},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+ await stress.goto(base,{waitUntil:'domcontentloaded'});
+ await stress.waitForFunction(()=>document.querySelector('#count')?.textContent==='50',{timeout:30000});
+ await stress.waitForTimeout(1700);
+ const perf=await stress.evaluate(async()=>{
+  const start=performance.now();let frames=0;
+  while(performance.now()-start<1800){await new Promise(resolve=>requestAnimationFrame(resolve));frames++;}
+  return {fps:Math.round(frames*1000/(performance.now()-start)),canvas:!!document.querySelector('#viewport canvas')};
+ });
+ if(!perf.canvas)throw Error('50-object canvas missing');
+ await stress.screenshot({path:'artifacts/worldgen/mobile-50-objects.png',fullPage:true,animations:'disabled'});
+ results.push({viewport:'mobile-50',objects:50,headlessSwiftShaderFps:perf.fps});
+ await stress.close();
  if(failures.length)throw Error(failures.join('; '));
  await fs.writeFile('artifacts/worldgen/summary.json',JSON.stringify({passed:true,results},null,2));
  console.log('PASS WorldGen browser screenshot and interaction',JSON.stringify(results));
