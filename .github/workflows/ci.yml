@@ -16,6 +16,9 @@ jobs:
       - name: Static JavaScript checks
         run: |
           node --check web/app.js
+          node --check web/worlds/spec.mjs
+          node --check web/worlds/builder.mjs
+          node --test web/test/world-spec.test.mjs
           node --check web/config.js
           node --check web/issue-prefill.mjs
           node --check web/terraforming.mjs
