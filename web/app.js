@@ -1,3 +1,4 @@
+import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
 import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
 import {resolvedWorldSpec} from './worlds/spec.mjs';
 import {buildWorld} from './worlds/builder.mjs';
@@ -10,6 +11,12 @@ import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,f
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
 let createEnabled = false;
+let worldgenLive = false;
+let selectedWorld = null;
+const tokenKey=id=>'academyverso-2026:world-owner:'+String(id);
+function savedWorldToken(id){try{return sessionStorage.getItem(tokenKey(id))||''}catch{return ''}}
+function storeWorldToken(id,token){try{sessionStorage.setItem(tokenKey(id),token)}catch{}}
+
 const REPO = config.REPO || 'davidop/academyverso-2026';
 const DEMO = [
   {issue_number:1,type:'planeta',name:'Pythonia',alias:'Comandante Python',description:'Un planeta turquesa con tres lunas brillantes y océanos de código.'},
@@ -272,7 +279,56 @@ function animate(){
 }animate();
 let renderedSignature=null;
 function refreshUI(){const signature=JSON.stringify(objects);if(signature===renderedSignature)return;renderedSignature=signature;paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
-openDetails=(obj,poi=null)=>{const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+openDetails=(obj,poi=null)=>{selectedWorld=obj;const evolvePanel=$('world-evolve-panel');evolvePanel.hidden=!worldgenLive||!API||!obj.issue_number;if(!evolvePanel.hidden){$('world-edit-token').value=savedWorldToken(obj.issue_number);$('world-evolve-status').textContent='';$('world-history-list').replaceChildren();}const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+
+$('copy-evolve-command').addEventListener('click',async()=>{
+ if(!selectedWorld)return;
+ const instruction=$('world-evolve-instruction').value.trim()||'Añade dos lunas y una ciudad flotante';
+ try{
+  const command=evolutionComment(instruction);
+  await navigator.clipboard.writeText(command);
+  $('world-evolve-status').textContent='Comando copiado. Pégalo como comentario en tu GitHub Issue, con tu cuenta de autor.';
+ }catch(error){$('world-evolve-status').textContent=error.message||'No se pudo copiar el comando';}
+});
+$('world-evolve-form').addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(!selectedWorld||!API)return;
+ const status=$('world-evolve-status'),token=$('world-edit-token').value.trim();
+ const instruction=$('world-evolve-instruction').value.trim();
+ status.textContent='Evolucionando mundo y guardando una nueva versión…';
+ try{
+  const result=await mutateWorld(API,selectedWorld.issue_number,'evolve',token,{instruction});
+  storeWorldToken(selectedWorld.issue_number,token);
+  status.textContent='Versión '+result.version+' registrada ('+(result.status==='ready'?'Microsoft Foundry':'generación procedural de respaldo')+'). Actualizando galaxia…';
+  await sync();
+ }catch(error){status.textContent=error.message||'No se pudo evolucionar el mundo';}
+});
+$('world-history-button').addEventListener('click',async()=>{
+ if(!selectedWorld||!API)return;
+ const list=$('world-history-list');list.replaceChildren();
+ try{
+  const response=await fetch(worldUrl(API,selectedWorld.issue_number,'history'),{cache:'no-store'});
+  const data=await response.json();
+  if(!response.ok)throw Error(data.error||'No se pudo obtener el historial');
+  for(const revision of data.versions||[]){
+   const li=document.createElement('li');
+   li.textContent='Versión '+revision.version+' · '+revision.world_status+' · '+revision.created_at;
+   list.append(li);
+  }
+  if(!list.childElementCount){const li=document.createElement('li');li.textContent='Sin versiones registradas';list.append(li);}
+ }catch(error){$('world-evolve-status').textContent=error.message;}
+});
+$('world-rollback-form').addEventListener('submit',async event=>{
+ event.preventDefault();if(!selectedWorld||!API)return;
+ const status=$('world-evolve-status'),token=$('world-edit-token').value.trim(),version=Number($('world-rollback-version').value);
+ status.textContent='Restaurando versión '+version+'…';
+ try{
+  const result=await mutateWorld(API,selectedWorld.issue_number,'rollback',token,{version});
+  status.textContent='Versión '+result.version+' creada al restaurar la versión '+version+'.';
+  await sync();
+ }catch(error){status.textContent=error.message||'No se pudo restaurar';}
+});
+
 $('close-detail').onclick=()=>$('detail-dialog').close();$('open-form').onclick=()=>$('create-dialog').showModal();$('close-form').onclick=()=>$('create-dialog').close();
 for(const mission of TERRAFORMING_MISSIONS){
   $(mission.id+'-github').href=terraformGitHubUrl(mission.id,REPO);
@@ -316,6 +372,7 @@ async function checkCreateCapability(){
    if(!response.ok)throw new Error('Servicio no disponible');
    const data=await response.json();
    createEnabled=data.ok===true && data.database_connected===true && data.create_enabled===true;
+   worldgenLive=data.worldgen_enabled===true;
  }catch(error){createEnabled=false}
  updateCreateUI();
 }
@@ -352,6 +409,15 @@ $('create-form').addEventListener('submit',async e=>{
    issueLink.rel='noopener noreferrer';
    issueLink.textContent=`Ver Issue #${registeredIssue} en GitHub ↗`;
    status.replaceChildren(document.createTextNode('¡Registrado! Tu creación ya forma parte de AcademyVerso. '),issueLink);
+   if(typeof data.edit_token==='string'&&/^[A-Za-z0-9_-]{43}$/.test(data.edit_token)){
+    storeWorldToken(registeredIssue,data.edit_token);
+    const notice=document.createElement('p');
+    notice.textContent='Guarda esta clave privada para poder evolucionar el mundo. Solo se muestra al crearlo:';
+    const code=document.createElement('code');code.textContent=data.edit_token;
+    const copy=document.createElement('button');copy.type='button';copy.textContent='Copiar clave';
+    copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(data.edit_token);copy.textContent='Clave copiada';}catch{copy.textContent='Selecciona la clave y cópiala';}});
+    status.append(notice,code,document.createTextNode(' '),copy);
+   }
    await sync();
  }catch(err){
    if(registeredIssue){
