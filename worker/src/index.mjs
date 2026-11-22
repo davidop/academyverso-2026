@@ -30,10 +30,28 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
    try{
      const check=await env.DB.prepare("SELECT COUNT(*) AS total FROM sqlite_master WHERE type='table' AND name IN ('objects','rates')").first();
      const ready=Number(check?.total||0)===2;
-     return respond({ok:ready,database_connected:ready,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI,create_enabled:!!env.GITHUB_TOKEN,worldgen_enabled:worldgenEnabled(env)},ready?200:503);
+     let worldgenReady=false;
+     if(ready&&worldgenEnabled(env)){
+       try{
+         const versions=await env.DB.prepare("SELECT COUNT(*) AS total FROM sqlite_master WHERE type='table' AND name='world_revisions'").first();
+         const columns=(await env.DB.prepare('PRAGMA table_info(objects)').all()).results||[];
+         const names=new Set(columns.map(x=>x.name));
+         worldgenReady=Number(versions?.total||0)===1&&['world_spec','world_status','world_version','world_owner_token_hash'].every(x=>names.has(x));
+       }catch(_){worldgenReady=false}
+     }
+     return respond({ok:ready,database_connected:ready,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI,create_enabled:!!env.GITHUB_TOKEN,worldgen_enabled:worldgenReady},ready?200:503);
    }catch(err){console.warn('D1 health check failed',err?.message);return respond({ok:false,database_connected:false,error:'D1 no disponible'},503)}
  }
- if(url.pathname==='/api/objects'&&request.method==='GET'){const fields=worldgenEnabled(env)?'issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at,world_spec,world_status,world_version':'issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at';const result=await env.DB.prepare('SELECT '+fields+' FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();return respond({objects:result.results||[]})}
+ if(url.pathname==='/api/objects'&&request.method==='GET'){
+   const legacy='issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at';
+   let result;
+   if(worldgenEnabled(env)){
+     try{result=await env.DB.prepare('SELECT '+legacy+',world_spec,world_status,world_version FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all()}
+     catch(error){console.warn('WorldGen columns unavailable; serving legacy objects')}
+   }
+   if(!result)result=await env.DB.prepare('SELECT '+legacy+' FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();
+   return respond({objects:result.results||[]});
+ }
  if(/^\/api\/worlds\/\d+\/history$/.test(url.pathname)&&request.method==='GET'){
   if(!worldgenEnabled(env))return respond({error:'Historial de mundos desactivado'},503);
   const id=Number(url.pathname.split('/')[3]);
