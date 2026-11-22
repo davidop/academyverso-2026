@@ -43,7 +43,7 @@ jobs:
           cd worker && npm run check && npm test
 
   browser-worldgen:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/feature/gta-light-missions-26nov'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
