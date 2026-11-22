@@ -60,6 +60,18 @@ flowchart TD
 
 **GitHub Pages** sirve la web; **Cloudflare Workers + D1** resuelven el registro seguro y la sincronización. El navegador nunca recibe el token de GitHub. El motor 3D funciona incluso antes de configurar el backend, mostrando **seis objetos de ejemplo identificados como modo demostración**; este modo **no admite envíos** y no debe confundirse con funcionamiento en producción.
 
+## 🌌 WorldGen — mundos Three.js dirigidos por IA
+
+El nuevo motor procedural interpreta descripciones en un catálogo seguro de estructuras 3D (océanos, volcanes, ciudades flotantes, cúpulas, satélites y lunas), con geometrías distintas, LOD, adaptación visual y efectos cinematográficos de nacimiento. La IA no genera JavaScript ni modelos externos: propone un `WorldSpecV1` validado.
+
+**Estado real:** el código de Microsoft Foundry, D1 versionada y evolución autenticada está preparado, pero `WORLDGEN_ENABLED=false` por defecto. No se han aplicado migraciones remotas ni confirmado un despliegue de modelo compatible. Los objetos tienen fallback procedural determinista y la web conserva las APIs actuales. No atribuir pruebas simuladas de Foundry a ejecuciones reales.
+
+- [Contrato y diseño](docs/worldgen-design.md)
+- [Despliegue, backup y GO/NO-GO](docs/worldgen-deploy.md)
+- [Skills de Sergio para diseño/motion/vídeo](docs/skills-seleccionadas-sergio.md)
+
+**Evolución:** los autores de GitHub pueden publicar `/academyverso-evolve ...` o `/academyverso-rollback N` en su Issue cuando ambos feature flags estén activos. Los creadores web recibirán una clave privada de edición. El historial público conserva hasta ocho versiones por mundo.
+
 ## 🚦 Estado de implantación
 
 | Módulo | Estado en el código | Requiere configuración externa |
