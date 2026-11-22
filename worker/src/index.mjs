@@ -1,3 +1,4 @@
+import {generateWorldForIssue,worldgenEnabled} from './worldgen/service.mjs';
 import {validate,parseIssue,issueBody} from './validation.mjs';
 const HEAD={'content-type':'application/json;charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'};
 const json=(value,status=200,headers={})=>new Response(JSON.stringify(value),{status,headers:{...HEAD,...headers}});
@@ -16,18 +17,18 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
      return respond({ok:ready,database_connected:ready,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI,create_enabled:!!env.GITHUB_TOKEN},ready?200:503);
    }catch(err){console.warn('D1 health check failed',err?.message);return respond({ok:false,database_connected:false,error:'D1 no disponible'},503)}
  }
- if(url.pathname==='/api/objects'&&request.method==='GET'){const result=await env.DB.prepare('SELECT issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();return respond({objects:result.results||[]})}
+ if(url.pathname==='/api/objects'&&request.method==='GET'){const fields=worldgenEnabled(env)?'issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at,world_spec,world_status,world_version':'issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at';const result=await env.DB.prepare('SELECT '+fields+' FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();return respond({objects:result.results||[]})}
  if(url.pathname==='/api/create'&&request.method==='POST'){
   if(!env.GITHUB_TOKEN)return respond({error:'Creación web pendiente de activar en Cloudflare',code:'CREATE_NOT_READY'},503);
   const raw=await request.text();if(raw.length>2400)return respond({error:'Solicitud demasiado grande'},413);
   const data=validate(JSON.parse(raw));const ip=request.headers.get('cf-connecting-ip')||'unverified';await rateLimit(env,ip);
   const result=await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues`,{method:'POST',headers:{'accept':'application/vnd.github+json','authorization':`Bearer ${env.GITHUB_TOKEN}`,'x-github-api-version':'2022-11-28','user-agent':'AcademyVerso-Worker','content-type':'application/json'},body:JSON.stringify({title:`${data.type}: ${data.name}`,body:issueBody(data)})});
-  if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();await upsert(env,issue,data);ctx.waitUntil(enrich(env,issue.number,data));return respond({issue_number:issue.number,issue_url:issue.html_url},201)
+  if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();await upsert(env,issue,data);ctx.waitUntil(enrich(env,issue.number,data));if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,issue,data));return respond({issue_number:issue.number,issue_url:issue.html_url},201)
  }
  if(url.pathname==='/api/ingest'&&request.method==='POST'){
   const raw=await request.text();if(!env.INGEST_SECRET||!await verifyHmac(request,raw,env.INGEST_SECRET))return respond({error:'Firma incorrecta'},401);
   const incoming=JSON.parse(raw);if(!incoming.issue||!['open','closed'].includes(incoming.issue.state))return respond({ignored:true});
-  const data=parseIssue(incoming.issue.body);await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data);ctx.waitUntil(enrich(env,incoming.issue.number,data));return respond({ok:true,issue_number:incoming.issue.number})
+  const data=parseIssue(incoming.issue.body);await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data);ctx.waitUntil(enrich(env,incoming.issue.number,data));if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,incoming.issue,data));return respond({ok:true,issue_number:incoming.issue.number})
  }
  if(url.pathname==='/api/admin/hide'&&request.method==='POST'){
   if(!env.ADMIN_TOKEN||request.headers.get('authorization')!==`Bearer ${env.ADMIN_TOKEN}`)return respond({error:'No autorizado'},401);
