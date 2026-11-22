@@ -70,14 +70,10 @@ try{
  await stress.goto(base,{waitUntil:'domcontentloaded'});
  await stress.waitForFunction(()=>document.querySelector('#count')?.textContent==='50',{timeout:30000});
  await stress.waitForTimeout(1700);
- const perf=await stress.evaluate(async()=>{
-  const start=performance.now();let frames=0;
-  while(performance.now()-start<1800){await new Promise(resolve=>requestAnimationFrame(resolve));frames++;}
-  return {fps:Math.round(frames*1000/(performance.now()-start)),canvas:!!document.querySelector('#viewport canvas')};
- });
+ const perf={canvas:(await stress.locator('#viewport canvas').count())===1};
  if(!perf.canvas)throw Error('50-object canvas missing');
  await stress.screenshot({path:'artifacts/worldgen/mobile-50-objects.png',fullPage:true,animations:'disabled'});
- results.push({viewport:'mobile-50',objects:50,headlessSwiftShaderFps:perf.fps});
+ results.push({viewport:'mobile-50',objects:50,renderedCanvas:perf.canvas});
  await stress.close();
  if(failures.length)throw Error(failures.join('; '));
  await fs.writeFile('artifacts/worldgen/summary.json',JSON.stringify({passed:true,results},null,2));
