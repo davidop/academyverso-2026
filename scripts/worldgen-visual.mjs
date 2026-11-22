@@ -47,6 +47,21 @@ try{
   await page.close();
  }
  // Load a synthetic 50-object crowd to catch WebGL crashes and gross layout failures.
+ try{
+  const baseline=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
+  await baseline.route('**/api/objects',route=>route.fulfill({json:{objects},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await baseline.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:false},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await baseline.goto('https://davidop.github.io/academyverso-2026/',{waitUntil:'domcontentloaded',timeout:20000});
+  await baseline.waitForFunction(()=>document.querySelector('#count')?.textContent==='4',{timeout:20000});
+  await baseline.waitForTimeout(800);
+  await baseline.screenshot({path:'artifacts/worldgen/baseline-main-mobile.png',fullPage:true,animations:'disabled'});
+  results.push({baseline:'main-production',captured:true});
+  await baseline.close();
+ }catch(error){
+  console.warn('Nonblocking baseline capture unavailable:',error.message);
+  results.push({baseline:'main-production',captured:false});
+ }
+
  const crowd=Array.from({length:50},(_,i)=>({...objects[i%objects.length],issue_number:2000+i,name:'Objeto de ensayo '+(i+1)}));
  const stress=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
  stress.on('pageerror',err=>failures.push('crowd: '+err.message));
