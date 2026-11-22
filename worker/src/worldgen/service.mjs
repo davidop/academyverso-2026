@@ -3,15 +3,15 @@ import {requestWorldSpec} from './foundry.mjs';
 
 export const worldgenEnabled=env=>String(env.WORLDGEN_ENABLED||'false').toLowerCase()==='true';
 
-async function recordRevision(env,issueNumber,origin){
+async function recordRevision(env,issueNumber,origin,fingerprint){
  // A saved revision is always based on the committed object; never trust user-provided spec data.
  await env.DB.prepare(
   "INSERT INTO world_revisions(issue_number,version,world_spec,world_status,input_hash,origin) " +
   "SELECT issue_number,world_version,world_spec,world_status,world_input_hash,? FROM objects " +
-  "WHERE issue_number=? AND world_version>0 AND world_spec IS NOT NULL " +
+  "WHERE issue_number=? AND world_input_hash=? AND world_version>0 AND world_spec IS NOT NULL " +
   "ON CONFLICT(issue_number,version) DO UPDATE SET " +
   "world_spec=excluded.world_spec,world_status=excluded.world_status,input_hash=excluded.input_hash"
- ).bind(origin,issueNumber).run();
+ ).bind(origin,issueNumber,fingerprint).run();
 }
 
 export async function generateWorldForIssue(env,issue,data,fetcher=fetch){
@@ -30,7 +30,7 @@ export async function generateWorldForIssue(env,issue,data,fetcher=fetch){
    "AND (world_input_hash IS NULL OR world_input_hash<>?)"
   ).bind(JSON.stringify(fallback),fingerprint,n,data.description,data.type,data.name,fingerprint).run();
   if(!update.meta?.changes)return {status:'unchanged'};
-  await recordRevision(env,n,origin);
+  await recordRevision(env,n,origin,fingerprint);
   if(!env.FOUNDRY_ENDPOINT||!env.FOUNDRY_API_KEY||!env.FOUNDRY_DEPLOYMENT)return {status:'fallback'};
   try{
    const spec=await requestWorldSpec(env,data.description,fallback,fetcher);
@@ -39,7 +39,7 @@ export async function generateWorldForIssue(env,issue,data,fetcher=fetch){
     "WHERE issue_number=? AND world_input_hash=? AND description=?"
    ).bind(JSON.stringify(spec),n,fingerprint,data.description).run();
    if(!result.meta?.changes)return {status:'superseded'};
-   await recordRevision(env,n,origin);
+   await recordRevision(env,n,origin,fingerprint);
    return {status:'ready'};
   }catch(error){
    console.warn('WorldGen fallback for issue',n,error?.name==='TimeoutError'?'timeout':'model failure');
