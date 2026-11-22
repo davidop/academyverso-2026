@@ -1,3 +1,5 @@
+import {resolvedWorldSpec} from './worlds/spec.mjs';
+import {buildWorld} from './worlds/builder.mjs';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
@@ -37,17 +39,15 @@ const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshSta
 const centerHalo=new THREE.Mesh(new THREE.TorusGeometry(21,0.32,8,90),new THREE.MeshBasicMaterial({color:0xbac3ff,transparent:true,opacity:.55}));centerHalo.rotation.x=Math.PI/2.8;scene.add(centerHalo);
 const starsGeo=new THREE.BufferGeometry();const points=[];for(let i=0;i<1300;i++){points.push((Math.random()-.5)*800,(Math.random()-.5)*550,(Math.random()-.5)*900)}starsGeo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:1.25,sizeAttenuation:true,transparent:true,opacity:.75})));
 let meshes=[],clickables=[];const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
-function makeBody(obj,i){const h=numberHash(`${obj.issue_number}-${obj.name}`),t=String(obj.type||'planeta');const coords=worldPosition(obj,i);const pos=new THREE.Vector3(coords.x,coords.y,coords.z);const colorPal=[0x64c4c1,0xb0a0ef,0xffba68,0x71b2ed,0xef89a3,0xf4db82];let color=colorPal[h%colorPal.length];if(/rojo|fuego|lava/i.test(obj.description))color=0xea777a;if(/verde|bosque/i.test(obj.description))color=0x7acb99;
- const group=new THREE.Group();group.position.copy(pos);
- const size=t==='estrella'?7:t==='planeta'?6:t==='agujero-negro'?6:t==='estacion'?4:3.6;
- const mat=new THREE.MeshStandardMaterial({color:t==='agujero-negro'?0x101020:color,roughness:.76,metalness:t==='estacion'?.5:.1,emissive:t==='estrella'?color:0x0f1524,emissiveIntensity:t==='estrella'?.85:.07});
+function makeBody(obj,i){
+ const coords=worldPosition(obj,i);
  const mission=terraformMissionFor(obj.description);
- if(mission){mat.color.setHex(mission.id==='vice-nebula'?0xee78b8:0x4edfc4);mat.emissive.setHex(mission.id==='vice-nebula'?0x621d5c:0x116b64);mat.emissiveIntensity=.37;}
- const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(size,t==='asteroide'?0:2),mat);group.add(mesh);
- if(t==='planeta'||t==='agujero-negro'){const ring=new THREE.Mesh(new THREE.TorusGeometry(size*1.6,.35,7,56),new THREE.MeshBasicMaterial({color:t==='agujero-negro'?0x72e6db:mission?(mission.id==='vice-nebula'?0xff9fda:0x8bffea):0xe7badb,side:THREE.DoubleSide,transparent:true,opacity:.8}));ring.rotation.x=.8;ring.rotation.y=.2;group.add(ring)}
- if(t==='estacion'){const solar=new THREE.Mesh(new THREE.BoxGeometry(size*5,.35,2),new THREE.MeshStandardMaterial({color:0x6ac9f2,metalness:.5,roughness:.4}));group.add(solar)}
- if(t==='estrella'){const glow=new THREE.PointLight(color,350,80);group.add(glow)}
- mesh.userData={obj,group};clickables.push(mesh);meshes.push({obj,group,size,phase:h%100/20});scene.add(group);
+ const {spec}=resolvedWorldSpec(obj);
+ const {group,size,clickables:targets}=buildWorld(THREE,obj,spec,mission);
+ group.position.set(coords.x,coords.y,coords.z);
+ for(const mesh of targets){mesh.userData={obj,group};clickables.push(mesh)}
+ meshes.push({obj,group,size,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20});
+ scene.add(group);
 }
 function paint(items){
   for(const m of meshes){
