@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
+import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,zoomDistance,HOME_ORBIT} from './travel.mjs';
 
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
@@ -36,8 +37,7 @@ const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshSta
 const centerHalo=new THREE.Mesh(new THREE.TorusGeometry(21,0.32,8,90),new THREE.MeshBasicMaterial({color:0xbac3ff,transparent:true,opacity:.55}));centerHalo.rotation.x=Math.PI/2.8;scene.add(centerHalo);
 const starsGeo=new THREE.BufferGeometry();const points=[];for(let i=0;i<1300;i++){points.push((Math.random()-.5)*800,(Math.random()-.5)*550,(Math.random()-.5)*900)}starsGeo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:1.25,sizeAttenuation:true,transparent:true,opacity:.75})));
 let meshes=[],clickables=[];const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
-function numberHash(str){let h=2166136261;for(const c of str){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
-function makeBody(obj,i,total){const h=numberHash(`${obj.issue_number}-${obj.name}`),t=String(obj.type||'planeta');const angle=i*2.399963+((h%47)/200);const radius=33+Math.sqrt(i+1)*16;const y=((h%27)-13)*1.6;const pos=new THREE.Vector3(Math.cos(angle)*radius,y,Math.sin(angle)*radius);const colorPal=[0x64c4c1,0xb0a0ef,0xffba68,0x71b2ed,0xef89a3,0xf4db82];let color=colorPal[h%colorPal.length];if(/rojo|fuego|lava/i.test(obj.description))color=0xea777a;if(/verde|bosque/i.test(obj.description))color=0x7acb99;
+function makeBody(obj,i){const h=numberHash(`${obj.issue_number}-${obj.name}`),t=String(obj.type||'planeta');const coords=worldPosition(obj,i);const pos=new THREE.Vector3(coords.x,coords.y,coords.z);const colorPal=[0x64c4c1,0xb0a0ef,0xffba68,0x71b2ed,0xef89a3,0xf4db82];let color=colorPal[h%colorPal.length];if(/rojo|fuego|lava/i.test(obj.description))color=0xea777a;if(/verde|bosque/i.test(obj.description))color=0x7acb99;
  const group=new THREE.Group();group.position.copy(pos);
  const size=t==='estrella'?7:t==='planeta'?6:t==='agujero-negro'?6:t==='estacion'?4:3.6;
  const mat=new THREE.MeshStandardMaterial({color:t==='agujero-negro'?0x101020:color,roughness:.76,metalness:t==='estacion'?.5:.1,emissive:t==='estrella'?color:0x0f1524,emissiveIntensity:t==='estrella'?.85:.07});
@@ -47,22 +47,178 @@ function makeBody(obj,i,total){const h=numberHash(`${obj.issue_number}-${obj.nam
  if(t==='planeta'||t==='agujero-negro'){const ring=new THREE.Mesh(new THREE.TorusGeometry(size*1.6,.35,7,56),new THREE.MeshBasicMaterial({color:t==='agujero-negro'?0x72e6db:mission?(mission.id==='vice-nebula'?0xff9fda:0x8bffea):0xe7badb,side:THREE.DoubleSide,transparent:true,opacity:.8}));ring.rotation.x=.8;ring.rotation.y=.2;group.add(ring)}
  if(t==='estacion'){const solar=new THREE.Mesh(new THREE.BoxGeometry(size*5,.35,2),new THREE.MeshStandardMaterial({color:0x6ac9f2,metalness:.5,roughness:.4}));group.add(solar)}
  if(t==='estrella'){const glow=new THREE.PointLight(color,350,80);group.add(glow)}
- mesh.userData={obj,group};clickables.push(mesh);meshes.push({group,phase:h%100/20});scene.add(group);
+ mesh.userData={obj,group};clickables.push(mesh);meshes.push({obj,group,size,phase:h%100/20});scene.add(group);
 }
-function paint(items){for(const m of meshes)scene.remove(m.group);meshes=[];clickables=[];items.slice(0,200).forEach((o,i)=>makeBody(o,i,items.length))}
+function paint(items){
+  for(const m of meshes){
+    scene.remove(m.group);
+    m.group.traverse(child=>{
+      child.geometry?.dispose?.();
+      const materials=Array.isArray(child.material)?child.material:[child.material];
+      for(const material of materials)material?.dispose?.();
+    });
+  }
+  meshes=[];clickables=[];
+  orderWorlds(items).slice(0,200).forEach((o,i)=>makeBody(o,i));
+  if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
+    returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
+  }
+}
 function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
 new ResizeObserver(resize).observe(viewport);resize();
-let pointerDown=null,dragging=false,yaw=0,pitch=.12,dist=190;
-function updateCamera(){camera.position.set(Math.sin(yaw)*dist*Math.cos(pitch),Math.sin(pitch)*dist,Math.cos(yaw)*dist*Math.cos(pitch));camera.lookAt(0,0,0)}
-renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};dragging=false;renderer.domElement.setPointerCapture(e.pointerId)});
-renderer.domElement.addEventListener('pointermove',e=>{if(!pointerDown)return;const dx=e.clientX-pointerDown.x,dy=e.clientY-pointerDown.y;if(Math.abs(dx)+Math.abs(dy)>4)dragging=true;yaw-=dx*.004;pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.003));pointerDown={x:e.clientX,y:e.clientY};updateCamera()});
-renderer.domElement.addEventListener('pointerup',e=>{pointerDown=null;if(dragging)return;const b=renderer.domElement.getBoundingClientRect();mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;raycaster.setFromCamera(mouse,camera);const found=raycaster.intersectObjects(clickables)[0];if(found)openDetails(found.object.userData.obj)});
-renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(50,Math.min(380,dist+Math.sign(e.deltaY)*10));updateCamera()},{passive:false});
-$('reset-camera').addEventListener('click',()=>{yaw=0;pitch=.12;dist=190;updateCamera()});
+// Orbiting remains available both in the galaxy and after reaching a destination.
+const focus=new THREE.Vector3(0,0,0);
+let pointerDown=null,dragging=false,yaw=HOME_ORBIT.yaw,pitch=HOME_ORBIT.pitch,dist=HOME_ORBIT.distance;
+let flight=null,travelMode='galaxy',activeWorldId=null;
+const statusMessage=message=>{$('travel-status').textContent=message;};
+function updateCamera(){
+  camera.position.set(focus.x+Math.sin(yaw)*dist*Math.cos(pitch),
+    focus.y+Math.sin(pitch)*dist,focus.z+Math.cos(yaw)*dist*Math.cos(pitch));
+  camera.lookAt(focus);
+}
+function currentPose(){return {eye:{x:camera.position.x,y:camera.position.y,z:camera.position.z},focus:{x:focus.x,y:focus.y,z:focus.z}};}
+function setPose(pose){
+  camera.position.set(pose.eye.x,pose.eye.y,pose.eye.z);
+  focus.set(pose.focus.x,pose.focus.y,pose.focus.z);
+  camera.lookAt(focus);
+}
+function deriveOrbit(){
+  const delta=camera.position.clone().sub(focus);
+  dist=Math.max(0.1,delta.length());
+  yaw=Math.atan2(delta.x,delta.z);
+  pitch=Math.asin(Math.max(-1,Math.min(1,delta.y/dist)));
+}
+function finishFlight(){
+  const completed=flight;
+  flight=null;
+  viewport.classList.remove('travelling');
+  deriveOrbit();
+  if(completed.kind==='home'){
+    travelMode='galaxy';activeWorldId=null;
+    $('travel-panel').hidden=true;
+    statusMessage('Has regresado a la galaxia. Selecciona otro planeta para viajar.');
+    $('reset-camera').focus({preventScroll:true});
+  }else{
+    travelMode='world';
+    $('travel-phase').textContent='Destino alcanzado · arrastra para explorar';
+    statusMessage('Destino alcanzado: '+completed.worldName+'. Puedes explorar alrededor del planeta o regresar.');
+    $('return-home').focus({preventScroll:true});
+  }
+}
+function advanceFlight(now){
+  if(!flight)return;
+  const state=flightPose(flight,now);
+  setPose(state);
+  if(state.done)finishFlight();
+}
+function startTravel(obj){
+  if(!terraformMissionFor(obj?.description))return false;
+  const world=meshes.find(m=>String(m.obj.issue_number)===String(obj.issue_number));
+  if(!world){statusMessage('Este mundo todavía no se ha cargado. Vuelve a intentarlo.');return false;}
+  const from=currentPose();
+  const target=world.group.position;
+  const to=cameraPoseForWorld({x:target.x,y:target.y,z:target.z},from.eye,world.size);
+  activeWorldId=String(obj.issue_number);
+  travelMode='travelling';
+  flight={from,to,startedAt:performance.now(),duration:reduced?0:1850,kind:'world',worldName:safe(obj.name)};
+  $('travel-panel').hidden=false;
+  $('travel-world').textContent=safe(obj.name);
+  $('travel-phase').textContent=reduced?'Destino seleccionado':'En vuelo · preparando aterrizaje';
+  viewport.classList.toggle('travelling',!reduced);
+  $('universe').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+  statusMessage('Despegando hacia '+safe(obj.name)+'.');
+  if(reduced)advanceFlight(flight.startedAt);
+  else $('return-home').focus({preventScroll:true});
+  return true;
+}
+function returnHome(message){
+  if(travelMode==='galaxy'&&!flight){
+    yaw=HOME_ORBIT.yaw;pitch=HOME_ORBIT.pitch;dist=HOME_ORBIT.distance;
+    focus.set(0,0,0);updateCamera();
+    return;
+  }
+  const from=currentPose();
+  activeWorldId=null;
+  travelMode='returning';
+  flight={from,to:homeCameraPose(),startedAt:performance.now(),duration:reduced?0:1100,kind:'home'};
+  $('travel-panel').hidden=false;
+  $('travel-phase').textContent='Regresando a la galaxia';
+  viewport.classList.toggle('travelling',!reduced);
+  statusMessage(message||'Regresando a la galaxia.');
+  if(reduced)advanceFlight(flight.startedAt);
+}
+// Track multiple pointers so touch gestures zoom rather than accidentally select a planet.
+const activePointers=new Map();
+let previousPinchGap=null;
+function pinchGap(){
+ const [a,b]=[...activePointers.values()];
+ return a&&b?Math.hypot(a.x-b.x,a.y-b.y):null;
+}
+renderer.domElement.addEventListener('pointerdown',e=>{
+ if(flight)return;
+ activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ renderer.domElement.setPointerCapture(e.pointerId);
+ if(activePointers.size>1){previousPinchGap=pinchGap();pointerDown=null;dragging=true;}
+ else{pointerDown={x:e.clientX,y:e.clientY};dragging=false;}
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+ if(flight||!activePointers.has(e.pointerId))return;
+ const prior=activePointers.get(e.pointerId);
+ activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(activePointers.size>1){
+   const gap=pinchGap();
+   if(gap>0&&previousPinchGap>0){
+     dist=zoomDistance(dist,previousPinchGap/gap,travelMode==='world');
+     updateCamera();
+   }
+   previousPinchGap=gap;pointerDown=null;dragging=true;
+   return;
+ }
+ if(!pointerDown)return;
+ const dx=e.clientX-prior.x,dy=e.clientY-prior.y;
+ if(Math.abs(e.clientX-pointerDown.x)+Math.abs(e.clientY-pointerDown.y)>4)dragging=true;
+ yaw-=dx*.004;pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.003));
+ updateCamera();
+});
+renderer.domElement.addEventListener('pointerup',e=>{
+ const tap=activePointers.size===1&&pointerDown!==null&&!dragging&&!flight;
+ activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;
+ if(!tap)return;
+ const b=renderer.domElement.getBoundingClientRect();
+ mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;
+ raycaster.setFromCamera(mouse,camera);
+ const found=raycaster.intersectObjects(clickables)[0];
+ if(found)openDetails(found.object.userData.obj);
+});
+renderer.domElement.addEventListener('pointercancel',e=>{
+ activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;dragging=true;
+});
+renderer.domElement.addEventListener('wheel',e=>{
+ e.preventDefault();
+ if(flight)return;
+ dist=zoomDistance(dist,(dist+Math.sign(e.deltaY)*10)/dist,travelMode==='world');
+ updateCamera();
+},{passive:false});
+$('return-home').addEventListener('click',()=>returnHome());
+$('reset-camera').addEventListener('click',()=>returnHome());
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&travelMode!=='galaxy'&&!$('detail-dialog').open&&!$('create-dialog').open){
+    e.preventDefault();returnHome();
+  }
+});
 updateCamera();
-function animate(){requestAnimationFrame(animate);if(!reduced){center.rotation.y+=.001;meshes.forEach((m,i)=>{m.group.rotation.y+=.0025;m.group.position.y+=Math.sin(performance.now()/1100+m.phase)*.006})}renderer.render(scene,camera)}animate();
-function refreshUI(){paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
-openDetails=obj=>{$('detail-type').textContent=`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=safe(obj.name);$('detail-description').textContent=safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+function animate(){
+  requestAnimationFrame(animate);
+  if(flight)advanceFlight(performance.now());
+  if(!reduced){
+    center.rotation.y+=.001;
+    meshes.forEach(m=>{m.group.rotation.y+=.0025;m.group.position.y+=Math.sin(performance.now()/1100+m.phase)*.006;});
+  }
+  renderer.render(scene,camera);
+}animate();
+let renderedSignature=null;
+function refreshUI(){const signature=JSON.stringify(objects);if(signature===renderedSignature)return;renderedSignature=signature;paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
+openDetails=obj=>{const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=safe(obj.name);$('detail-description').textContent=safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
 $('close-detail').onclick=()=>$('detail-dialog').close();$('open-form').onclick=()=>$('create-dialog').showModal();$('close-form').onclick=()=>$('create-dialog').close();
 for(const mission of TERRAFORMING_MISSIONS){
   $(mission.id+'-github').href=terraformGitHubUrl(mission.id,REPO);

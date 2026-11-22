@@ -2,13 +2,13 @@
 
 > **El núcleo de creación de mundos funciona ya**: Issues → Worker/D1 → objetos en Three.js. Los escenarios son un concepto de diseño y un marcador en las descripciones, **no un videojuego completo**. Cada tarea siguiente se debe abrir en un agente sobre una rama actualizada, revisar como PR y fusionar tras CI.
 
-## 1. Copilot — construir navegación hacia un escenario
+## 1. Copilot — construir o mejorar navegación hacia un escenario
 
 ```text
-Trabaja sobre davidop/academyverso-2026. A partir de web/terraforming.mjs y la escena Three.js en web/app.js, implementa una navegación de cámara «Viajar a este mundo» para objetos con marcador [GTA:VICE-NEBULA] o [GTA:COLONIA-CENTINELA]. Mantén la ficha del objeto y un botón «Regresar». No alteres el contrato Worker ni la creación de Issues. Soporta teclado, touch, prefers-reduced-motion y un universo vacío. Añade pruebas de funciones puras cuando sea posible. Abre PR con capturas y riesgos; no hagas merge automáticamente.
+Trabaja sobre davidop/academyverso-2026. Verifica si la navegación de cámara «Viajar a este mundo» ya existe en main o en el PR de Fase 1. Si ya existe, mejora la **selección del destino por teclado** y el feedback de viaje sin duplicar la lógica; si todavía no se ha integrado, implementa el viaje a objetos marcados [GTA:VICE-NEBULA] o [GTA:COLONIA-CENTINELA] aprovechando los cálculos de web/travel.mjs y conservando «Regresar». No alteres Worker, D1 ni la creación de Issues. Soporta teclado, touch, prefers-reduced-motion y un universo vacío. Añade pruebas de funciones puras cuando sea posible. Abre PR con capturas y riesgos; no hagas merge automáticamente.
 ```
 
-**Aceptar si:** el viaje existe de verdad, el usuario puede volver, la escena con cero objetos no falla, y el PR detalla sus pruebas.
+**Aceptar si:** el viaje existe de verdad, el usuario puede volver, la escena con cero objetos no falla y el PR detalla sus pruebas. El código preparado como respaldo en la rama de Fase 1 es una implementación de referencia de ChatGPT; **no debe atribuirse a una ejecución de GitHub Copilot**.
 
 ## 2. Claude Code — dar vida visual al escenario
 
