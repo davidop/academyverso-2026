@@ -1,3 +1,4 @@
+import {reserveFoundryCall} from './budget.mjs';
 import {fallbackWorldSpec,numberHash} from '../../../web/worlds/spec.mjs';
 import {requestWorldSpec} from './foundry.mjs';
 
@@ -32,6 +33,7 @@ export async function generateWorldForIssue(env,issue,data,fetcher=fetch){
   if(!update.meta?.changes)return {status:'unchanged'};
   await recordRevision(env,n,origin,fingerprint);
   if(!env.FOUNDRY_ENDPOINT||!env.FOUNDRY_API_KEY||!env.FOUNDRY_DEPLOYMENT)return {status:'fallback'};
+  if(!await reserveFoundryCall(env))return {status:'fallback',reason:'daily-budget-exhausted'};
   try{
    const spec=await requestWorldSpec(env,data.description,fallback,fetcher);
    const result=await env.DB.prepare(
