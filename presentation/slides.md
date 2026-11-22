@@ -197,9 +197,9 @@ transition: slide-left
 <div class="kicker">11 · TRABAJO ENCADENADO</div>
 <div class="headline">Un escenario.<br><span class="gradient">Tres agentes. PRs revisados.</span></div>
 <div class="agent-chain">
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff"/><b>COPILOT</b><p>Programa el viaje al mundo elegido</p><small>PR #1</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff"/><b>CLAUDE</b><p>Da identidad visual al escenario</p><small>PR #2</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/openai/ffffff"/><b>CODEX</b><p>Verifica reglas, acceso y CI</p><small>PR #3</small></div>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff"/><b>COPILOT</b><p>Programa el viaje al mundo elegido</p><small>TAREA 1</small></div><span v-after>→</span>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff"/><b>CLAUDE</b><p>Da identidad visual al escenario</p><small>TAREA 2</small></div><span v-after>→</span>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/openai/ffffff"/><b>CODEX</b><p>Verifica reglas, acceso y CI</p><small>TAREA 3</small></div>
 </div>
 <div class="footnote">Cada nuevo agente parte de una versión revisada e integrada del trabajo anterior.</div>
 
@@ -215,7 +215,7 @@ transition: fade
  <div class="travel"><div class="planet left"></div><div class="dash"></div><span class="rocket">🚀</span><div class="planet right"></div><small>ORIGEN → VIAJE → DESTINO</small></div>
 </div>
 
-<!-- Fase 1: existe implementación de referencia preparada en rama/PR por ChatGPT. NO atribuir ese PR a Copilot. Si GitHub Copilot trabaja en directo, exigir una sesión real y un PR nuevo, por ejemplo mejora de teclado/selección. Mostrar el viaje publicado solo después de integrar el PR y probarlo en navegador. -->
+<!-- PR #9 ya se fusionó: implementación de referencia de ChatGPT, NO una sesión de Copilot. Mostrar viaje tras prueba real de navegador. En directo Copilot puede mejorar selección de destino por teclado en un PR nuevo. -->
 
 ---
 transition: fade
@@ -259,8 +259,8 @@ transition: fade
 <div class="kicker">16 · EL UNIVERSO CONTINÚA</div>
 <div class="final-title">ESTO NO<br><span class="gradient">TERMINA HOY.</span></div>
 <div class="final-layout">
- <QrPortal url="https://github.com/davidop/academyverso-2026" label="CÓDIGO Y DOCUMENTACIÓN"/>
- <div><p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p><a class="action-link" href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR ACADEMYVERSO ↗</a></div>
+ <QrPortal url="https://davidop.github.io/academyverso-2026/sesion.html" label="ENLACES Y CÓDIGO"/>
+ <div><p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p><a class="action-link" href="https://davidop.github.io/academyverso-2026/sesion.html" target="_blank">ENLACES DE LA SESIÓN ↗</a></div>
 </div>
 <div class="footer-stamp">DAVID OLIVA × SERGIO VALVERDE · ACADEMYVERSO 2026</div>
 

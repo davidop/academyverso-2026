@@ -1,6 +1,7 @@
 # AcademyVerso 2026 · Runbook GO / NO-GO
 
 **Evento:** jueves 26 de noviembre de 2026 · 15:00–15:55 (Europe/Madrid)
+**Enlace maestro:** [https://davidop.github.io/academyverso-2026/sesion.html](https://davidop.github.io/academyverso-2026/sesion.html)
 **Ponentes:** David Oliva y Sergio Valverde
 **Título oficial:** Programa con IA desde tu móvil: GitHub Copilot, Claude y Codex
 
@@ -14,7 +15,7 @@
 | Publicación GitHub Pages | [Run 44955212123](https://github.com/davidop/academyverso-2026/actions/runs/44955212123) | Workflow completado; prueba visual actual pendiente |
 | Ingesta firmada Vice Nebula | [Issue #10](https://github.com/davidop/academyverso-2026/issues/10) · [Run 44960074451](https://github.com/davidop/academyverso-2026/actions/runs/44960074451) | HTTP 200 + cierre automático |
 | Ingesta firmada Colonia Centinela | [Issue #11](https://github.com/davidop/academyverso-2026/issues/11) · [Run 44960081404](https://github.com/davidop/academyverso-2026/actions/runs/44960081404) | HTTP 200 + cierre automático |
-| Viaje 3D | [PR #9](https://github.com/davidop/academyverso-2026/pull/9) · [CI 44961961644](https://github.com/davidop/academyverso-2026/actions/runs/44961961644) | Código en rama y CI verde, sin merge; preview Cloudflare fallida |
+| Viaje 3D | [PR #9 fusionada](https://github.com/davidop/academyverso-2026/pull/9) · [CI](https://github.com/davidop/academyverso-2026/actions/runs/44965573236) | Integrado en main y desplegado en Pages; prueba visual de móvil pendiente |
 | Presentación visual renovada | [PR #1](https://github.com/davidop/academyverso-2026/pull/1) | Draft con conflictos; no reemplazar slides estables sin revisión |
 | Sesiones reales de Copilot/Claude/Codex | [Guía](activar-agentes.md) | **No verificadas** en GitHub Mobile |
 | Dispositivos, proyector, QR y Wi-Fi | — | **No probados** en sala |
@@ -32,7 +33,7 @@ Los objetos #10/#11 son **ensayos del equipo**, no votos de asistentes. El pipel
 
 ### Lunes 23 · Navegador y móvil
 
-- [ ] Con PR #9 aprobada, fusionar con intervención humana y verificar [CI](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml) + [Deploy Pages](https://github.com/davidop/academyverso-2026/actions).
+- [x] PR #9 fusionada en main y GitHub Pages desplegado; falta probar el viaje en navegador, móvil y pantalla.
 - [ ] Android y un segundo dispositivo: abrir [web](https://davidop.github.io/academyverso-2026/) y [presentación](https://davidop.github.io/academyverso-2026/presentation/).
 - [ ] Ensayar viaje → regresar durante vuelo → viaje de nuevo → zoom por pellizco → Escape / teclado → lector de pantalla → `prefers-reduced-motion`.
 - [ ] Abrir los objetos **#10** y **#11** en D1/web; comprobar contadores, colores, ficha y enlaces a Issue. Sin inventar métricas de participantes.

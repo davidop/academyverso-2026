@@ -4,6 +4,8 @@
 >
 > Proyecto de demostración de **David Oliva y Sergio Valverde** para **AcademyVerso 2026** (26/11/2026, 15:00–15:55). Se basa en los recursos gráficos originales entregados por AcademyVerso.
 
+**[🚀 Portal de la sesión](https://davidop.github.io/academyverso-2026/sesion.html)** · [Enlaces para los ponentes](docs/enlaces-sesion.md) · [Runbook de cierre](docs/runbook-go-no-go-26nov.md)
+
 [![CI](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml)
 
 ## 🎮 ¿Cómo funciona?
@@ -23,7 +25,7 @@ La propuesta de Sergio Valverde se integra sin sustituir los planetas ni el tít
 
 **Backlog por agente:** [Fase 1 · Copilot — viajes](https://github.com/davidop/academyverso-2026/issues/5) · [Fase 2 · Claude — ciudad y estética](https://github.com/davidop/academyverso-2026/issues/6) · [Fase 3 · Codex — misiones y pruebas](https://github.com/davidop/academyverso-2026/issues/7) · [Fase 4 · ensayo E2E](https://github.com/davidop/academyverso-2026/issues/8). Son tareas abiertas para desarrollar mediante PRs, no funciones entregadas.
 
-**Estado del núcleo GTA:** selección + creación + visualización + recuento + enlaces GitHub Mobile implementados. **Viaje interplanetario:** implementación preparada en rama/PR independiente para revisión, con cámara animada, retorno, controles móviles y tests deterministas; no atribuir estos cambios a Copilot ni mostrarlos como desplegados hasta integrar el PR. Las ciudades visitables, vehículos y mecánicas tipo videojuego **no están desarrollados**; se proponen como trabajo futuro de agentes mediante PRs verificados. Se incluyen tests deterministas en `web/test/terraforming.test.mjs`.
+**Estado del núcleo GTA:** selección + creación + visualización + recuento + enlaces GitHub Mobile implementados. **Viaje interplanetario:** PR #9 fusionada en main con CI y GitHub Pages en verde; cámara animada, retorno, controles móviles y tests deterministas. La prueba visual en dispositivo físico sigue pendiente. Es código de referencia de ChatGPT; no atribuir estos cambios a GitHub Copilot. Las ciudades visitables, vehículos y mecánicas tipo videojuego **no están desarrollados**; se proponen como trabajo futuro de agentes mediante PRs verificados. Se incluyen tests deterministas en `web/test/terraforming.test.mjs`.
 
 Este material es una **parodia conceptual independiente**. No está afiliado a Rockstar Games ni incorpora imágenes, logotipos, personajes ni recursos protegidos de GTA. La propuesta audiovisual utiliza estilo espacial original y los materiales propios de AcademyVerso.
 
@@ -70,7 +72,7 @@ flowchart TD
 | Enriquecimiento IA | Opcional; hook implementado | Binding Workers AI; revisar cuotas/costes |
 | GitHub Pages | Workflow incluido | Activar Pages → Source: GitHub Actions |
 | Copilot / Claude / Codex | Guion + prompts incluidos | Verificar acceso, planes y permisos manualmente |
-| Viajes interplanetarios | Implementación en PR de Fase 1, pendiente de revisión e integración | Validar CI y ensayo real tras merge |
+| Viajes interplanetarios | PR #9 fusionada en `main` y CI verde | Ensayo manual de viaje/retorno en móvil y sala |
 | Grand Terraforming Agents | Dos escenarios, creación, contadores y colores en Three.js | Worker + D1 para recuento real; sin migraciones |
 
 ## ✅ Comprobación local

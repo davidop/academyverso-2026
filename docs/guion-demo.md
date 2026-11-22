@@ -9,7 +9,7 @@
 | 15:08–15:13 | David | Diferenciar selector de modelos de agentes de programación | Claude como modelo ≠ Claude Code |
 | 15:13–15:17 | Sergio | Abrir `#grand-terraforming-agents` y mostrar Vice Nebula / Colonia Centinela | El público decide el escenario |
 | 15:17–15:24 | Ambos | QR + formularios; participantes crean objetos con etiqueta de misión | GitHub Issues → Worker → D1 → Three.js |
-| 15:24–15:32 | David | Solicitar a Copilot un viaje a un planeta de GTA mediante PR | Prompt → código → revisión |
+| 15:24–15:32 | David | Pedir a Copilot una mejora pequeña del viaje 3D ya integrado y abrir un PR nuevo | Prompt → código → revisión |
 | 15:32–15:40 | Sergio | Claude propone ambiente visual de un escenario sobre rama actualizada | Agentes encadenados, no tres chats aislados |
 | 15:40–15:48 | Ambos | Codex comprueba escenarios, accesibilidad, tests y CI | El resultado necesita verificación |
 | 15:48–15:52 | Sergio | Mostrar contadores, fichas y viaje 3D (solo tras integrar PR y probar navegador) | Demo de colaboración medible |
@@ -20,8 +20,10 @@
 - La app **Three.js** representa objetos cósmicos recibidos desde **Cloudflare D1**.
 - Una Issue creada en la web o GitHub Mobile entra en el circuito Worker/Actions; la Issue se cierra tras confirmar ingesta.
 - Las tarjetas Vice Nebula y Colonia Centinela precargan un marcador en la descripción y los contadores muestran **número de objetos**, no votos de personas únicas.
-- La tematización visual y el 3D **no contienen ciudades visitables, vehículos voladores, persecuciones ni sistema jugable de cinco estrellas**. La Fase 1 propone un **viaje de cámara** hasta los planetas etiquetados y regreso (PR separado, pendiente de merge y ensayo de navegador).
+- La tematización visual y el 3D **no contienen ciudades visitables, vehículos voladores, persecuciones ni sistema jugable de cinco estrellas**. La **PR #9 ya está fusionada**: viaje de cámara y retorno integrados, aún pendiente ensayo de dispositivo. Es implementación de referencia de ChatGPT; no atribuirla a Copilot.
 - Workers AI opcional no implica que Copilot/Claude/Codex hayan generado cada planeta: esos agentes **modifican el código**; las aportaciones llegan como datos validados.
+
+**Enlaces oficiales:** [portal de la sesión](https://davidop.github.io/academyverso-2026/sesion.html) y [guía de enlaces](enlaces-sesion.md).
 
 ## Preparación previa
 
@@ -30,7 +32,7 @@
 3. Crear una Issue de prueba con marcador `[GTA:VICE-NEBULA]`; comprobar objeto en `/api/objects` y que cierre la Issue. No afirmar latencia fija: GitHub Actions es asíncrono.
 4. Ensayar un prompt por agente. Guardar PRs preparados y marcarlos como respaldo; jamás atribuir cambios hechos manualmente a una ejecución de agente.
 5. QRs GitHub Mobile y web verificados en Android/iOS. Para usuarios sin GitHub, el formulario web anónimo usa el Worker seguro.
-6. Revisar PR de viaje 3D, integrar tras CI, comprobar la publicación de Pages y ensayar «Viajar aquí» y «Regresar» con al menos un objeto GTA real; probar teclado, móvil y modo de movimiento reducido.
+6. Confirmar PR #9 integrada, comprobar Pages y ensayar «Viajar aquí» y «Regresar» con al menos un objeto GTA real; probar teclado, móvil y modo de movimiento reducido.
 
 ## Plan B y criterios de éxito
 
