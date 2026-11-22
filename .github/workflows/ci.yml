@@ -18,6 +18,10 @@ jobs:
           node --check web/app.js
           node --check web/worlds/spec.mjs
           node --check web/worlds/builder.mjs
+          node --check web/worlds/birth.mjs
+          node --check worker/src/worldgen/foundry.mjs
+          node --check worker/src/worldgen/service.mjs
+          node --test web/test/world-birth.test.mjs
           node --test web/test/world-spec.test.mjs
           node --check web/config.js
           node --check web/issue-prefill.mjs
