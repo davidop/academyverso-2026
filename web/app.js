@@ -1,3 +1,8 @@
+import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
+import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
+import {resolvedWorldSpec} from './worlds/spec.mjs';
+import {buildWorld} from './worlds/builder.mjs';
+import {birthProgress,birthScale,createBirthParticles} from './worlds/birth.mjs';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
@@ -6,6 +11,12 @@ import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,f
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
 let createEnabled = false;
+let worldgenLive = false;
+let selectedWorld = null;
+const tokenKey=id=>'academyverso-2026:world-owner:'+String(id);
+function savedWorldToken(id){try{return sessionStorage.getItem(tokenKey(id))||''}catch{return ''}}
+function storeWorldToken(id,token){try{sessionStorage.setItem(tokenKey(id),token)}catch{}}
+
 const REPO = config.REPO || 'davidop/academyverso-2026';
 const DEMO = [
   {issue_number:1,type:'planeta',name:'Pythonia',alias:'Comandante Python',description:'Un planeta turquesa con tres lunas brillantes y océanos de código.'},
@@ -21,6 +32,7 @@ const emoji={planeta:'🪐',estrella:'⭐',luna:'🌙','agujero-negro':'🕳️'
 const $=id=>document.getElementById(id);
 const safe=s=>String(s??'').trim().slice(0,280);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let quality=initialQuality(navigator.hardwareConcurrency||4,devicePixelRatio||1);
 
 const viewport=$('viewport');
 const scene=new THREE.Scene();
@@ -28,7 +40,7 @@ scene.fog=new THREE.FogExp2(0x11182d,0.004);
 const camera=new THREE.PerspectiveCamera(58,1,.1,2000);
 camera.position.set(0,65,185);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setPixelRatio(pixelRatioFor(quality,devicePixelRatio));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 viewport.innerHTML='';viewport.appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0x859aff,2));
@@ -37,32 +49,54 @@ const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshSta
 const centerHalo=new THREE.Mesh(new THREE.TorusGeometry(21,0.32,8,90),new THREE.MeshBasicMaterial({color:0xbac3ff,transparent:true,opacity:.55}));centerHalo.rotation.x=Math.PI/2.8;scene.add(centerHalo);
 const starsGeo=new THREE.BufferGeometry();const points=[];for(let i=0;i<1300;i++){points.push((Math.random()-.5)*800,(Math.random()-.5)*550,(Math.random()-.5)*900)}starsGeo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:1.25,sizeAttenuation:true,transparent:true,opacity:.75})));
 let meshes=[],clickables=[];const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
-function makeBody(obj,i){const h=numberHash(`${obj.issue_number}-${obj.name}`),t=String(obj.type||'planeta');const coords=worldPosition(obj,i);const pos=new THREE.Vector3(coords.x,coords.y,coords.z);const colorPal=[0x64c4c1,0xb0a0ef,0xffba68,0x71b2ed,0xef89a3,0xf4db82];let color=colorPal[h%colorPal.length];if(/rojo|fuego|lava/i.test(obj.description))color=0xea777a;if(/verde|bosque/i.test(obj.description))color=0x7acb99;
- const group=new THREE.Group();group.position.copy(pos);
- const size=t==='estrella'?7:t==='planeta'?6:t==='agujero-negro'?6:t==='estacion'?4:3.6;
- const mat=new THREE.MeshStandardMaterial({color:t==='agujero-negro'?0x101020:color,roughness:.76,metalness:t==='estacion'?.5:.1,emissive:t==='estrella'?color:0x0f1524,emissiveIntensity:t==='estrella'?.85:.07});
+let initialWorldPaint=true,firstLiveSync=false,suppressBirth=false;
+function makeBody(obj,i){
+ const coords=worldPosition(obj,i);
  const mission=terraformMissionFor(obj.description);
- if(mission){mat.color.setHex(mission.id==='vice-nebula'?0xee78b8:0x4edfc4);mat.emissive.setHex(mission.id==='vice-nebula'?0x621d5c:0x116b64);mat.emissiveIntensity=.37;}
- const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(size,t==='asteroide'?0:2),mat);group.add(mesh);
- if(t==='planeta'||t==='agujero-negro'){const ring=new THREE.Mesh(new THREE.TorusGeometry(size*1.6,.35,7,56),new THREE.MeshBasicMaterial({color:t==='agujero-negro'?0x72e6db:mission?(mission.id==='vice-nebula'?0xff9fda:0x8bffea):0xe7badb,side:THREE.DoubleSide,transparent:true,opacity:.8}));ring.rotation.x=.8;ring.rotation.y=.2;group.add(ring)}
- if(t==='estacion'){const solar=new THREE.Mesh(new THREE.BoxGeometry(size*5,.35,2),new THREE.MeshStandardMaterial({color:0x6ac9f2,metalness:.5,roughness:.4}));group.add(solar)}
- if(t==='estrella'){const glow=new THREE.PointLight(color,350,80);group.add(glow)}
- mesh.userData={obj,group};clickables.push(mesh);meshes.push({obj,group,size,phase:h%100/20});scene.add(group);
+ const {spec}=resolvedWorldSpec(obj);
+ const {group,size,clickables:targets}=buildWorld(THREE,obj,spec,mission,quality);
+ group.position.set(coords.x,coords.y,coords.z);
+ for(const mesh of targets){mesh.userData={...mesh.userData,obj,group};clickables.push(mesh)}
+ const entry={obj,group,size,targets,baseY:coords.y,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20};
+ meshes.push(entry);scene.add(group);return entry;
+}
+function disposeWorld(m){
+ scene.remove(m.group);
+ m.group.traverse(child=>{
+  child.geometry?.dispose?.();
+  const materials=Array.isArray(child.material)?child.material:[child.material];
+  for(const material of materials)material?.dispose?.();
+ });
 }
 function paint(items){
-  for(const m of meshes){
-    scene.remove(m.group);
-    m.group.traverse(child=>{
-      child.geometry?.dispose?.();
-      const materials=Array.isArray(child.material)?child.material:[child.material];
-      for(const material of materials)material?.dispose?.();
-    });
+ const oldById=new Map(meshes.map(m=>[String(m.obj.issue_number),m]));
+ const next=orderWorlds(items).slice(0,200);
+ meshes=[];clickables=[];
+ for(let i=0;i<next.length;i++){
+  const obj=next[i],id=String(obj.issue_number);
+  const signature=JSON.stringify([obj.type,obj.name,obj.description,obj.world_spec,obj.world_version,quality]);
+  const previous=oldById.get(id);
+  if(previous&&previous.signature===signature){
+   previous.obj=obj;
+   for(const mesh of previous.targets){mesh.userData.obj=obj;clickables.push(mesh)}
+   meshes.push(previous);
+  }else{
+   if(previous)disposeWorld(previous);
+   const created=makeBody(obj,i);created.signature=signature;
+   if(!initialWorldPaint&&!suppressBirth&&!reduced&&!previous){
+    created.birthStartedAt=performance.now();
+    created.group.scale.setScalar(.08);
+    created.birthParticles=createBirthParticles(THREE,created.size,numberHash(id));
+    created.group.add(created.birthParticles);
+   }
   }
-  meshes=[];clickables=[];
-  orderWorlds(items).slice(0,200).forEach((o,i)=>makeBody(o,i));
-  if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
-    returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
-  }
+  oldById.delete(id);
+ }
+ for(const old of oldById.values())disposeWorld(old);
+ initialWorldPaint=false;
+ if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
+  returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
+ }
 }
 function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
 new ResizeObserver(resize).observe(viewport);resize();
@@ -188,7 +222,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
  mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;
  raycaster.setFromCamera(mouse,camera);
  const found=raycaster.intersectObjects(clickables)[0];
- if(found)openDetails(found.object.userData.obj);
+ if(found)openDetails(found.object.userData.obj,found.object.userData.poi);
 });
 renderer.domElement.addEventListener('pointercancel',e=>{
  activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;dragging=true;
@@ -207,18 +241,94 @@ document.addEventListener('keydown',e=>{
   }
 });
 updateCamera();
+let qualitySampleStart=performance.now(),qualityFrames=0,lastQualityChange=qualitySampleStart;
 function animate(){
   requestAnimationFrame(animate);
+  const sampleNow=performance.now();qualityFrames++;
+  if(sampleNow-qualitySampleStart>=4500){
+    const fps=qualityFrames*1000/(sampleNow-qualitySampleStart);
+    qualityFrames=0;qualitySampleStart=sampleNow;
+    if(sampleNow-lastQualityChange>12000){
+      const next=adaptiveQuality(quality,fps);
+      if(next!==quality){quality=next;renderer.setPixelRatio(pixelRatioFor(quality,devicePixelRatio));resize();suppressBirth=true;paint(objects);suppressBirth=false;lastQualityChange=sampleNow;}
+    }
+  }
   if(flight)advanceFlight(performance.now());
   if(!reduced){
     center.rotation.y+=.001;
-    meshes.forEach(m=>{m.group.rotation.y+=.0025;m.group.position.y+=Math.sin(performance.now()/1100+m.phase)*.006;});
+    const now=performance.now();
+    meshes.forEach(m=>{
+      m.group.rotation.y+=.0025;
+      m.group.position.y=m.baseY+Math.sin(now/1100+m.phase)*.14;
+      if(m.birthStartedAt!==undefined){
+       const elapsed=now-m.birthStartedAt,t=birthProgress(elapsed);
+       m.group.scale.setScalar(birthScale(elapsed));
+       if(m.birthParticles){
+        m.birthParticles.material.opacity=1-t;
+        m.birthParticles.scale.setScalar(1+t*.5);
+       }
+       if(t===1){
+        m.group.scale.setScalar(1);
+        if(m.birthParticles){m.group.remove(m.birthParticles);m.birthParticles.geometry.dispose();m.birthParticles.material.dispose();m.birthParticles=null;}
+        delete m.birthStartedAt;
+       }
+      }
+    });
   }
   renderer.render(scene,camera);
 }animate();
 let renderedSignature=null;
 function refreshUI(){const signature=JSON.stringify(objects);if(signature===renderedSignature)return;renderedSignature=signature;paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
-openDetails=obj=>{const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=safe(obj.name);$('detail-description').textContent=safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+openDetails=(obj,poi=null)=>{selectedWorld=obj;const evolvePanel=$('world-evolve-panel');evolvePanel.hidden=!worldgenLive||!API||!obj.issue_number;if(!evolvePanel.hidden){$('world-edit-token').value=savedWorldToken(obj.issue_number);$('world-evolve-status').textContent='';$('world-history-list').replaceChildren();}const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+
+$('copy-evolve-command').addEventListener('click',async()=>{
+ if(!selectedWorld)return;
+ const instruction=$('world-evolve-instruction').value.trim()||'Añade dos lunas y una ciudad flotante';
+ try{
+  const command=evolutionComment(instruction);
+  await navigator.clipboard.writeText(command);
+  $('world-evolve-status').textContent='Comando copiado. Pégalo como comentario en tu GitHub Issue, con tu cuenta de autor.';
+ }catch(error){$('world-evolve-status').textContent=error.message||'No se pudo copiar el comando';}
+});
+$('world-evolve-form').addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(!selectedWorld||!API)return;
+ const status=$('world-evolve-status'),token=$('world-edit-token').value.trim();
+ const instruction=$('world-evolve-instruction').value.trim();
+ status.textContent='Evolucionando mundo y guardando una nueva versión…';
+ try{
+  const result=await mutateWorld(API,selectedWorld.issue_number,'evolve',token,{instruction});
+  storeWorldToken(selectedWorld.issue_number,token);
+  status.textContent='Versión '+result.version+' registrada ('+(result.status==='ready'?'Microsoft Foundry':'generación procedural de respaldo')+'). Actualizando galaxia…';
+  await sync();
+ }catch(error){status.textContent=error.message||'No se pudo evolucionar el mundo';}
+});
+$('world-history-button').addEventListener('click',async()=>{
+ if(!selectedWorld||!API)return;
+ const list=$('world-history-list');list.replaceChildren();
+ try{
+  const response=await fetch(worldUrl(API,selectedWorld.issue_number,'history'),{cache:'no-store'});
+  const data=await response.json();
+  if(!response.ok)throw Error(data.error||'No se pudo obtener el historial');
+  for(const revision of data.versions||[]){
+   const li=document.createElement('li');
+   li.textContent='Versión '+revision.version+' · '+revision.world_status+' · '+revision.created_at;
+   list.append(li);
+  }
+  if(!list.childElementCount){const li=document.createElement('li');li.textContent='Sin versiones registradas';list.append(li);}
+ }catch(error){$('world-evolve-status').textContent=error.message;}
+});
+$('world-rollback-form').addEventListener('submit',async event=>{
+ event.preventDefault();if(!selectedWorld||!API)return;
+ const status=$('world-evolve-status'),token=$('world-edit-token').value.trim(),version=Number($('world-rollback-version').value);
+ status.textContent='Restaurando versión '+version+'…';
+ try{
+  const result=await mutateWorld(API,selectedWorld.issue_number,'rollback',token,{version});
+  status.textContent='Versión '+result.version+' creada al restaurar la versión '+version+'.';
+  await sync();
+ }catch(error){status.textContent=error.message||'No se pudo restaurar';}
+});
+
 $('close-detail').onclick=()=>$('detail-dialog').close();$('open-form').onclick=()=>$('create-dialog').showModal();$('close-form').onclick=()=>$('create-dialog').close();
 for(const mission of TERRAFORMING_MISSIONS){
   $(mission.id+'-github').href=terraformGitHubUrl(mission.id,REPO);
@@ -237,7 +347,7 @@ document.querySelectorAll('[data-mission]').forEach(button=>button.addEventListe
   $('create-dialog').showModal();
   form.elements.namedItem('alias').focus();
 }));
-async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];refreshUI();$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
+async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];if(!firstLiveSync)suppressBirth=true;refreshUI();firstLiveSync=true;suppressBirth=false;$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
 function draftIssue(status,body,message,redirect=false){
  const url=issueDraftUrl(body,REPO);
  const link=document.createElement('a');
@@ -262,6 +372,7 @@ async function checkCreateCapability(){
    if(!response.ok)throw new Error('Servicio no disponible');
    const data=await response.json();
    createEnabled=data.ok===true && data.database_connected===true && data.create_enabled===true;
+   worldgenLive=data.worldgen_enabled===true;
  }catch(error){createEnabled=false}
  updateCreateUI();
 }
@@ -298,6 +409,15 @@ $('create-form').addEventListener('submit',async e=>{
    issueLink.rel='noopener noreferrer';
    issueLink.textContent=`Ver Issue #${registeredIssue} en GitHub ↗`;
    status.replaceChildren(document.createTextNode('¡Registrado! Tu creación ya forma parte de AcademyVerso. '),issueLink);
+   if(typeof data.edit_token==='string'&&/^[A-Za-z0-9_-]{43}$/.test(data.edit_token)){
+    storeWorldToken(registeredIssue,data.edit_token);
+    const notice=document.createElement('p');
+    notice.textContent='Guarda esta clave privada para poder evolucionar el mundo. Solo se muestra al crearlo:';
+    const code=document.createElement('code');code.textContent=data.edit_token;
+    const copy=document.createElement('button');copy.type='button';copy.textContent='Copiar clave';
+    copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(data.edit_token);copy.textContent='Clave copiada';}catch{copy.textContent='Selecciona la clave y cópiala';}});
+    status.append(notice,code,document.createTextNode(' '),copy);
+   }
    await sync();
  }catch(err){
    if(registeredIssue){

@@ -46,3 +46,15 @@
 @keyframes warp-flight{to{transform:rotate(28deg)}}
 @media(max-width:700px){.travel-panel{flex-direction:column;align-items:stretch;padding:17px}.travel-panel button{width:100%}.travel-action{width:100%;margin:15px 0}}
 @media(prefers-reduced-motion:reduce){#viewport.travelling:after{display:none}}
+
+/* Accessible WorldGen evolution controls; layout remains scrollable on phones. */
+#detail-dialog{max-height:92dvh;overflow-y:auto}
+.world-evolve{margin-top:18px;border-top:1px solid #687b9b;padding:14px 0 4px}
+.world-evolve summary{font-weight:800;cursor:pointer;color:#abf4e7;padding:9px 0}
+.world-evolve summary:focus-visible,.world-evolve button:focus-visible{outline:3px solid #a9fff0;outline-offset:3px}
+.world-evolve .micro{font-size:12px;line-height:1.6;color:#dce6f3}
+.world-evolve button{max-width:100%}
+.world-evolve form{margin:9px 0 18px}
+.world-evolve ol{max-height:145px;overflow-y:auto;padding-left:26px;color:#e2eafa;font-size:12px}
+.world-evolve #world-evolve-status{min-height:23px;color:#baf6e9;overflow-wrap:anywhere}
+#form-status code{display:block;overflow-wrap:anywhere;margin:10px 0;padding:9px;background:#151f32;border:1px solid #6d8baf;border-radius:9px}

@@ -53,3 +53,28 @@ test('ingest updates D1 for a previously closed Issue after an edit',async()=>{
   assert.equal((await res.json()).issue_number,3);
   assert.equal(writes,1);
 });
+
+
+test('WorldGen health only announces enabled when schema migration is present',async()=>{
+ const env={WORLDGEN_ENABLED:'true',DB:{prepare(sql){
+  if(sql.includes("name IN ('objects','rates')"))return {async first(){return {total:2}}};
+  if(sql.includes("name='world_revisions'"))return {async first(){return {total:1}}};
+  if(sql.includes('PRAGMA table_info'))return {async all(){return {results:['world_spec','world_status','world_version','world_owner_token_hash'].map(name=>({name}))}}};
+  throw Error('unexpected SQL '+sql);
+ }}};
+ const response=await worker.fetch(request(),env,{});
+ assert.equal(response.status,200);
+ assert.equal((await response.json()).worldgen_enabled,true);
+});
+test('WorldGen query failure does not break legacy object listing',async()=>{
+ let queries=0;
+ const env={WORLDGEN_ENABLED:'true',DB:{prepare(sql){return {async all(){
+  queries++;
+  if(sql.includes('world_spec'))throw Error('no migration yet');
+  return {results:[{issue_number:10,name:'Legacy',type:'planeta'}]};
+ }}}}};
+ const response=await worker.fetch(new Request('https://api.example.com/api/objects'),env,{});
+ assert.equal(response.status,200);
+ assert.equal((await response.json()).objects[0].name,'Legacy');
+ assert.equal(queries,2);
+});

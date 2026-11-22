@@ -2,11 +2,13 @@ name: Registro de objeto cósmico
 on:
   issues:
     types: [opened, edited, reopened]
+  issue_comment:
+    types: [created]
 permissions:
   issues: write
 jobs:
   ingest:
-    if: contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador')
+    if: (github.event_name == 'issues' && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
     runs-on: ubuntu-latest
     steps:
       - name: Ingest signed issue event
@@ -43,7 +45,7 @@ jobs:
               raise SystemExit(1)
           PY
       - name: Close Issue after confirmed D1 ingestion
-        if: ${{ github.event.issue.state == 'open' }}
+        if: ${{ github.event_name == 'issues' && github.event.issue.state == 'open' }}
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}

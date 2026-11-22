@@ -5,6 +5,8 @@ workers_dev = true
 
 [vars]
 GITHUB_REPO = "davidop/academyverso-2026"
+# Keep disabled until migration and live model are validated.
+WORLDGEN_ENABLED = "false"
 ALLOWED_ORIGIN = "https://davidop.github.io"
 
 [[d1_databases]]
