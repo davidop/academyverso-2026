@@ -1,3 +1,4 @@
+import {advanceMission,emptyMissionState,missionProgress} from './missions.mjs';
 import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
 import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
 import {resolvedWorldSpec} from './worlds/spec.mjs';
@@ -104,6 +105,23 @@ new ResizeObserver(resize).observe(viewport);resize();
 const focus=new THREE.Vector3(0,0,0);
 let pointerDown=null,dragging=false,yaw=HOME_ORBIT.yaw,pitch=HOME_ORBIT.pitch,dist=HOME_ORBIT.distance;
 let flight=null,travelMode='galaxy',activeWorldId=null;
+
+let missionState=emptyMissionState();
+function updateMissionUI(){
+ const progress=missionProgress(missionState);
+ $('mission-stars').textContent='★'.repeat(progress.stars)+'☆'.repeat(5-progress.stars);
+ $('mission-progress').textContent=progress.stars+'/5 estrellas · '+progress.visited+'/2 mundos GTA VII · '+progress.points+'/3 descubrimientos';
+}
+function recordMission(event){
+ const next=advanceMission(missionState,event);
+ if(next!==missionState){missionState=next;updateMissionUI();}
+}
+$('mission-reset').addEventListener('click',()=>{
+ missionState=emptyMissionState();updateMissionUI();
+ $('mission-reset').focus({preventScroll:true});
+});
+updateMissionUI();
+
 const statusMessage=message=>{$('travel-status').textContent=message;};
 function updateCamera(){
   camera.position.set(focus.x+Math.sin(yaw)*dist*Math.cos(pitch),
@@ -134,6 +152,7 @@ function finishFlight(){
     $('reset-camera').focus({preventScroll:true});
   }else{
     travelMode='world';
+    if(completed.missionId)recordMission({kind:'world-reached',mission:completed.missionId});
     $('travel-phase').textContent='Destino alcanzado · arrastra para explorar';
     statusMessage('Destino alcanzado: '+completed.worldName+'. Puedes explorar alrededor del planeta o regresar.');
     $('return-home').focus({preventScroll:true});
@@ -154,7 +173,7 @@ function startTravel(obj){
   const to=cameraPoseForWorld({x:target.x,y:target.y,z:target.z},from.eye,world.size);
   activeWorldId=String(obj.issue_number);
   travelMode='travelling';
-  flight={from,to,startedAt:performance.now(),duration:reduced?0:1850,kind:'world',worldName:safe(obj.name)};
+  flight={from,to,startedAt:performance.now(),duration:reduced?0:1850,kind:'world',worldName:safe(obj.name),missionId:terraformMissionFor(obj.description)?.id};
   $('travel-panel').hidden=false;
   $('travel-world').textContent=safe(obj.name);
   $('travel-phase').textContent=reduced?'Destino seleccionado':'En vuelo · preparando aterrizaje';
@@ -222,7 +241,12 @@ renderer.domElement.addEventListener('pointerup',e=>{
  mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;
  raycaster.setFromCamera(mouse,camera);
  const found=raycaster.intersectObjects(clickables)[0];
- if(found)openDetails(found.object.userData.obj,found.object.userData.poi);
+ if(found){
+  const selected=found.object.userData;
+  const mission=terraformMissionFor(selected.obj.description);
+  if(selected.poi&&mission)recordMission({kind:'poi-discovered',mission:mission.id,poi:selected.poi.kind});
+  openDetails(selected.obj,selected.poi);
+ }
 });
 renderer.domElement.addEventListener('pointercancel',e=>{
  activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;dragging=true;
