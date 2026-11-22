@@ -58,3 +58,10 @@
 .world-evolve ol{max-height:145px;overflow-y:auto;padding-left:26px;color:#e2eafa;font-size:12px}
 .world-evolve #world-evolve-status{min-height:23px;color:#baf6e9;overflow-wrap:anywhere}
 #form-status code{display:block;overflow-wrap:anywhere;margin:10px 0;padding:9px;background:#151f32;border:1px solid #6d8baf;border-radius:9px}
+
+
+/* Fictional and local-only GTA VII exploration score */
+.mission-score{margin:12px auto 0;padding:10px 16px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;border:1px solid #627a9d88;border-radius:15px;background:#17243ac9;color:#e4f1fb;font-size:12px;max-width:780px}
+.mission-score-stars{color:#ffde83;font-size:21px;letter-spacing:2px;white-space:nowrap}
+.mission-score button{font-size:11px}
+@media(max-width:700px){.mission-score{margin:10px 14px 0;padding:11px}.mission-score-stars{font-size:18px}}
