@@ -67,6 +67,24 @@
     <section class="credits"><div><strong>Construido con GitHub Mobile</strong><p>Una sesión de David Oliva y Sergio Valverde · AcademyVerso 2026 · 26 de noviembre</p></div><p>Copilot + Claude + Codex: tres agentes, un mismo proyecto.</p></section>
   </main>
   <dialog id="create-dialog" aria-labelledby="dialog-title"><form id="create-form" method="dialog"><button type="button" class="close" id="close-form" aria-label="Cerrar">×</button><p class="eyebrow">MISIÓN EXPLORADOR</p><h2 id="dialog-title">Crea tu objeto cósmico</h2><label>Tu alias<input name="alias" minlength="2" maxlength="28" required placeholder="Comandante Python" autocomplete="nickname" /></label><label>Tipo de objeto<select name="type"><option value="planeta">🪐 Planeta</option><option value="estrella">⭐ Estrella</option><option value="luna">🌙 Luna</option><option value="agujero-negro">🕳️ Agujero negro</option><option value="estacion">🛸 Estación espacial</option><option value="asteroide">☄️ Asteroide</option></select></label><label>Nombre de tu creación<input name="name" minlength="3" maxlength="48" required placeholder="Pythonia" /></label><label>¿Cómo lo imaginas?<textarea name="description" minlength="8" maxlength="280" required placeholder="Un planeta turquesa con tres lunas y anillos de estrellas…"></textarea></label><p class="micro">Con backend conectado se registrará una Issue pública. Mientras tanto, te llevaremos al formulario de GitHub con los campos preparados. Evita datos personales.</p><button class="primary submit" id="submit-object" type="submit">Lanzar al universo 🚀</button><p id="form-status" role="status" aria-live="polite"></p></form></dialog>
-  <dialog id="detail-dialog" aria-labelledby="detail-title"><div class="detail"><button type="button" class="close" id="close-detail" aria-label="Cerrar">×</button><span class="section-tag" id="detail-type"></span><h2 id="detail-title"></h2><p id="detail-description"></p><p id="detail-alias"></p><button id="travel-to-world" type="button" class="primary travel-action" aria-controls="viewport" hidden>🚀 Viajar a este mundo</button><a id="detail-issue" target="_blank" rel="noopener noreferrer">Ver la GitHub Issue ↗</a></div></dialog>
+  <dialog id="detail-dialog" aria-labelledby="detail-title"><div class="detail"><button type="button" class="close" id="close-detail" aria-label="Cerrar">×</button><span class="section-tag" id="detail-type"></span><h2 id="detail-title"></h2><p id="detail-description"></p><p id="detail-alias"></p><button id="travel-to-world" type="button" class="primary travel-action" aria-controls="viewport" hidden>🚀 Viajar a este mundo</button><a id="detail-issue" target="_blank" rel="noopener noreferrer">Ver la GitHub Issue ↗</a>
+      <details id="world-evolve-panel" class="world-evolve" hidden>
+        <summary>✨ Evolucionar este mundo</summary>
+        <p class="micro">Si lo creaste en GitHub Mobile, publica este comando como comentario en tu Issue. Solo el autor puede modificar el mundo.</p>
+        <button id="copy-evolve-command" type="button" class="tiny">Copiar comando de evolución</button>
+        <p class="micro">Si lo creaste desde el formulario web, utiliza la clave privada recibida al crearlo. El formulario puede evolucionar el mundo sin cuenta de GitHub.</p>
+        <form id="world-evolve-form">
+          <label>Clave privada de edición<input id="world-edit-token" type="password" minlength="43" maxlength="43" autocomplete="off" placeholder="Clave de 43 caracteres" required /></label>
+          <label>Nueva instrucción<textarea id="world-evolve-instruction" minlength="8" maxlength="240" required placeholder="Añade dos lunas y una ciudad flotante, conservando sus océanos"></textarea></label>
+          <button type="submit" class="primary">Evolucionar con IA o fallback</button>
+        </form>
+        <p id="world-evolve-status" role="status" aria-live="polite"></p>
+        <button type="button" class="tiny" id="world-history-button">Ver historial de versiones</button>
+        <ol id="world-history-list" aria-label="Versiones del mundo"></ol>
+        <form id="world-rollback-form">
+          <label>Versión anterior<input id="world-rollback-version" type="number" min="1" step="1" required placeholder="1" /></label>
+          <button type="submit" class="tiny">Restaurar versión con clave</button>
+        </form>
+      </details></div></dialog>
 </body>
 </html>
