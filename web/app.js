@@ -1,3 +1,4 @@
+import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
 import {resolvedWorldSpec} from './worlds/spec.mjs';
 import {buildWorld} from './worlds/builder.mjs';
 import {birthProgress,birthScale,createBirthParticles} from './worlds/birth.mjs';
@@ -24,6 +25,7 @@ const emoji={planeta:'🪐',estrella:'⭐',luna:'🌙','agujero-negro':'🕳️'
 const $=id=>document.getElementById(id);
 const safe=s=>String(s??'').trim().slice(0,280);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let quality=initialQuality(navigator.hardwareConcurrency||4,devicePixelRatio||1);
 
 const viewport=$('viewport');
 const scene=new THREE.Scene();
@@ -31,7 +33,7 @@ scene.fog=new THREE.FogExp2(0x11182d,0.004);
 const camera=new THREE.PerspectiveCamera(58,1,.1,2000);
 camera.position.set(0,65,185);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setPixelRatio(pixelRatioFor(quality,devicePixelRatio));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 viewport.innerHTML='';viewport.appendChild(renderer.domElement);
 scene.add(new THREE.AmbientLight(0x859aff,2));
@@ -45,9 +47,9 @@ function makeBody(obj,i){
  const coords=worldPosition(obj,i);
  const mission=terraformMissionFor(obj.description);
  const {spec}=resolvedWorldSpec(obj);
- const {group,size,clickables:targets}=buildWorld(THREE,obj,spec,mission);
+ const {group,size,clickables:targets}=buildWorld(THREE,obj,spec,mission,quality);
  group.position.set(coords.x,coords.y,coords.z);
- for(const mesh of targets){mesh.userData={obj,group};clickables.push(mesh)}
+ for(const mesh of targets){mesh.userData={...mesh.userData,obj,group};clickables.push(mesh)}
  const entry={obj,group,size,targets,baseY:coords.y,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20};
  meshes.push(entry);scene.add(group);return entry;
 }
@@ -65,7 +67,7 @@ function paint(items){
  meshes=[];clickables=[];
  for(let i=0;i<next.length;i++){
   const obj=next[i],id=String(obj.issue_number);
-  const signature=JSON.stringify([obj.type,obj.name,obj.description,obj.world_spec,obj.world_version]);
+  const signature=JSON.stringify([obj.type,obj.name,obj.description,obj.world_spec,obj.world_version,quality]);
   const previous=oldById.get(id);
   if(previous&&previous.signature===signature){
    previous.obj=obj;
@@ -213,7 +215,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
  mouse.x=((e.clientX-b.left)/b.width)*2-1;mouse.y=-((e.clientY-b.top)/b.height)*2+1;
  raycaster.setFromCamera(mouse,camera);
  const found=raycaster.intersectObjects(clickables)[0];
- if(found)openDetails(found.object.userData.obj);
+ if(found)openDetails(found.object.userData.obj,found.object.userData.poi);
 });
 renderer.domElement.addEventListener('pointercancel',e=>{
  activePointers.delete(e.pointerId);pointerDown=null;previousPinchGap=null;dragging=true;
@@ -232,8 +234,18 @@ document.addEventListener('keydown',e=>{
   }
 });
 updateCamera();
+let qualitySampleStart=performance.now(),qualityFrames=0,lastQualityChange=qualitySampleStart;
 function animate(){
   requestAnimationFrame(animate);
+  const sampleNow=performance.now();qualityFrames++;
+  if(sampleNow-qualitySampleStart>=4500){
+    const fps=qualityFrames*1000/(sampleNow-qualitySampleStart);
+    qualityFrames=0;qualitySampleStart=sampleNow;
+    if(sampleNow-lastQualityChange>12000){
+      const next=adaptiveQuality(quality,fps);
+      if(next!==quality){quality=next;renderer.setPixelRatio(pixelRatioFor(quality,devicePixelRatio));resize();suppressBirth=true;paint(objects);suppressBirth=false;lastQualityChange=sampleNow;}
+    }
+  }
   if(flight)advanceFlight(performance.now());
   if(!reduced){
     center.rotation.y+=.001;
@@ -260,7 +272,7 @@ function animate(){
 }animate();
 let renderedSignature=null;
 function refreshUI(){const signature=JSON.stringify(objects);if(signature===renderedSignature)return;renderedSignature=signature;paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
-openDetails=obj=>{const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=safe(obj.name);$('detail-description').textContent=safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+openDetails=(obj,poi=null)=>{const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
 $('close-detail').onclick=()=>$('detail-dialog').close();$('open-form').onclick=()=>$('create-dialog').showModal();$('close-form').onclick=()=>$('create-dialog').close();
 for(const mission of TERRAFORMING_MISSIONS){
   $(mission.id+'-github').href=terraformGitHubUrl(mission.id,REPO);
