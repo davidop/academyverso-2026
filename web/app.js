@@ -1,5 +1,6 @@
 import {resolvedWorldSpec} from './worlds/spec.mjs';
 import {buildWorld} from './worlds/builder.mjs';
+import {birthProgress,birthScale,createBirthParticles} from './worlds/birth.mjs';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
@@ -39,6 +40,7 @@ const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshSta
 const centerHalo=new THREE.Mesh(new THREE.TorusGeometry(21,0.32,8,90),new THREE.MeshBasicMaterial({color:0xbac3ff,transparent:true,opacity:.55}));centerHalo.rotation.x=Math.PI/2.8;scene.add(centerHalo);
 const starsGeo=new THREE.BufferGeometry();const points=[];for(let i=0;i<1300;i++){points.push((Math.random()-.5)*800,(Math.random()-.5)*550,(Math.random()-.5)*900)}starsGeo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:1.25,sizeAttenuation:true,transparent:true,opacity:.75})));
 let meshes=[],clickables=[];const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+let initialWorldPaint=true,firstLiveSync=false,suppressBirth=false;
 function makeBody(obj,i){
  const coords=worldPosition(obj,i);
  const mission=terraformMissionFor(obj.description);
@@ -46,23 +48,46 @@ function makeBody(obj,i){
  const {group,size,clickables:targets}=buildWorld(THREE,obj,spec,mission);
  group.position.set(coords.x,coords.y,coords.z);
  for(const mesh of targets){mesh.userData={obj,group};clickables.push(mesh)}
- meshes.push({obj,group,size,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20});
- scene.add(group);
+ const entry={obj,group,size,targets,baseY:coords.y,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20};
+ meshes.push(entry);scene.add(group);return entry;
+}
+function disposeWorld(m){
+ scene.remove(m.group);
+ m.group.traverse(child=>{
+  child.geometry?.dispose?.();
+  const materials=Array.isArray(child.material)?child.material:[child.material];
+  for(const material of materials)material?.dispose?.();
+ });
 }
 function paint(items){
-  for(const m of meshes){
-    scene.remove(m.group);
-    m.group.traverse(child=>{
-      child.geometry?.dispose?.();
-      const materials=Array.isArray(child.material)?child.material:[child.material];
-      for(const material of materials)material?.dispose?.();
-    });
+ const oldById=new Map(meshes.map(m=>[String(m.obj.issue_number),m]));
+ const next=orderWorlds(items).slice(0,200);
+ meshes=[];clickables=[];
+ for(let i=0;i<next.length;i++){
+  const obj=next[i],id=String(obj.issue_number);
+  const signature=JSON.stringify([obj.type,obj.name,obj.description,obj.world_spec,obj.world_version]);
+  const previous=oldById.get(id);
+  if(previous&&previous.signature===signature){
+   previous.obj=obj;
+   for(const mesh of previous.targets){mesh.userData.obj=obj;clickables.push(mesh)}
+   meshes.push(previous);
+  }else{
+   if(previous)disposeWorld(previous);
+   const created=makeBody(obj,i);created.signature=signature;
+   if(!initialWorldPaint&&!suppressBirth&&!reduced&&!previous){
+    created.birthStartedAt=performance.now();
+    created.group.scale.setScalar(.08);
+    created.birthParticles=createBirthParticles(THREE,created.size,numberHash(id));
+    created.group.add(created.birthParticles);
+   }
   }
-  meshes=[];clickables=[];
-  orderWorlds(items).slice(0,200).forEach((o,i)=>makeBody(o,i));
-  if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
-    returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
-  }
+  oldById.delete(id);
+ }
+ for(const old of oldById.values())disposeWorld(old);
+ initialWorldPaint=false;
+ if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
+  returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
+ }
 }
 function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
 new ResizeObserver(resize).observe(viewport);resize();
@@ -212,7 +237,24 @@ function animate(){
   if(flight)advanceFlight(performance.now());
   if(!reduced){
     center.rotation.y+=.001;
-    meshes.forEach(m=>{m.group.rotation.y+=.0025;m.group.position.y+=Math.sin(performance.now()/1100+m.phase)*.006;});
+    const now=performance.now();
+    meshes.forEach(m=>{
+      m.group.rotation.y+=.0025;
+      m.group.position.y=m.baseY+Math.sin(now/1100+m.phase)*.14;
+      if(m.birthStartedAt!==undefined){
+       const elapsed=now-m.birthStartedAt,t=birthProgress(elapsed);
+       m.group.scale.setScalar(birthScale(elapsed));
+       if(m.birthParticles){
+        m.birthParticles.material.opacity=1-t;
+        m.birthParticles.scale.setScalar(1+t*.5);
+       }
+       if(t===1){
+        m.group.scale.setScalar(1);
+        if(m.birthParticles){m.group.remove(m.birthParticles);m.birthParticles.geometry.dispose();m.birthParticles.material.dispose();m.birthParticles=null;}
+        delete m.birthStartedAt;
+       }
+      }
+    });
   }
   renderer.render(scene,camera);
 }animate();
@@ -237,7 +279,7 @@ document.querySelectorAll('[data-mission]').forEach(button=>button.addEventListe
   $('create-dialog').showModal();
   form.elements.namedItem('alias').focus();
 }));
-async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];refreshUI();$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
+async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];if(!firstLiveSync)suppressBirth=true;refreshUI();firstLiveSync=true;suppressBirth=false;$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
 function draftIssue(status,body,message,redirect=false){
  const url=issueDraftUrl(body,REPO);
  const link=document.createElement('a');
