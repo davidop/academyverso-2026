@@ -2,8 +2,10 @@
 const pi=Math.PI;
 function vecOnSphere(THREE,r,theta,phi){return new THREE.Vector3(Math.sin(theta)*Math.cos(phi),Math.cos(theta),Math.sin(theta)*Math.sin(phi)).multiplyScalar(r)}
 function rand(seed,n){let x=(seed^(n*0x9e3779b9))>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296}
-export function buildWorld(THREE,obj,spec,mission=null){
+export function buildWorld(THREE,obj,spec,mission=null,quality='high'){
  const group=new THREE.Group(),clickables=[],seed=spec.seed>>>0;
+ const detail=quality==='low'?.55:quality==='medium'?.78:1;
+ const sphere=(r,w=32,h=24,...args)=>new THREE.SphereGeometry(r,Math.max(12,Math.round(w*detail)),Math.max(8,Math.round(h*detail)),...args);
  const archetype=spec.archetype,size=archetype==='star'?7:archetype==='station'?4:archetype==='asteroid'?3.7:archetype==='moon'?3.8:6;
  const primary=new THREE.Color(mission?(mission.id==='vice-nebula'?'#EE78B8':'#4EDFC4'):spec.palette.primary);
  const secondary=new THREE.Color(spec.palette.secondary),emissive=new THREE.Color(spec.palette.emissive);
@@ -13,7 +15,7 @@ export function buildWorld(THREE,obj,spec,mission=null){
   const mesh=new THREE.Mesh(geometry,material);parent.add(mesh);if(interactive)clickables.push(mesh);return mesh;
  }
  function glow(radius,color,opacity){
-  add(new THREE.SphereGeometry(radius,24,16),new THREE.MeshBasicMaterial({color,side:THREE.BackSide,transparent:true,opacity,depthWrite:false}));
+  add(sphere(radius,24,16),new THREE.MeshBasicMaterial({color,side:THREE.BackSide,transparent:true,opacity,depthWrite:false}));
  }
  function ring(radius,tube,color,rot=1.12){
   const m=add(new THREE.TorusGeometry(radius,tube,8,64),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72,side:THREE.DoubleSide,depthWrite:false}));
@@ -26,14 +28,14 @@ export function buildWorld(THREE,obj,spec,mission=null){
   base.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal);
   group.add(base);
   if(kind==='volcano'){
-   const cone=add(new THREE.ConeGeometry(.8+size*.03,1.9,9),std('#5D4C5B',{flatShading:true}),base,true);cone.position.y=.7;
-   const lava=add(new THREE.SphereGeometry(.34,10,6),new THREE.MeshBasicMaterial({color:'#FF7045'}),base);lava.position.y=1.6;
+   const cone=add(new THREE.ConeGeometry(.8+size*.03,1.9,9),std('#5D4C5B',{flatShading:true}),base,true);cone.position.y=.7;cone.userData.poi={kind:'volcano',title:'Volcán activo',description:'Estructura volcánica generada de forma procedural para este mundo.'};
+   const lava=add(sphere(.34,10,6),new THREE.MeshBasicMaterial({color:'#FF7045'}),base);lava.position.y=1.6;
   }else if(kind==='floating_city'){
-   const platform=add(new THREE.CylinderGeometry(1.7,1.2,.32,12),std('#3E4C73',{metalness:.72}),base,true);platform.position.y=1.2;
+   const platform=add(new THREE.CylinderGeometry(1.7,1.2,.32,12),std('#3E4C73',{metalness:.72}),base,true);platform.position.y=1.2;platform.userData.poi={kind:'floating_city',title:'Ciudad flotante',description:'Plataforma orbital y edificios ligeros creados a partir de la descripción del mundo.'};
    for(let j=0;j<5;j++){const h=1.05+rand(seed,index*17+j+40)*1.8;const tower=add(new THREE.BoxGeometry(.35,h,.35),std(j%2?'#B1E6F6':'#8F6CB7',{emissive:emissive,emissiveIntensity:.24}),base,true);tower.position.set(Math.cos(j*pi*2/5)*.95,1.4+h/2,Math.sin(j*pi*2/5)*.95)}
    const thruster=add(new THREE.CylinderGeometry(.32,.6,.7,10),new THREE.MeshBasicMaterial({color:emissive}),base);thruster.position.y=.7;
   }else if(kind==='dome'){
-   const dome=add(new THREE.SphereGeometry(1.15,16,10,0,pi*2,0,pi/2),std('#68C5D8',{transparent:true,opacity:.62,side:THREE.DoubleSide,metalness:.45}),base,true);dome.position.y=.1;
+   const dome=add(sphere(1.15,16,10,0,pi*2,0,pi/2),std('#68C5D8',{transparent:true,opacity:.62,side:THREE.DoubleSide,metalness:.45}),base,true);dome.position.y=.1;dome.userData.poi={kind:'dome',title:'Cúpula de la colonia',description:'Cúpula protectora transparente de una colonia futurista.'};
    const edge=add(new THREE.TorusGeometry(1.15,.11,6,28),new THREE.MeshBasicMaterial({color:emissive}),base);edge.rotation.x=pi/2;
   }else if(kind==='forest'){
    for(let j=0;j<6;j++){const tree=add(new THREE.ConeGeometry(.23,.85,5),std(j%2?'#57CEAB':'#53A1B6',{flatShading:true}),base);tree.position.set((rand(seed,index+j+78)-.5)*1.9,.43,(rand(seed,index+j+125)-.5)*1.9)}
@@ -46,9 +48,9 @@ export function buildWorld(THREE,obj,spec,mission=null){
    add(new THREE.BoxGeometry(.22,.4,size*.65),new THREE.MeshBasicMaterial({color:emissive}),wing);
   }
   ring(size*.93,.15,emissive,pi/2);
-  add(new THREE.SphereGeometry(size*.25,20,12),new THREE.MeshBasicMaterial({color:primary}),group,true);
+  add(sphere(size*.25,20,12),new THREE.MeshBasicMaterial({color:primary}),group,true);
  }else if(archetype==='black_hole'){
-  add(new THREE.SphereGeometry(size*.82,28,20),std('#03040D',{metalness:.1,roughness:1}),group,true);
+  add(sphere(size*.82,28,20),std('#03040D',{metalness:.1,roughness:1}),group,true);
   for(let j=0;j<3;j++)ring(size*(1.18+j*.32),.18+j*.035,j%2?primary:emissive,1.08+j*.16);
   glow(size*1.05,emissive,.14);
  }else if(archetype==='star'){
@@ -62,7 +64,7 @@ export function buildWorld(THREE,obj,spec,mission=null){
   geom.computeVertexNormals();
   add(geom,std(primary,{flatShading:true,roughness:1}),group,true);
  }else{
-  const g=new THREE.SphereGeometry(size,32,24).toNonIndexed();
+  const g=sphere(size,32,24).toNonIndexed();
   const positions=g.getAttribute('position'),colors=[];
   const ocean=spec.features.some(f=>f.kind==='ocean'),ice=archetype==='ice';
   const sea=new THREE.Color(ice?'#9CBFD5':'#0B6296');
@@ -77,7 +79,7 @@ export function buildWorld(THREE,obj,spec,mission=null){
   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   add(g,std('#FFFFFF',{vertexColors:true,roughness:archetype==='moon'?.96:.74}),group,true);
   if(archetype==='moon'){
-   for(let j=0;j<6;j++){const normal=vecOnSphere(THREE,size,rand(seed,j+60)*pi,rand(seed,j+90)*2*pi);const crater=add(new THREE.SphereGeometry(.35+rand(seed,j+40)*.45,10,6),std('#5B657D',{roughness:1}),group,true);crater.position.copy(normal.multiplyScalar(1.004))}
+   for(let j=0;j<6;j++){const normal=vecOnSphere(THREE,size,rand(seed,j+60)*pi,rand(seed,j+90)*2*pi);const crater=add(sphere(.35+rand(seed,j+40)*.45,10,6),std('#5B657D',{roughness:1}),group,true);crater.position.copy(normal.multiplyScalar(1.004))}
   }
   if(spec.atmosphere.intensity>.1)glow(size*1.09,spec.atmosphere.color,Math.min(.21,spec.atmosphere.intensity*.33));
  }
@@ -86,7 +88,7 @@ export function buildWorld(THREE,obj,spec,mission=null){
    const count=Math.min(f.count,4);
    if(['volcano','floating_city','dome','forest'].includes(f.kind)){for(let i=0;i<count;i++)pillarSurface(f.kind,i+f.kind.length*10,count)}
    else if(f.kind==='moon'){
-    for(let i=0;i<count;i++){const body=add(new THREE.SphereGeometry(.9+i*.13,12,8),std('#B8C8E2',{roughness:1}),group,true);const a=2*pi*i/count+.3;body.position.set(Math.cos(a)*size*(2.3+i*.17),Math.sin(a*2)*size*.33,Math.sin(a)*size*(2.3+i*.17))}
+    for(let i=0;i<count;i++){const body=add(sphere(.9+i*.13,12,8),std('#B8C8E2',{roughness:1}),group,true);const a=2*pi*i/count+.3;body.position.set(Math.cos(a)*size*(2.3+i*.17),Math.sin(a*2)*size*.33,Math.sin(a)*size*(2.3+i*.17))}
    }else if(f.kind==='ring')ring(size*1.45,.2,secondary);
    else if(f.kind==='aurora')ring(size*1.23,.08,emissive,.9);
    else if(f.kind==='satellite'){
