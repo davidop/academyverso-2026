@@ -19,6 +19,8 @@ jobs:
           node --check web/worlds/spec.mjs
           node --check web/worlds/builder.mjs
           node --check web/worlds/birth.mjs
+          node --check web/worlds/quality.mjs
+          node --test web/test/world-quality.test.mjs
           node --check worker/src/worldgen/foundry.mjs
           node --check worker/src/worldgen/service.mjs
           node --test web/test/world-birth.test.mjs
