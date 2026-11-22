@@ -50,6 +50,8 @@ npx wrangler secret put FOUNDRY_API_KEY
 
 6. Comprobar `GET /api/health` y `GET /api/objects`. Crear una Issue nueva real, verificar estado, spec y versión en D1.
 
+7. Solo cuando el Worker esté listo, habilitar la variable del repositorio GitHub Actions `ACADEMYVERSO_WORLDGEN_ENABLED=true` para aceptar comentarios de evolución. El workflow `issue-to-universe.yml` ignora esos comandos mientras falte o sea distinta de `true`. Para desactivar, quitar la variable y poner el flag Cloudflare a `false`.
+
 ## Evolución y rollback
 
 **GitHub Mobile**: el autor autenticado puede publicar un comentario en su Issue, incluso cerrada:
