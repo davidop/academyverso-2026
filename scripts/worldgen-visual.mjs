@@ -40,6 +40,9 @@ try{
     await page.locator('#cards .body-card').filter({hasText:'Oceania Neon'}).click();
     await page.locator('#travel-to-world').click();
     await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Destino alcanzado'),{timeout:10000});
+    await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('1/5'));
+    await page.locator('#mission-reset').click();
+    await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('0/5'));
     await page.screenshot({path:'artifacts/worldgen/desktop-travel.png',animations:'disabled'});
     await page.locator('#return-home').click();
   }
