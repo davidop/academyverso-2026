@@ -1,3 +1,4 @@
+import {reserveFoundryCall} from './budget.mjs';
 // Evolving and restoring worlds via *authenticated* GitHub Issue comments.
 // The only caller is the Worker after validating GitHub Actions HMAC.
 // No anonymous endpoint is exposed; alias is never an ownership credential.
@@ -58,7 +59,7 @@ export async function evolveWorld(env,issueNumber,instruction,fetcher=fetch){
  const prompt=row.description+'\nEvolution requested by the verified GitHub issue author: '+command.instruction+
   '\nPreserve all existing world features unless the user explicitly requests their removal. The current specification is supplied as reference.';
  let proposed=fallbackWorldSpec({...row,description:row.description+' '+command.instruction}),status='fallback';
- if(env.FOUNDRY_ENDPOINT&&env.FOUNDRY_DEPLOYMENT&&env.FOUNDRY_API_KEY){
+ if(env.FOUNDRY_ENDPOINT&&env.FOUNDRY_DEPLOYMENT&&env.FOUNDRY_API_KEY&&await reserveFoundryCall(env)){
   try{proposed=await requestWorldSpec(env,prompt,current,fetcher);status='ready'}
   catch(error){console.warn('World evolution used procedural fallback',error?.name)}
  }
