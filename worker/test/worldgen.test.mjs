@@ -39,7 +39,7 @@ test('fallback is persisted if the external model fails; ingestion remains succe
  const DB={prepare(sql){return {bind(...params){return {async run(){calls.push({sql,params});return {meta:{changes:1}}}}}}}};
  const res=await generateWorldForIssue({...env,DB,WORLDGEN_ENABLED:'true'},{number:42},{type:'planeta',name:'N',description:'Luna y océano'},async()=>new Response('offline',{status:503}));
  assert.equal(res.status,'fallback');
- assert.equal(calls.length,2);
- assert.ok(calls[1].sql.includes('INSERT INTO world_revisions'));
+ assert.equal(calls.filter(x=>x.sql.includes('INSERT INTO world_revisions')).length,1);
+ assert.ok(calls.some(x=>x.sql.includes('INSERT INTO rates')));
  assert.ok(JSON.parse(calls[0].params[0]).features.length>0);
 });
