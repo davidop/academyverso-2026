@@ -10,14 +10,15 @@ const objects=[
  {issue_number:105,type:'luna',name:'Luna Cristal',alias:'QA-4',description:'Una luna lavanda cubierta de cráteres',issue_url:'https://github.com/davidop/academyverso-2026/issues/4'}
 ];
 await fs.mkdir('artifacts/worldgen',{recursive:true});
-const browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--disable-web-security']});
+const browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl']});
 const failures=[],results=[];
 try{
  for(const viewport of [{width:390,height:844,name:'mobile'},{width:1440,height:900,name:'desktop'}]){
   const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
   page.on('pageerror',err=>failures.push(viewport.name+': '+err.message));
   await page.route('**/api/objects',route=>route.fulfill({json:{objects},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
-  await page.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:false},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await page.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:false,worldgen_enabled:true},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await page.route('**/api/worlds/*/history',route=>route.fulfill({json:{issue_number:102,versions:[{version:1,world_status:'ready',origin:'create',created_at:'2026-11-22 12:00:00'}]},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
   await page.goto(base,{waitUntil:'domcontentloaded'});
   await page.waitForSelector('#viewport canvas',{timeout:20000});
   await page.waitForFunction(()=>document.querySelector('#count')?.textContent==='4',{timeout:20000});
@@ -27,7 +28,22 @@ try{
   await page.screenshot({path:'artifacts/worldgen/'+viewport.name+'.png',fullPage:true,animations:'disabled'});
   const mission=await page.locator('#vice-nebula-count').innerText();
   if(mission.trim()!=='1')throw Error('Mission count '+mission+' is not one');
-  results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim()});
+  await page.locator('#cards .body-card').filter({hasText:'Oceania Neon'}).click();
+  await page.waitForSelector('#detail-dialog[open]');
+  await page.waitForFunction(()=>!document.querySelector('#world-evolve-panel').hidden);
+  await page.locator('#world-evolve-panel summary').click();
+  await page.locator('#world-history-button').click();
+  await page.waitForFunction(()=>document.querySelector('#world-history-list')?.textContent.includes('Versión 1'));
+  await page.screenshot({path:'artifacts/worldgen/'+viewport.name+'-detail.png',animations:'disabled'});
+  await page.locator('#close-detail').click();
+  if(viewport.name==='desktop'){
+    await page.locator('#cards .body-card').filter({hasText:'Oceania Neon'}).click();
+    await page.locator('#travel-to-world').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Destino alcanzado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/desktop-travel.png',animations:'disabled'});
+    await page.locator('#return-home').click();
+  }
+  results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested'});
   await page.close();
  }
  if(failures.length)throw Error(failures.join('; '));
