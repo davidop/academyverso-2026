@@ -16,8 +16,8 @@ try{
  for(const viewport of [{width:390,height:844,name:'mobile'},{width:1440,height:900,name:'desktop'}]){
   const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height},deviceScaleFactor:1});
   page.on('pageerror',err=>failures.push(viewport.name+': '+err.message));
-  await page.route('**/api/objects',route=>route.fulfill({json:{objects},status:200}));
-  await page.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:false},status:200}));
+  await page.route('**/api/objects',route=>route.fulfill({json:{objects},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await page.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:false},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
   await page.goto(base,{waitUntil:'domcontentloaded'});
   await page.waitForSelector('#viewport canvas',{timeout:20000});
   await page.waitForFunction(()=>document.querySelector('#count')?.textContent==='4',{timeout:20000});
