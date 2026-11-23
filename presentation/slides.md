@@ -41,6 +41,54 @@ transition: fade
 transition: slide-left
 ---
 
+<div class="kicker">07 · TU PRIMERA CONTRIBUCIÓN</div>
+<div class="headline">Escanea. Imagina.<br><span class="gradient">Crea tu planeta.</span></div>
+<div class="qr-layout">
+ <QrPortal url="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml" label="CREAR OBJETO EN GITHUB"/>
+ <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta usa un Cloudflare Worker. Abrir el escenario deseado desde la portada rellena la misión y su marcador.</small></div>
+</div>
+
+<!-- Sergio facilita el QR. David revisa las Issues reales. Una Issue sí se crea aunque aún no esté desplegado el Worker. -->
+
+---
+transition: slide-left
+---
+
+<div class="kicker">08 · EL PROMPT ES TU IMAGINACIÓN</div>
+<div class="headline">¿Qué mundo<br><span class="mint">quieres inventar?</span></div>
+<div class="prompt-example"><div class="prompt-tag">🪐 NUEVA ISSUE · PLANETA</div><div class="prompt-text">«Quiero un planeta <b>violeta</b> con anillos de cristal, <b>tres lunas</b> y tormentas eléctricas. Se llama <b>Neón-42</b> y mi alias es <b>Comandante Pixel</b>».</div><div class="prompt-footer">TIPO · PLANETA　 |　 ALIAS · COMANDANTE PIXEL　 |　 ISSUE · TRAZABLE</div></div>
+
+<!-- David pide al público una propuesta divertida. Sergio muestra la estructura de una Issue. -->
+
+---
+transition: slide-left
+---
+
+<div class="kicker">MISIÓN PARTICIPATIVA · EL PÚBLICO DECIDE</div>
+<div class="headline compact">Cada persona crea un mundo.<br><span class="gradient">Elegiremos dos para conectarlos.</span></div>
+<div class="gta-vote">
+ <div class="gta-choice vice" v-click><span class="gta-choice-icon">🌆</span><small>RUTA A · METRÓPOLIS</small><h2>VICE NEBULA</h2><p>Neón, avenidas flotantes y vehículos antigravedad.</p></div>
+ <div class="gta-choice sentinel" v-click><span class="gta-choice-icon">🛰️</span><small>RUTA B · COLONIA</small><h2>COLONIA CENTINELA</h2><p>Cúpulas espaciales, drones de rescate y rutas seguras.</p></div>
+</div>
+<div class="gta-bottom"><a class="action-link" href="https://davidop.github.io/academyverso-2026/#grand-terraforming-agents" target="_blank">ABRIR MISIÓN EN DIRECTO ↗</a><span>Vice Nebula y Centinela son ejemplos. Al final seleccionaremos dos mundos registrados por asistentes; los contadores no equivalen a votos únicos.</span></div>
+
+<!-- Sergio enseña dos opciones en la web. David pide al público crear un planeta desde el formulario o GitHub Mobile. El recuento se alimenta de D1; nunca simular participación. -->
+
+---
+transition: fade
+---
+
+<div class="kicker">09 · ACADEMYVERSO 3D</div>
+<div class="headline compact">Un universo<br><span class="gradient">que conectaremos con un portal.</span></div>
+<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/#universe" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
+<div class="live-note">Datos desde Cloudflare D1. Las nuevas Issues pueden tardar por la cola de GitHub Actions; verificar la URL y el estado real durante la demo.</div>
+
+<!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
+
+---
+transition: slide-left
+---
+
 <div class="kicker">01 · LA IDEA</div>
 <div class="headline">No vamos a hablar de IA.<br><span class="gradient">Vamos a ponerla a trabajar.</span></div>
 <div class="two-up" style="margin-top:60px">
@@ -124,54 +172,6 @@ transition: fade
 
 <!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. -->
 
-
----
-transition: slide-left
----
-
-<div class="kicker">MISIÓN PARTICIPATIVA · EL PÚBLICO DECIDE</div>
-<div class="headline compact">Cada persona crea un mundo.<br><span class="gradient">Elegiremos dos para conectarlos.</span></div>
-<div class="gta-vote">
- <div class="gta-choice vice" v-click><span class="gta-choice-icon">🌆</span><small>RUTA A · METRÓPOLIS</small><h2>VICE NEBULA</h2><p>Neón, avenidas flotantes y vehículos antigravedad.</p></div>
- <div class="gta-choice sentinel" v-click><span class="gta-choice-icon">🛰️</span><small>RUTA B · COLONIA</small><h2>COLONIA CENTINELA</h2><p>Cúpulas espaciales, drones de rescate y rutas seguras.</p></div>
-</div>
-<div class="gta-bottom"><a class="action-link" href="https://davidop.github.io/academyverso-2026/#grand-terraforming-agents" target="_blank">ABRIR MISIÓN EN DIRECTO ↗</a><span>Vice Nebula y Centinela son ejemplos. Al final seleccionaremos dos mundos registrados por asistentes; los contadores no equivalen a votos únicos.</span></div>
-
-<!-- Sergio enseña dos opciones en la web. David pide al público crear un planeta desde el formulario o GitHub Mobile. El recuento se alimenta de D1; nunca simular participación. -->
-
----
-transition: slide-left
----
-
-<div class="kicker">07 · TU PRIMERA CONTRIBUCIÓN</div>
-<div class="headline">Escanea. Imagina.<br><span class="gradient">Crea tu planeta.</span></div>
-<div class="qr-layout">
- <QrPortal url="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml" label="CREAR OBJETO EN GITHUB"/>
- <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta usa un Cloudflare Worker. Abrir el escenario deseado desde la portada rellena la misión y su marcador.</small></div>
-</div>
-
-<!-- Sergio facilita el QR. David revisa las Issues reales. Una Issue sí se crea aunque aún no esté desplegado el Worker. -->
-
----
-transition: slide-left
----
-
-<div class="kicker">08 · EL PROMPT ES TU IMAGINACIÓN</div>
-<div class="headline">¿Qué mundo<br><span class="mint">quieres inventar?</span></div>
-<div class="prompt-example"><div class="prompt-tag">🪐 NUEVA ISSUE · PLANETA</div><div class="prompt-text">«Quiero un planeta <b>violeta</b> con anillos de cristal, <b>tres lunas</b> y tormentas eléctricas. Se llama <b>Neón-42</b> y mi alias es <b>Comandante Pixel</b>».</div><div class="prompt-footer">TIPO · PLANETA　 |　 ALIAS · COMANDANTE PIXEL　 |　 ISSUE · TRAZABLE</div></div>
-
-<!-- David pide al público una propuesta divertida. Sergio muestra la estructura de una Issue. -->
-
----
-transition: fade
----
-
-<div class="kicker">09 · ACADEMYVERSO 3D</div>
-<div class="headline compact">Un universo<br><span class="gradient">que conectaremos con un portal.</span></div>
-<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/#universe" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
-<div class="live-note">Datos desde Cloudflare D1. Las nuevas Issues pueden tardar por la cola de GitHub Actions; verificar la URL y el estado real durante la demo.</div>
-
-<!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
 
 ---
 transition: slide-left
