@@ -47,6 +47,20 @@ try{
     await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('0/5'));
     await page.screenshot({path:'artifacts/worldgen/desktop-travel.png',animations:'disabled'});
     await page.locator('#return-home').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-panel')?.hidden===true,{timeout:10000});
+    await page.locator('#portal-source').selectOption('102');
+    await page.locator('#portal-target').selectOption('103');
+    await page.locator('#portal-launch').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/desktop-portal.png',animations:'disabled'});
+    await page.locator('#return-home').click();
+  }else{
+    await page.locator('#portal-source').selectOption('102');
+    await page.locator('#portal-target').selectOption('103');
+    await page.locator('#portal-launch').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/mobile-portal.png',animations:'disabled'});
+    await page.locator('#return-home').click();
   }
   results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested'});
   await page.close();
