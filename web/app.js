@@ -92,7 +92,7 @@ function makePortalGate(world,color){
   gate.add(new THREE.Points(geometry,new THREE.PointsMaterial({color,size:.38,transparent:true,opacity:.88,depthWrite:false})));
  }
  gate.position.copy(world.group.position);
- gate.position.x+=world.size*1.5;
+ gate.position.x+=world.size*.75;
  gate.position.y+=world.size*.25;
  scene.add(gate);portalArt.push(gate);
 }
