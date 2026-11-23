@@ -56,6 +56,21 @@
     <section id="universe" class="space-section" aria-label="Universo tridimensional interactivo">
       <div class="space-toolbar"><div><span class="section-tag">GALAXIA COLECTIVA</span><h2>Explora el AcademyVerso</h2></div><div class="counters"><div><strong id="count">0</strong><span>objetos</span></div><div><strong id="explorers">0</strong><span>exploradores</span></div></div></div>
       <div id="viewport" role="img" aria-label="Vista 3D interactiva del universo creado por asistentes; arrastra para rotar y usa la rueda para acercarte"><div id="fallback-text">Preparando el universo…</div></div>
+      <section id="portal-control" class="portal-control" aria-labelledby="portal-title">
+        <div class="portal-heading">
+          <div><span class="eyebrow">✨ MISIÓN EN DIRECTO · COPILOT → CLAUDE → CODEX</span><h3 id="portal-title">Portal interdimensional</h3><p>Elige dos mundos creados por la comunidad y atraviesa el puente entre ambos.</p></div>
+          <span id="portal-mode" class="portal-mode">Comprobando datos…</span>
+        </div>
+        <div class="portal-fields">
+          <label for="portal-source">Mundo de origen<select id="portal-source" aria-label="Seleccionar mundo de origen"></select></label>
+          <span class="portal-direction" aria-hidden="true">✦ → ✦</span>
+          <label for="portal-target">Mundo de destino<select id="portal-target" aria-label="Seleccionar mundo de destino"></select></label>
+          <button id="portal-swap" type="button" class="tiny" aria-label="Intercambiar mundos">⇄ Intercambiar</button>
+          <button id="portal-launch" type="button" class="primary" aria-controls="viewport" disabled>Activar portal ✦</button>
+        </div>
+        <p id="portal-feedback" role="status" aria-live="polite">Selecciona dos mundos para iniciar el viaje.</p>
+        <p class="micro">Si no hay conexión, se mostrarán exclusivamente los objetos de ejemplo identificados como modo demostración. El portal no crea nuevas Issues ni modifica D1.</p>
+      </section>
       <div id="travel-panel" class="travel-panel" hidden>
         <div><span class="eyebrow">🚀 VIAJE INTERPLANETARIO</span><strong id="travel-world"></strong><span id="travel-phase">En ruta</span></div>
         <button id="return-home" type="button" class="primary" aria-controls="viewport">↩ Regresar a la galaxia</button>
