@@ -25,6 +25,8 @@ try{
   const canvas=await page.locator('#viewport canvas').evaluate(el=>({width:el.width,height:el.height}));
   if(canvas.width<100||canvas.height<100)throw Error('WebGL canvas too small');
   await page.waitForTimeout(1500);
+  if(!await page.locator('#portal-launch').isEnabled())throw Error('Portal should be enabled for 4 distinct worlds');
+  if(await page.locator('#portal-source option').count()!==4)throw Error('Portal source choices mismatch');
   await page.screenshot({path:'artifacts/worldgen/'+viewport.name+'.png',fullPage:true,animations:'disabled'});
   const mission=await page.locator('#vice-nebula-count').innerText();
   if(mission.trim()!=='1')throw Error('Mission count '+mission+' is not one');
