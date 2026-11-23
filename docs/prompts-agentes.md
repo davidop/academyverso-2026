@@ -1,37 +1,94 @@
-# Prompts para GitHub Mobile — GTA VII: Grand Terraforming Agents
+# Prompts para GitHub Mobile — portal interdimensional AcademyVerso
 
-> **El núcleo de creación de mundos funciona ya**: Issues → Worker/D1 → objetos en Three.js. Los escenarios son un concepto de diseño y un marcador en las descripciones, **no un videojuego completo**. Cada tarea siguiente se debe abrir en un agente sobre una rama actualizada, revisar como PR y fusionar tras CI.
+**Charla:** 26/11/2026 · David Oliva + Sergio Valverde · público mixto 25–50 personas.  
+**Objetivo:** una misión evolutiva, no tres tareas independientes: Copilot construye → Claude enriquece → Codex verifica. El público aporta dos mundos por GitHub Issue.
 
-## 1. Copilot — mejorar el viaje 3D ya integrado
+> No atribuir a los agentes la referencia preparada en [PR #22](https://github.com/davidop/academyverso-2026/pull/22) ni las PR de respaldo #23–#25: estas son de ChatGPT. Para demostrar ejecución de los coding agents, usar sesiones y PR **nuevas, reales y rastreables**.
 
-```text
-Trabaja sobre davidop/academyverso-2026 en una rama nueva desde main. La PR #9 ya integró «Viajar a este mundo» como implementación de referencia ChatGPT, no de Copilot. Mejora la **selección del destino por teclado** y el feedback de viaje sin duplicar la lógica; conserva los cálculos de web/travel.mjs y el botón «Regresar». No alteres Worker, D1 ni la creación de Issues. Soporta teclado, touch, prefers-reduced-motion y un universo vacío. Añade pruebas de funciones puras cuando sea posible. Abre PR con capturas y riesgos; no hagas merge automáticamente.
-```
+## Prerrequisitos y rama de seguridad
 
-**Aceptar si:** el viaje existe de verdad, el usuario puede volver, la escena con cero objetos no falla y el PR detalla sus pruebas. El código preparado como respaldo en la rama de Fase 1 es una implementación de referencia de ChatGPT; **no debe atribuirse a una ejecución de GitHub Copilot**.
+1. Probar en ambos teléfonos el acceso a **GitHub Mobile**, al repositorio y a las herramientas de agentes. No confundir **modelo Claude** en selector con **Claude coding agent**, ni modelo OpenAI con **Codex coding agent**.
+2. Usar **`demo/portal-seed-26nov`** como rama base de la demostración, creada antes de integrar el portal en `main`. No dar permisos a los agentes para aplicar cambios directamente en producción.
+3. Cada agente debe abrir una **PR dirigida a la rama de demo**, revisar diff y checks antes de integrarla; la siguiente misión hereda exactamente el resultado anterior.
+4. En cualquier momento se puede abandonar la cadena de código en la rama aislada y utilizar el portal estable ya probado en `main`. Indicar cuándo se muestra una referencia preparada.
 
-## 2. Claude Code — dar vida visual al escenario
+## 1 · Copilot — construir (15:15–15:23)
 
-```text
-Sobre main tras integrar el PR de Copilot, añade un ambiente de ciencia ficción independiente a los dos escenarios de Grand Terraforming Agents: luces neón para Vice Nebula, tonalidades turquesa para Colonia Centinela, efectos ligeros sin assets ajenos y sin reutilizar material de GTA/Rockstar. Optimiza móvil, accesibilidad, contraste y prefers-reduced-motion. No inventes un sistema de juego que no exista, ni reescribas el backend. Presenta cambios en un PR separable.
-```
-
-**Aceptar si:** FPS, uso de memoria, lectura de textos y versión móvil son razonables; nunca bloquear el render por animaciones adicionales.
-
-## 3. Codex — evaluar, proteger y documentar
+**[Issue #26](https://github.com/davidop/academyverso-2026/issues/26)** · [Respaldo #23](https://github.com/davidop/academyverso-2026/pull/23)
 
 ```text
-Sobre main una vez integrado el PR visual, revisa Grand Terraforming Agents: validación del marcador, URL de GitHub Mobile, recuento de objetos reales, escenarios desconocidos, objetos sin misión, viaje y soporte reduced-motion. Añade tests automatizados deterministas con node --test, ejecuta CI y comprueba regresión de la creación desde formulario. No afirmes que una prueba ha pasado sin logs reales; abre un PR con checklist de validación y hallazgos.
+Somos dos ponentes de AcademyVerso 2026 y dirigimos esta tarea desde GitHub Mobile.
+Trabaja en davidop/academyverso-2026, crea una rama a partir de
+demo/portal-seed-26nov y abre una PR contra esa rama (nunca main).
+
+El público ha creado planetas mediante Issues reales. Construye un portal
+interdimensional Three.js que permita elegir DOS mundos distintos ya existentes,
+con selector origen/destino legible en móvil y un viaje de cámara suave entre
+ambos. No inventes contribuciones; si D1 tiene menos de dos mundos, desactiva
+el portal. Con modo demo muestra claramente que son ejemplos.
+Conserva la navegación, botón de regreso, teclado, formulario, Issue URLs,
+accesibilidad, y prefers-reduced-motion (salto inmediato).
+No cambies Worker, D1, Foundry, claves ni configuración de despliegue.
+Añade tests deterministas para selección y ruta; documenta lo ejecutado.
+Abre PR para revisión humana, sin fusionar automáticamente.
 ```
 
-**Aceptar si:** CI verde y PR con evidencia; las métricas no se confunden con votos únicos.
+**Qué enseñar al público:** Issue real, agente real trabajando, diff propuesto, revisión humana. Si no termina, anunciar explícitamente «Vamos a utilizar nuestra referencia preparada con ChatGPT» y pasar a #23.
 
-## Cómo presentarlo
+## 2 · Claude — enriquecer (15:23–15:31)
 
-1. Sergio muestra un planeta enviado desde el móvil y explica cómo llega a D1.
-2. David abre una sesión del agente de programación en GitHub (no solo un selector de modelo) y delega la tarea 1.
-3. Tras revisar el resultado, Sergio mejora el aspecto con Claude Code, **si la integración está habilitada**.
-4. Codex añade pruebas y observaciones en PR separado. Los tiempos de ejecución no se garantizan.
-5. Enseñar el resultado **solo si el código se integró**; si no, usar PRs de respaldo etiquetados como tales.
+**[Issue #27](https://github.com/davidop/academyverso-2026/issues/27)** · [Respaldo #24](https://github.com/davidop/academyverso-2026/pull/24)
 
-Misión comunitaria y requisitos funcionales: [grand-terraforming-agents.md](grand-terraforming-agents.md).
+```text
+Parte del resultado que acaba de dejar Copilot en la rama
+demo/portal-seed-26nov o del respaldo #23 declarado como tal.
+NO vuelvas a implementar el portal desde cero.
+
+Dale personalidad cinematográfica: dos anillos energéticos diferenciados,
+destellos y partículas ligeras, estética espacial original y un tránsito
+legible. Mantén buen contraste de textos, targets táctiles, reduced-motion,
+LOD básico y compatibilidad con móvil. Evita recursos protegidos de GTA,
+modelos remotos, efectos de alto consumo y cambios en Worker/D1.
+Entrega antes/después con capturas auténticas y PR revisable que compare
+contra la misma rama de ensayo. No atribuyas una referencia preparada
+a una sesión Claude que no haya ocurrido.
+```
+
+**Qué enseñar:** antes/después del código de la fase 1 en la misma rama. Si no hay acceso a Claude partner agent, explicarlo sin confundirlo con un modelo de Copilot, y enseñar #24 como respaldo.
+
+## 3 · Codex — verificar (15:31–15:40)
+
+**[Issue #28](https://github.com/davidop/academyverso-2026/issues/28)** · [Respaldo #25](https://github.com/davidop/academyverso-2026/pull/25)
+
+```text
+Parte de la rama demo que conserva los cambios de Copilot y Claude
+o sus respaldos declarados. Valida el portal y abre una PR con los tests.
+
+Comprobar: cero mundos, uno, duplicados, origen=destino, ID desaparecido
+durante el polling de D1, selección estable, viaje en tres fases, llegada,
+regreso en mitad del vuelo, prefers-reduced-motion, accesibilidad de controles
+y sin fugas de geometrías Three.js. Añade tests de funciones puras y un
+smoke Playwright/WebGL en viewport Android y escritorio, si el entorno permite
+ejecutarlo. Con 50 objetos sintéticos no confundas stress con participación
+real ni inventes FPS de dispositivos físicos. En la PR enlaza los logs reales
+de GitHub Actions y registra lo que NO se ha validado.
+No toques Worker, secretos ni rama main. Revisión antes de merge.
+```
+
+**Qué enseñar:** test añadido, ejecución real en Actions, diff/observaciones y un fallo corregido si aparece.
+
+## Cómo alternan David y Sergio
+
+- **David** introduce Copilot y ejecuta la misión 1; **Sergio** cuenta qué va cambiando en la Issue y controla Slidev.
+- **Sergio** lanza la fase Claude y explica el antes/después; **David** compara los efectos en AcademyVerso.
+- **David** inicia Codex y explica seguridad/calidad; **Sergio** abre Actions y muestra las evidencias.
+- En cada fase intercambiar roles durante algunos minutos y dejar claro quién ejecuta móvil y quién narra.
+
+## Políticas de contingencia
+
+**Límite de decisión:** 15:23, 15:31, 15:40; no esperar indefinidamente.  
+**Respaldo en orden:** #23 → #24 → #25. PRs apiladas contra `demo/portal-seed-26nov`; al usar respaldo, comprobar primero base, conflictos y CI. La versión de escena estable puede enseñarse desde `main` independientemente de las ramas de ensayo.  
+**Panel Slidev MissionBoard:** estado operado manualmente; «VERIFICADA» solo con un enlace o log auténtico.  
+**Backend:** Foundry opcional y desactivado por defecto; crear y mostrar aportaciones requiere Worker/D1. Sin integración real, no prometer sincronización instantánea.
+
+Guion: [55 minutos](guion-demo.md) · [GO/NO-GO](runbook-go-no-go-26nov.md) · [Activar agentes](activar-agentes.md).
