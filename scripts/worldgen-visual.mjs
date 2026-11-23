@@ -25,6 +25,8 @@ try{
   const canvas=await page.locator('#viewport canvas').evaluate(el=>({width:el.width,height:el.height}));
   if(canvas.width<100||canvas.height<100)throw Error('WebGL canvas too small');
   await page.waitForTimeout(1500);
+  if(!await page.locator('#portal-launch').isEnabled())throw Error('Portal should be enabled for 4 distinct worlds');
+  if(await page.locator('#portal-source option').count()!==4)throw Error('Portal source choices mismatch');
   await page.screenshot({path:'artifacts/worldgen/'+viewport.name+'.png',fullPage:true,animations:'disabled'});
   const mission=await page.locator('#vice-nebula-count').innerText();
   if(mission.trim()!=='1')throw Error('Mission count '+mission+' is not one');
@@ -45,6 +47,20 @@ try{
     await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('0/5'));
     await page.screenshot({path:'artifacts/worldgen/desktop-travel.png',animations:'disabled'});
     await page.locator('#return-home').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-panel')?.hidden===true,{timeout:10000});
+    await page.locator('#portal-source').selectOption('102');
+    await page.locator('#portal-target').selectOption('103');
+    await page.locator('#portal-launch').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/desktop-portal.png',animations:'disabled'});
+    await page.locator('#return-home').click();
+  }else{
+    await page.locator('#portal-source').selectOption('102');
+    await page.locator('#portal-target').selectOption('103');
+    await page.locator('#portal-launch').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/mobile-portal.png',animations:'disabled'});
+    await page.locator('#return-home').click();
   }
   results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested'});
   await page.close();
@@ -64,6 +80,36 @@ try{
   console.warn('Nonblocking baseline capture unavailable:',error.message);
   results.push({baseline:'main-production',captured:false});
  }
+
+ // Portal safety in low-data situations: NEVER manufacture two audience worlds.
+ for(const [label,subset] of [['empty',[]],['single',[objects[0]]]]){
+  const edge=await browser.newPage({viewport:{width:390,height:844}});
+  edge.on('pageerror',err=>failures.push(label+': '+err.message));
+  await edge.route('**/api/objects',route=>route.fulfill({json:{objects:subset},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await edge.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:true},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+  await edge.goto(base,{waitUntil:'domcontentloaded'});
+  await edge.waitForFunction(n=>document.querySelector('#count')?.textContent===String(n),subset.length,{timeout:20000});
+  if(await edge.locator('#portal-launch').isEnabled())throw Error('Portal enabled with '+subset.length+' worlds');
+  if(!((await edge.locator('#portal-feedback').innerText()).includes('al menos dos')))throw Error('Missing accessible empty-state feedback');
+  results.push({case:label,portalDisabled:true});
+  await edge.close();
+ }
+ // Reduced-motion users can reach the same destination without animated flight.
+ const accessible=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+ accessible.on('pageerror',err=>failures.push('reduced: '+err.message));
+ await accessible.route('**/api/objects',route=>route.fulfill({json:{objects},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+ await accessible.route('**/api/health',route=>route.fulfill({json:{ok:true,database_connected:true,create_enabled:true},status:200,headers:{'access-control-allow-origin':'*','content-type':'application/json'}}));
+ await accessible.goto(base,{waitUntil:'domcontentloaded'});
+ await accessible.waitForFunction(()=>document.querySelector('#count')?.textContent==='4',{timeout:20000});
+ await accessible.locator('#portal-source').selectOption('102');
+ await accessible.locator('#portal-target').selectOption('103');
+ await accessible.locator('#portal-launch').click();
+ await accessible.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:5000});
+ if(await accessible.locator('#viewport').evaluate(el=>el.classList.contains('travelling')))throw Error('Reduced motion should never animate the portal');
+ await accessible.locator('#return-home').click();
+ await accessible.waitForFunction(()=>document.querySelector('#travel-panel')?.hidden===true,{timeout:5000});
+ results.push({case:'reduced-motion',instantArrivalAndReturn:true});
+ await accessible.close();
 
  const crowd=Array.from({length:50},(_,i)=>({...objects[i%objects.length],issue_number:2000+i,name:'Objeto de ensayo '+(i+1)}));
  const stress=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});

@@ -37,6 +37,8 @@ jobs:
           node --test web/test/terraforming.test.mjs
           node --check web/travel.mjs
           node --test web/test/travel.test.mjs
+          node --check web/portal.mjs
+          node --test web/test/portal.test.mjs
           node --test web/test/session-links.test.mjs
           node --test worker/test/issue-prefill.test.mjs
           python -m py_compile scripts/event-smoke.py
@@ -66,3 +68,18 @@ jobs:
           name: academyverso-worldgen-screenshots
           path: artifacts/worldgen
           if-no-files-found: warn
+
+  slidev-build:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - name: Install Slidev dependencies
+        working-directory: presentation
+        run: npm install --no-audit --no-fund
+      - name: Build presentation exactly as GitHub Pages will
+        working-directory: presentation
+        run: npm run build

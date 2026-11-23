@@ -1,105 +1,104 @@
-# AcademyVerso 2026 · Runbook GO / NO-GO
+# AcademyVerso 2026 · GO/NO-GO operativo — 26 de noviembre
 
-**Evento:** jueves 26 de noviembre de 2026 · 15:00–15:55 (Europe/Madrid)
-**Enlace maestro:** [https://davidop.github.io/academyverso-2026/sesion.html](https://davidop.github.io/academyverso-2026/sesion.html)
-**Ponentes:** David Oliva y Sergio Valverde
-**Título oficial:** Programa con IA desde tu móvil: GitHub Copilot, Claude y Codex
+**Evento:** jueves 26 de noviembre de 2026, 15:00–15:55 (Europe/Madrid)  
+**Ponentes:** David Oliva + Sergio Valverde  
+**Público:** 25–50 asistentes, perfiles técnicos y no técnicos  
+**Objetivo:** el público crea mundos desde el móvil; los ponentes utilizan GitHub Mobile para dirigir tres agentes sobre un portal que conecta dos mundos, con resultados y responsabilidades trazables.
 
-> Documento operativo, no acta de pruebas completadas. Actualizar cada casilla con URL/captura/log auténticos antes de marcarla. La aplicación publicada en `main` es la versión estable hasta que una PR supere revisión, checks y ensayo en dispositivos.
+> Documento operativo; ninguna casilla vacía implica prueba completada. **El código generado por ChatGPT para referencias de respaldo NO se atribuye a GitHub Copilot, Claude ni Codex.** Slidev MissionBoard solo informa estados introducidos manualmente.
 
-## 0. Estado verificado al 22/11/2026
+## 1. Entregables y evidencias de GitHub
 
-| Elemento | Evidencia | Estado |
+| Entregable | Enlace | Interpretación |
 |---|---|---|
-| GitHub Actions CI de `main` | [Run 44955212122](https://github.com/davidop/academyverso-2026/actions/runs/44955212122) | Verde (última ejecución de `main` observada) |
-| Publicación GitHub Pages | [Run 44955212123](https://github.com/davidop/academyverso-2026/actions/runs/44955212123) | Workflow completado; prueba visual actual pendiente |
-| Ingesta firmada Vice Nebula | [Issue #10](https://github.com/davidop/academyverso-2026/issues/10) · [Run 44960074451](https://github.com/davidop/academyverso-2026/actions/runs/44960074451) | HTTP 200 + cierre automático |
-| Ingesta firmada Colonia Centinela | [Issue #11](https://github.com/davidop/academyverso-2026/issues/11) · [Run 44960081404](https://github.com/davidop/academyverso-2026/actions/runs/44960081404) | HTTP 200 + cierre automático |
-| Viaje 3D | [PR #9 fusionada](https://github.com/davidop/academyverso-2026/pull/9) · [CI](https://github.com/davidop/academyverso-2026/actions/runs/44965573236) | Integrado en main y desplegado en Pages; prueba visual de móvil pendiente |
-| Presentación visual renovada | [PR #1](https://github.com/davidop/academyverso-2026/pull/1) | Draft con conflictos; no reemplazar slides estables sin revisión |
-| Sesiones reales de Copilot/Claude/Codex | [Guía](activar-agentes.md) | **No verificadas** en GitHub Mobile |
-| Dispositivos, proyector, QR y Wi-Fi | — | **No probados** en sala |
+| Portal Three.js + Slidev y documentación | [PR #22](https://github.com/davidop/academyverso-2026/pull/22) | Integración de referencia desarrollada con ChatGPT; revisar CI y merge a main antes del evento |
+| Rama sin portal de partida | [demo/portal-seed-26nov](https://github.com/davidop/academyverso-2026/tree/demo/portal-seed-26nov) | Aislamiento para misiones reales, sin tocar producción |
+| Copilot construir | [Issue #26](https://github.com/davidop/academyverso-2026/issues/26) · [Backup PR #23](https://github.com/davidop/academyverso-2026/pull/23) | Backup escrito por ChatGPT |
+| Claude enriquecer | [Issue #27](https://github.com/davidop/academyverso-2026/issues/27) · [Backup PR #24](https://github.com/davidop/academyverso-2026/pull/24) | Backup escrito por ChatGPT |
+| Codex verificar | [Issue #28](https://github.com/davidop/academyverso-2026/issues/28) · [Backup PR #25](https://github.com/davidop/academyverso-2026/pull/25) | Backup escrito por ChatGPT |
+| Renderizador WorldGen | [PR #19 ya fusionada](https://github.com/davidop/academyverso-2026/pull/19) | Fallback procedural, no prueba de Foundry live |
+| Ingesta de ensayo | [Issue #10](https://github.com/davidop/academyverso-2026/issues/10) y [#11](https://github.com/davidop/academyverso-2026/issues/11) | Dos objetos reales del equipo, no asistentes ni demostración de origen GitHub Mobile |
+| GitHub CI principal | [Actions](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml) | Consultar último SHA/resultado antes del GO |
+| Pages + preflight | [Pages](https://github.com/davidop/academyverso-2026/actions/workflows/pages.yml) · [Preflight](https://github.com/davidop/academyverso-2026/actions/workflows/event-preflight.yml) | Consultar ejecución asociada al SHA fusionado |
 
-Los objetos #10/#11 son **ensayos del equipo**, no votos de asistentes. El pipeline confirma ingesta, pero no demuestra que la Issue se originara desde GitHub Mobile.
+## 2. Lunes 23 · Entrega técnica
 
-## 1. Secuencia de cierre
+- [x] Definidas diez decisiones con misión colaborativa, tiempos y respaldo.
+- [x] Creados Issues de los tres agentes con prompts verificables.
+- [x] Creadas PR preparadas #23–#25 y rama de ensayo separada (no son ejecuciones de agentes).
+- [ ] Revisar y fusionar PR #22 **solo si** pasan CI Node, navegador WebGL escritorio/móvil y compilación Slidev.
+- [ ] Publicar y comprobar la nueva versión de GitHub Pages; registrar SHA del despliegue.
+- [ ] Verificar en web el selector de dos mundos y el portal con datos actuales de Worker/D1.
 
-### Domingo 22 · Integración candidata
+## 3. Martes 24 · Prueba en móviles y agentes
 
-- [ ] En [PR #9](https://github.com/davidop/academyverso-2026/pull/9), revisar el diff y la accesibilidad con una persona, comprobar el motivo de la comprobación Cloudflare `Preview Build Failed`; no confundirla con CI verde.
-- [ ] Confirmar que las transiciones usan solo objetos con `[GTA:VICE-NEBULA]` o `[GTA:COLONIA-CENTINELA]`.
-- [ ] Preparar la rama de demo de respaldo y un commit estable; **no** fusionar PR #9 sin revisión humana (restricción expresa en la PR).
-- [ ] Revisar [PR #1](https://github.com/davidop/academyverso-2026/pull/1): identificar y resolver conflictos en su propia rama, mantenerla en Draft mientras faltan escenas y proyección.
+- [ ] **David:** GitHub Mobile autenticado → abrir Issue #26, crear sesión real Copilot cloud agent, rama base demo y PR contra esa rama.
+- [ ] **Sergio:** confirmar habilitación del coding agent Claude en GitHub Mobile y permisos para ese repositorio. No inferirlo de modelos de chat.
+- [ ] **Ambos:** confirmar disponibilidad de Codex coding agent, consumo/créditos y políticas.
+- [ ] Android + otro móvil: abrir QR, generar Issue, navegar por portal, pulsar Intercambiar, Regresar y selección por teclado.
+- [ ] Comprobar modo movimiento reducido, zoom, focos y panel accesible; registrar capturas.
+- [ ] Comprobar qué ocurre con 0/1/2/50 mundos, en D1 y simulados; no usar pruebas sintéticas como evidencia de público real.
+- [ ] **No ejecutar** Foundry WorldGen ni migraciones D1 remotamente para esta misión: no son necesarias.
 
-### Lunes 23 · Navegador y móvil
+## 4. Miércoles 25 · Ensayo + freeze
 
-- [x] PR #9 fusionada en main y GitHub Pages desplegado; falta probar el viaje en navegador, móvil y pantalla.
-- [ ] Android y un segundo dispositivo: abrir [web](https://davidop.github.io/academyverso-2026/) y [presentación](https://davidop.github.io/academyverso-2026/presentation/).
-- [ ] Ensayar viaje → regresar durante vuelo → viaje de nuevo → zoom por pellizco → Escape / teclado → lector de pantalla → `prefers-reduced-motion`.
-- [ ] Abrir los objetos **#10** y **#11** en D1/web; comprobar contadores, colores, ficha y enlaces a Issue. Sin inventar métricas de participantes.
-- [ ] Confirmar que objetos sin etiqueta no ofrecen viaje y que una lista vacía no rompe el render.
+- [ ] Ensayo completo **15:00–15:55** con David y Sergio; registrar duración real de cada bloque: 5 + 10 + 25 + 10 + 5 minutos.
+- [ ] Probar dos teléfonos, proyector/HDMI, resolución 16:9, visibilidad desde la última fila y red de respaldo.
+- [ ] Fotografiar el QR en pantalla y abrirlo **desde ambos móviles**; confirmar que la URL dirige a creación real.
+- [ ] Ejecutar una Issue desde GitHub Mobile identificada como ensayo → validar registro en D1 y objeto visible; comprobar latencia real y moderación.
+- [ ] Iniciar una sesión real de cada coding agent o anotar **NO DISPONIBLE** y ensayar la transición al backup sin atribución falsa.
+- [ ] Abrir Slidev con panel manual; accionar estado de agentes y verificar que no se muestra «VERIFICADA» sin evidencia.
+- [ ] Guardar capturas y enlaces a PR, diffs, Actions, Issues y a la escena final.
+- [ ] **Freeze al cerrar el día:** apuntar SHA principal, comprobar Pages y no introducir cambios no ensayados.
 
-### Martes 24 · Agentes y versión de escena
+## 5. Jueves 26 · Checklist en sala
 
-- [ ] David: sesión **real** GitHub Copilot desde GitHub Mobile sobre un cambio pequeño revisable (p. ej. mejora de foco/teclado); registrar Issue, sesión, commits, PR y CI.
-- [ ] Sergio: verificar si **Claude como agente de programación** está disponible (no confundir modelo Claude en Copilot con Claude Code). Si se ejecuta, guardar PR real con identidad visual original, no branding GTA ajeno.
-- [ ] Ambos: verificar **Codex como agente de programación** y usarlo para tests o una misión local pequeña; guardar PR real. Si no está disponible, explicar limitación y usar PR de respaldo identificado como tal.
-- [ ] Una mejora visual corta y una misión local son **opcionales**: no bloquear el flujo principal por terminar fases #6/#7.
+**13:30–14:00**
+- [ ] [GitHub Pages](https://davidop.github.io/academyverso-2026/) abre y dibuja canvas Three.js.
+- [ ] [Slidev](https://davidop.github.io/academyverso-2026/presentation/) abre con panel de misiones y QR legibles.
+- [ ] [Worker health](https://academyverso-api.david-oliva-paredes.workers.dev/api/health): `ok`, `database_connected`, `create_enabled` verificados. `worldgen_enabled` NO es requisito.
+- [ ] Comprobar dos objetos visibles en `/api/objects`; guardar sus Issues auténticas y distinguir ensayos de audiencia.
+- [ ] Accesos GitHub Mobile, red, batería, proyector y modo presentador.
 
-### Miércoles 25 · Ensayo general y freeze
+**14:30–14:55**
+- [ ] Abrir pestañas: Slidev, galaxia con `#universe`, GitHub Issues, PRs #22–#25 y Actions.
+- [ ] QR comprobado desde cámara móvil; pantalla y audio listos.
+- [ ] Acordar quién controla teléfono/proyector en cada momento.
+- [ ] Confirmar estado de tres sesiones reales y las rutas alternativas.
 
-- [ ] Ejecutar el [guion de 55 minutos](guion-demo.md) completo con David y Sergio, sin saltarse los tiempos.
-- [ ] Probar QR **con las cámaras de dos móviles**, red Wi-Fi/4G, cuentas, GitHub Mobile, teclado, audio, monitor externo y modo presentador.
-- [ ] Crear una Issue **desde GitHub Mobile**, identificarla como `ensayo`, verificar en Actions `HTTP 200`, estado `closed`, registro D1 y aparición real en la web.
-- [ ] Revisar nombre, descripción, legibilidad de letras, recuentos, contraste y `prefers-reduced-motion` en la pantalla real.
-- [ ] Guardar 2 pestañas de reserva: [galaxia](https://davidop.github.io/academyverso-2026/), [Issues](https://github.com/davidop/academyverso-2026/issues), [Actions](https://github.com/davidop/academyverso-2026/actions) y PRs trazables.
-- [ ] **Freeze:** fijar SHA de `main`, URL y capturas reales; no modificar secretos ni desplegar features no esenciales.
+## 6. Decisión GO/NO-GO por funcionalidad
 
-### Jueves 26 · Preflight
+**GO de experiencia escénica si**
+- [ ] Pages con portal y Slidev publicada en un SHA probado.
+- [ ] Dos mundos distintos válidos y seleccionables en universo; o modo demo etiquetado con dos ejemplos (sin atribuirlos al público).
+- [ ] Portal atraviesa de origen a destino, llega, regresa; uso móvil y accesibilidad ensayados.
+- [ ] QR y creación de Issues probados desde móvil.
+- [ ] Uno de los dos ponentes puede contar la historia sin dependencia de respuestas instantáneas de la IA.
 
-- [ ] 13:30–14:00: verificar salud Worker, lectura D1, publicación Pages, acceso a tres agentes y conexión de reserva; si algo falla activar plan B.
-- [ ] 14:30: abrir slide inicial, galaxia y dos PRs preparados; QR y móvil listos; confirmar quién controla cada pantalla.
-- [ ] 15:00: iniciar sesión. Evitar merges o cambios de configuración en directo salvo que formen parte de una demo **aislada** y claramente intencionada.
+**GO de demostración de agentes solo si**
+- [ ] Se abre una sesión real y su PR/commits/Actions trazables. Si falla una de las tres, usar respaldo indicado, explicar el cambio y NO afirmar que los tres ejecutaron.
+- [ ] No se fusionan PR automatizadas no revisadas ni se trabaja en `main` durante la sesión.
+- [ ] Slidev refleja estado manual consistente con la evidencia.
 
-## 2. Criterios de GO / NO-GO
+**NO-GO parcial** significa omitir la capacidad afectada y explicar la limitación, no cancelar toda la charla.
 
-**GO mínimo (debe cumplirse todo):**
-- [ ] Web pública carga Three.js y la presentación existente se puede ejecutar.
-- [ ] Dos objetos auténticos del equipo visibles y enlazados a Issues reales.
-- [ ] Formulario/Issue → Actions → Worker/D1 → Three.js validado con una creación nueva desde GitHub Mobile o plan B demostrado.
-- [ ] Al menos **una sesión auténtica de agente de programación**, con PR/diff auditable, o relato reescrito para no afirmar ejecución en directo.
-- [ ] Ensayo David + Sergio y plan de contingencia completados.
+## 7. Plan B de escenario
 
-**GO avanzado (deseable, no imprescindible):**
-- [ ] PR #9 revisada, integrada y viaje/retorno comprobados en producción.
-- [ ] Una aportación visual real atribuible a Claude y tests reales atribuibles a Codex (solo si sus sesiones existen y quedan trazadas).
-- [ ] PR #1 de Slidev revisada y sin conflictos, pero no imprescindible para dar la charla con la presentación actual.
+| Incidencia | Respuesta |
+|---|---|
+| No llegan dos mundos del público | Seleccionar dos creaciones auténticas de ensayo; decir explícitamente que son del equipo |
+| Worker/D1/Actions no responde | Mostrar Issues existentes y portal en modo demo solo cuando aparezca claramente indicado |
+| Un agente tarda o no existe el permiso | Enseñar Issue/sesión en curso, luego su PR de respaldo #23/#24/#25 como referencia ChatGPT |
+| Problema con rama/CI de demo | No fusionar; enseñar diff de referencia + Actions previas y mantener main estable |
+| Portal falla en móvil | Usar proyector escritorio y capturas de navegador verificadas; no afirmar que funciona en móvil físico |
+| Slidev no carga | Abrir app 3D en pestaña independiente y navegar por Issues/PRs; usar las notas del guion impreso |
+| Caída de Internet | No fingir participación en directo; usar capturas y explicación offline de la arquitectura |
+| Falta tiempo | Priorizar creación del público, una demostración de agente auténtica y viaje final |
 
-**NO-GO para la función afectada, no para toda la conferencia:** falla de integración, móvil, red, webGL o agentes. Retirar esa función de la demo y usar el plan B; no simular ejecuciones.
+**Frase de transparencia:** «Esta PR es nuestro respaldo, preparado antes de la charla. Lo que veis en GitHub Mobile es la ejecución real; os enseñamos por separado lo que ya habíamos validado».
 
-## 3. Run of show (55 minutos)
+## 8. Cierre de ejecución
 
-| Hora | Responsable | Ejecución | Respaldo |
-|---|---|---|---|
-| 15:00–15:04 | Ambos | Hook y universo | Slides estáticas |
-| 15:04–15:08 | Sergio | GitHub Mobile y agentes | Capturas auténticas previas |
-| 15:08–15:13 | David | Modelos vs agentes | Tabla en presentación |
-| 15:13–15:17 | Sergio | Vice Nebula y Centinela | Página de misión |
-| 15:17–15:24 | Ambos | QR + nuevas Issues | #10/#11 como ensayos identificados |
-| 15:24–15:32 | David | Copilot abre PR real | PR previo atribuido correctamente |
-| 15:32–15:40 | Sergio | Claude Code/agente aporta estética | Diff de respaldo, sin atribución falsa |
-| 15:40–15:48 | Ambos | Codex revisa, testea y CI | Tests existentes y PR verificada |
-| 15:48–15:52 | Sergio | Viajes 3D si integrados, recuentos | Galaxia estable y fichas |
-| 15:52–15:55 | David | Síntesis y reto a comunidad | URL/QR de repositorio |
+Guion 55 min: [docs/guion-demo.md](guion-demo.md) · Prompts: [docs/prompts-agentes.md](prompts-agentes.md) · Política de agentes: [docs/activar-agentes.md](activar-agentes.md).
 
-## 4. Enlaces de control
-
-- [Universo 3D](https://davidop.github.io/academyverso-2026/)
-- [Escenario de misiones](https://davidop.github.io/academyverso-2026/#grand-terraforming-agents)
-- [Slidev](https://davidop.github.io/academyverso-2026/presentation/)
-- [Worker health](https://academyverso-api.david-oliva-paredes.workers.dev/api/health)
-- [Objetos D1](https://academyverso-api.david-oliva-paredes.workers.dev/api/objects)
-- [Issues](https://github.com/davidop/academyverso-2026/issues) y [Actions](https://github.com/davidop/academyverso-2026/actions)
-- [PR #9](https://github.com/davidop/academyverso-2026/pull/9) y [PR #1](https://github.com/davidop/academyverso-2026/pull/1)
-
-No publicar secretos, tokens, datos personales de asistentes ni asignar contenido artificialmente a agentes.
+**Campos a rellenar en ensayo:** `main SHA`, `Pages run`, `CI run`, `captura Android`, `captura iOS`, `Issue creada desde móvil`, `PR Copilot real`, `PR Claude real`, `PR Codex real`, `resultado proyector`, `GO/NO-GO firmado por ambos`.

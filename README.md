@@ -8,6 +8,18 @@
 
 [![CI](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml)
 
+## ✨ Misión principal · Portal interdimensional (26 de noviembre)
+
+**Decisiones de la sesión:** 25–50 asistentes con perfiles mixtos, participación por QR desde el móvil, dos mundos creados por el público y un portal construido en una misión evolutiva Copilot → Claude → Codex. David y Sergio alternan el móvil y la explicación. Slidev es el centro de control visual; el vuelo final demuestra el resultado.
+
+- **[Universo: activar el portal entre dos mundos](https://davidop.github.io/academyverso-2026/#universe)** · [Slidev](https://davidop.github.io/academyverso-2026/presentation/) · [Guion de 55 min](docs/guion-demo.md).
+- **Integración de referencia:** [PR #22](https://github.com/davidop/academyverso-2026/pull/22). Selección de dos IDs válidos, anillos originales Three.js, cruce animado, regreso y modo reduced-motion. No requiere Foundry ni nuevas migraciones D1.
+- **Misiones reales desde GitHub Mobile:** [Copilot #26](https://github.com/davidop/academyverso-2026/issues/26), [Claude #27](https://github.com/davidop/academyverso-2026/issues/27), [Codex #28](https://github.com/davidop/academyverso-2026/issues/28) sobre la [rama aislada de ensayo](https://github.com/davidop/academyverso-2026/tree/demo/portal-seed-26nov).
+- **Respaldos progresivos preparados:** [PR #23](https://github.com/davidop/academyverso-2026/pull/23) → [#24](https://github.com/davidop/academyverso-2026/pull/24) → [#25](https://github.com/davidop/academyverso-2026/pull/25). **Las PR de respaldo fueron creadas con ChatGPT**, nunca atribuirlas a las ejecuciones en directo de los tres agentes.
+- **GO/NO-GO y pruebas físicas:** [runbook para el 26/11](docs/runbook-go-no-go-26nov.md). Las pruebas Chromium no demuestran FPS ni compatibilidad en un móvil físico; comprobar Android/iOS, QR, proyector, red y acceso real a cada coding agent.
+
+El portal solo permite seleccionar objetos presentes en los datos recibidos. Si Cloudflare D1 devuelve menos de dos mundos, se deshabilita. El modo de ejemplo se identifica como demostración; no se presentan esos objetos como contribuciones del público.
+
 ## 🎮 ¿Cómo funciona?
 
 1. Un participante abre **GitHub Mobile** y crea una **GitHub Issue** usando el formulario `🪐 Crear objeto del AcademyVerso`.
@@ -23,7 +35,7 @@
 
 La propuesta de Sergio Valverde se integra sin sustituir los planetas ni el título oficial de la sesión: **Vice Nebula** (ciudad orbital neón) y **Colonia Centinela** (colonia sostenible) son dos escenarios entre los que puede elegir el público. Cada botón prepara un **objeto cósmico real**, que se registra como GitHub Issue y aparece en D1/Three.js a través del circuito existente. La elección se guarda como marcador al inicio de la descripción (`[GTA:VICE-NEBULA]` o `[GTA:COLONIA-CENTINELA]`) sin cambiar el esquema de D1. Los contadores son de **objetos por escenario**, no de votantes únicos.
 
-**Backlog por agente:** [Fase 1 · Copilot — viajes](https://github.com/davidop/academyverso-2026/issues/5) · [Fase 2 · Claude — ciudad y estética](https://github.com/davidop/academyverso-2026/issues/6) · [Fase 3 · Codex — misiones y pruebas](https://github.com/davidop/academyverso-2026/issues/7) · [Fase 4 · ensayo E2E](https://github.com/davidop/academyverso-2026/issues/8). Son tareas abiertas para desarrollar mediante PRs, no funciones entregadas.
+**Backlog por agente:** [Fase 1 · Copilot — viajes](https://github.com/davidop/academyverso-2026/issues/5) · [Fase 2 · Claude — ciudad y estética](https://github.com/davidop/academyverso-2026/issues/6) · [Fase 3 · Codex — misiones y pruebas](https://github.com/davidop/academyverso-2026/issues/7) · [Fase 4 · ensayo E2E](https://github.com/davidop/academyverso-2026/issues/8). El viaje básico y las pruebas de misiones están implementados; el portal y su misión evolutiva se describen arriba. Algunas tareas visuales y ensayos físicos siguen pendientes.
 
 **Estado del núcleo GTA:** selección + creación + visualización + recuento + enlaces GitHub Mobile implementados. **Viaje interplanetario:** PR #9 fusionada en main con CI y GitHub Pages en verde; cámara animada, retorno, controles móviles y tests deterministas. La prueba visual en dispositivo físico sigue pendiente. Es código de referencia de ChatGPT; no atribuir estos cambios a GitHub Copilot. Las ciudades visitables, vehículos y mecánicas tipo videojuego **no están desarrollados**; se proponen como trabajo futuro de agentes mediante PRs verificados. Se incluyen tests deterministas en `web/test/terraforming.test.mjs`.
 
