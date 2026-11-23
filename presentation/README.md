@@ -18,7 +18,7 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-18 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
+19 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
 
@@ -34,3 +34,17 @@ Branding original: materiales de Academyverso, fuera de la licencia MIT del repo
 ## GTA VII: Grand Terraforming Agents
 
 La presentación mantiene el título oficial. Se añaden dos diapositivas originales (hook paródico y elección de escenarios) y se adapta la secuencia de agentes. No se utilizan imágenes, marcas gráficas ni personajes de Rockstar Games. La dinámica real consiste en crear objetos etiquetados y mostrar contadores calculados desde D1; los escenarios jugables complejos son ideas para futuras PRs, no funciones existentes.
+
+## Portal interdimensional · versión del evento
+
+La charla de 55 minutos conserva el título oficial, la experiencia móvil y el público mixto. Añade una escena con `MissionBoard.vue`, un **panel de estados actualizado manualmente**; nunca muestra resultados falsos de coding agents.
+
+- 15:00–15:05 introducción y QR.
+- 15:05–15:15 creaciones del público y elección de dos mundos.
+- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (Issues #26–#28; respaldos #23–#25).
+- 15:40–15:50 portal entre los mundos elegidos.
+- 15:50–15:55 conclusiones y preguntas.
+
+**Aviso de autoría:** la versión preparada del portal procede de ChatGPT, no de los tres agentes; sus ejecuciones en vivo deberán identificarse mediante nuevas sesiones, PR y GitHub Actions.
+
+[Guion operativo](../docs/guion-demo.md) · [GO/NO-GO](../docs/runbook-go-no-go-26nov.md) · [Prompts](../docs/prompts-agentes.md).
