@@ -37,6 +37,8 @@ jobs:
           node --test web/test/terraforming.test.mjs
           node --check web/travel.mjs
           node --test web/test/travel.test.mjs
+          node --check web/portal.mjs
+          node --test web/test/portal.test.mjs
           node --test web/test/session-links.test.mjs
           node --test worker/test/issue-prefill.test.mjs
           python -m py_compile scripts/event-smoke.py
