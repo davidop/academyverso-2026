@@ -89,7 +89,8 @@ El nuevo motor procedural interpreta descripciones en un catálogo seguro de est
 | Módulo | Estado en el código | Requiere configuración externa |
 |---|---|---|
 | Galaxy Three.js, navegación, fichas accesibles | Implementado | Acceso a CDN de Three.js |
-| Formulario GitHub Issue | Implementado | Habilitar Issues, etiqueta `cosmic-object` |
+| Formulario GitHub Issue | Implementado | Habilitar Issues (la etiqueta `cosmic-object` la crea el triage) |
+| Flujo de Issues (triage + cierre en ramas de ensayo) | `issue-triage.yml` y `close-linked-issues.yml`; reglas en `scripts/issue_flow.py` | Opcional: `ACADEMYVERSO_TRIAGE_ASSIGNEE`, `ACADEMYVERSO_PROJECT_URL` y secreto `ACADEMYVERSO_PROJECT_TOKEN`; copiar ambos a `demo/portal-seed-26nov` |
 | Formulario web alternativo | Implementado | Desplegar Worker y configurar `API_BASE` |
 | Sincronización multiusuario | Implementado (polling) | Worker + Cloudflare D1 + secreto de Actions |
 | Filtros, rate limit y ocultación | Implementado | Desplegar Worker y credenciales |

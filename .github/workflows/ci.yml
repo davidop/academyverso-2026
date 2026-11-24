@@ -26,6 +26,7 @@ jobs:
           node --test web/test/missions.test.mjs
           node --test web/test/world-evolution-ui.test.mjs
           python scripts/test_d1_migrations.py
+          python scripts/test_issue_flow.py
           node --test web/test/world-quality.test.mjs
           node --check worker/src/worldgen/foundry.mjs
           node --check worker/src/worldgen/service.mjs

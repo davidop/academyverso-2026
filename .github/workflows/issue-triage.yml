@@ -1,0 +1,38 @@
+name: Flujo de Issues · clasificar y asignar
+# Etiqueta las Issues según su título (COPILOT/CLAUDE/CODEX ·, [GTA VII · Fase N],
+# [P0][WorldGen]…), asigna las del flujo a la persona responsable y, si se
+# configura, las añade a un GitHub Project. Reglas: scripts/issue_flow.py.
+#
+# Configuración opcional (Settings → Secrets and variables → Actions):
+#   vars.ACADEMYVERSO_TRIAGE_ASSIGNEE  login responsable (por defecto, el propietario del repo)
+#   vars.ACADEMYVERSO_PROJECT_URL      https://github.com/users/<owner>/projects/<n>
+#   secrets.ACADEMYVERSO_PROJECT_TOKEN PAT con scope `project` (GITHUB_TOKEN no accede a Projects de usuario)
+#
+# No asigna Issues a Copilot ni a agentes asociados: eso abriría sesiones
+# reales con coste, y en la demo deben lanzarse en directo desde GitHub Mobile.
+on:
+  issues:
+    types: [opened, edited, reopened]
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: issue-triage-${{ github.event.issue.number }}
+  cancel-in-progress: false
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/issue_flow.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Clasificar, etiquetar y asignar
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TRIAGE_ASSIGNEE: ${{ vars.ACADEMYVERSO_TRIAGE_ASSIGNEE }}
+          PROJECT_URL: ${{ vars.ACADEMYVERSO_PROJECT_URL }}
+          PROJECT_TOKEN: ${{ secrets.ACADEMYVERSO_PROJECT_TOKEN }}
+        run: python3 scripts/issue_flow.py triage
