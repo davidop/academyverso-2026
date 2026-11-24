@@ -10,6 +10,10 @@ Dos subcomandos, cada uno usado por un workflow:
   PR en una rama que NO es la rama por defecto (p. ej. ``demo/portal-seed-26nov``),
   cierra las Issues que la PR enlaza con ``Closes #N`` / ``Fixes #N`` /
   ``Resolves #N``. GitHub solo lo hace por sí mismo al fusionar en ``main``.
+  Excepción: la Issue de relevo de la misión (``MISIÓN · …``), donde Copilot,
+  Claude y Codex trabajan uno tras otro, no se cierra con la PR de una fase
+  (Copilot añade ``Fixes #N`` por su cuenta): se comenta el avance y la cierran
+  los ponentes al terminar la última fase.
 
 Las decisiones son funciones puras (probadas en scripts/test_issue_flow.py);
 solo ``main()`` habla con la API de GitHub a través de la CLI ``gh``.
@@ -44,6 +48,8 @@ LABELS = {
 
 _AGENT_PREFIX = re.compile(r"(COPILOT|CLAUDE|CODEX)\s*·", re.I)
 _AGENT_WORD = re.compile(r"\b(copilot|claude|codex)\b", re.I)
+_MISSION_PREFIX = re.compile(r"MISI[OÓ]N\s*·", re.I)
+AGENT_LABELS = ("agent:copilot", "agent:claude", "agent:codex")
 
 _KEYWORD = r"(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)"
 _SHORT_REF = re.compile(
@@ -73,6 +79,10 @@ def classify(title: str | None, body: str | None) -> dict:
     prefix = _AGENT_PREFIX.match(title)
     if prefix:
         labels.update({"mision-portal", f"agent:{prefix.group(1).lower()}"})
+    if _MISSION_PREFIX.match(title):
+        # Una sola Issue para el relevo: lleva la etiqueta de cada agente nombrado.
+        labels.add("mision-portal")
+        labels.update(f"agent:{word.lower()}" for word in _AGENT_WORD.findall(title))
     if re.match(r"\[GTA VII\b", title, re.I):
         labels.add("gta-vii")
         phase = re.search(r"Fase\s*(\d+)", title, re.I)
@@ -134,6 +144,12 @@ def plan_close(event: dict, repo: str) -> list[int]:
         return []  # GitHub ya cierra de forma nativa al fusionar en la rama por defecto.
     refs = closing_refs(f"{pr.get('title') or ''}\n{pr.get('body') or ''}", repo)
     return [number for number in refs if number != pr.get("number")]
+
+
+def is_relay_issue(issue: dict) -> bool:
+    """La Issue de misión compartida por varios agentes (relevo en un solo hilo)."""
+    names = {label.get("name") for label in issue.get("labels") or []}
+    return "mision-portal" in names and len(names & set(AGENT_LABELS)) >= 2
 
 
 def parse_project_url(url: str) -> tuple[str, str] | None:
@@ -232,6 +248,15 @@ def run_close(event: dict, repo: str) -> None:
             continue
         if issue.get("state") == "closed":
             print(f"#{number} ya estaba cerrada.")
+            continue
+        if is_relay_issue(issue):
+            gh("api", "--method", "POST", f"repos/{repo}/issues/{number}/comments", "--input", "-", payload={
+                # El autor va entre comillas invertidas, sin @: mencionar a @copilot/@claude/@codex
+                # podría despertar a un agente en mitad del relevo.
+                "body": (f"Relevo: la PR #{pr.get('number')} (`{(pr.get('user') or {}).get('login', '?')}`) se fusionó "
+                         f"en `{base}`. La misión sigue abierta: el siguiente agente parte de esta rama y los "
+                         "ponentes cierran la Issue al terminar la última fase.")})
+            print(f"#{number}: Issue de relevo; se comenta el avance sin cerrarla (PR #{pr.get('number')} -> {base})")
             continue
         gh("api", "--method", "POST", f"repos/{repo}/issues/{number}/comments", "--input", "-", payload={
             "body": (f"Cerrada automáticamente: la PR #{pr.get('number')} se fusionó en `{base}` y la enlaza "

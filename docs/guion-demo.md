@@ -12,9 +12,9 @@
 |---|---:|---|---|---|
 | 15:00–15:05 | 5 min | David → Sergio | Slidev inicio + QR | «Hoy no venís a ver diapositivas: vais a construir un universo». Abrir QR al principio |
 | 15:05–15:15 | 10 min | Sergio → David | GitHub Mobile, web, galaxia | Asistentes crean planetas o estaciones; comprobar Issues reales; elegir **dos creaciones distintas** y decir sus nombres y autores |
-| 15:15–15:23 | 8 min | David → Sergio | Slidev MissionBoard + GitHub Mobile | **Copilot CONSTRUIR**: abrir [Issue #26](https://github.com/davidop/academyverso-2026/issues/26), lanzar sesión real en rama de ensayo, inspeccionar diff/PR |
-| 15:23–15:31 | 8 min | Sergio → David | GitHub Mobile + capturas antes/después | **Claude MEJORAR**: [Issue #27](https://github.com/davidop/academyverso-2026/issues/27), mostrar cambio de iluminación y partículas; conservar procedencia |
-| 15:31–15:40 | 9 min | David → Sergio | GitHub PR + Actions + Slidev | **Codex VERIFICAR**: [Issue #28](https://github.com/davidop/academyverso-2026/issues/28), pruebas deterministas, accesibilidad y QA móvil |
+| 15:15–15:23 | 8 min | David → Sergio | Slidev MissionBoard + GitHub Mobile | **Copilot CONSTRUIR**: abrir la [Issue #37](https://github.com/davidop/academyverso-2026/issues/37) de la misión, asignarla a Copilot, inspeccionar diff/PR en la rama de ensayo |
+| 15:23–15:31 | 8 min | Sergio → David | GitHub Mobile + capturas antes/después | **Claude MEJORAR**: en la **misma** Issue #37, comentar el relevo y asignarla a Claude; mostrar cambio de iluminación y partículas; conservar procedencia |
+| 15:31–15:40 | 9 min | David → Sergio | GitHub PR + Actions + Slidev | **Codex VERIFICAR**: relevo en #37 y asignación a Codex; pruebas deterministas, accesibilidad y QA móvil. Al terminar, cerrar #37 en directo |
 | 15:40–15:50 | 10 min | Sergio → David | [Portal web #universe](https://davidop.github.io/academyverso-2026/#universe) | Elegir dos mundos reales de D1; activar portal, llegar, explorar, regresar. Cambiar a demo claramente etiquetada si no existen dos |
 | 15:50–15:55 | 5 min | Ambos | Slidev QR final + repo | Mostrar Issue/PR/Actions; recapitulación; preguntas y reto para continuar desde el móvil |
 
@@ -23,8 +23,8 @@ La parte técnica de 25 minutos NO exige que los agentes terminen en 25 minutos.
 ## Preparación: orden en ambas pantallas
 
 **Pantalla del escenario:** Slidev → duplicación de GitHub Mobile → galería 3D → Slidev.  
-**Móvil David:** Issues #26 y #28, sesión Copilot/Codex si están habilitadas, PRs, Actions.  
-**Móvil Sergio:** formulario de creación, Issue #27 y agente Claude si está habilitado, pantalla del portal.  
+**Móvil David:** Issue #37 (fases Copilot y Codex), PRs, Actions.  
+**Móvil Sergio:** formulario de creación, Issue #37 (fase Claude), pantalla del portal.  
 Ambos alternan conducción y explicación; uno controla móvil y otro cuenta qué está sucediendo.
 
 **Abrir antes de la sesión:**
@@ -39,6 +39,17 @@ Ambos alternan conducción y explicación; uno controla móvil y otro cuenta qu�
 3. Claude parte de la **misma rama actualizada**, tras integrar Copilot o el respaldo declarado. Si la política no permite Claude como agente, no basta seleccionar el modelo Claude en Copilot.
 4. Codex prueba ese mismo código. No se anuncia CI verde hasta abrir una ejecución real.
 5. El resultado escénico se muestra con la **implementación estable integrada en main**. Si los agentes no han terminado, decir que el portal mostrado es el respaldo preparado; no atribuirlo retrospectivamente a ellos.
+
+## Relevo en una sola Issue
+
+Los tres agentes trabajan en el **mismo hilo**, [Issue #37](https://github.com/davidop/academyverso-2026/issues/37), para que el público vea la cadena completa en un único sitio. En cada cambio de fase:
+
+1. Comentar en #37 qué se ha integrado en `demo/portal-seed-26nov`. Plantilla: «Relevo → Claude: fase 1 integrada con la PR #X (o respaldo #23 declarado). Claude, haz solo la fase 2».
+2. Asignar #37 al siguiente agente (Copilot → Claude → Codex).
+3. Cada PR lleva `Refs #37`, no `Closes`. Si un agente añade `Fixes #37` por su cuenta, el workflow no cierra la misión: comenta el avance en #37.
+4. Al terminar Codex, cerrar #37 desde GitHub Mobile como gesto final de la misión.
+
+Si GitHub no deja asignar la misma Issue a un segundo agente, lanzar la sesión desde **Agents → Nueva sesión** con el prompt de la fase y el enlace a #37, y dejar igualmente el comentario de relevo en el hilo.
 
 ## Respaldo progresivo y orden de integración
 

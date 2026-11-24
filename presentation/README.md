@@ -41,7 +41,7 @@ La charla de 55 minutos conserva el título oficial, la experiencia móvil y el 
 
 - 15:00–15:05 introducción y QR.
 - 15:05–15:15 creaciones del público y elección de dos mundos.
-- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (Issues #26–#28; respaldos #23–#25).
+- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (una sola Issue #37 con relevo de agentes; respaldos #23–#25).
 - 15:40–15:50 portal entre los mundos elegidos.
 - 15:50–15:55 conclusiones y preguntas.
 
