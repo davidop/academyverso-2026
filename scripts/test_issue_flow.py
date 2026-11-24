@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 """Pruebas deterministas de scripts/issue_flow.py con títulos y PRs reales del repositorio."""
 from pathlib import Path
+import json
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from issue_flow import LABELS, classify, closing_refs, parse_project_url, plan_close, plan_triage  # noqa: E402
+import issue_flow  # noqa: E402
+from issue_flow import (  # noqa: E402
+    LABELS, classify, closing_refs, is_relay_issue, parse_project_url, plan_close, plan_triage,
+)
 
 REPO = "davidop/academyverso-2026"
 COSMIC_BODY = "### Tipo de objeto\n\nplaneta\n\n### Alias del explorador\n\nQA\n\n### Nombre del objeto\n\nPythonia"
 
-# --- Clasificación: misiones, fases y backlog técnico (títulos reales #5–#28)
+# --- Clasificación: misiones, fases y backlog técnico (títulos reales #5–#28 y #37)
+MISSION = "MISIÓN · Portal interdimensional — Copilot construye · Claude mejora · Codex verifica"
 cases = {
+    MISSION: ["agent:claude", "agent:codex", "agent:copilot", "mision-portal"],
+    "Mision · portal con Copilot y Codex": ["agent:codex", "agent:copilot", "mision-portal"],
     "COPILOT · Misión 1/3 — construir el portal interdimensional desde GitHub Mobile": ["agent:copilot", "mision-portal"],
     "CLAUDE · Misión 2/3 — enriquecer el portal con energía cinematográfica": ["agent:claude", "mision-portal"],
     "CODEX · Misión 3/3 — auditar portal, móvil, regresiones y CI": ["agent:codex", "mision-portal"],
@@ -75,8 +82,49 @@ assert plan_close(pr_event("main", "Closes #26"), REPO) == []                   
 assert plan_close(pr_event("demo/portal-seed-26nov", "Closes #26", merged=False), REPO) == []
 assert plan_close(pr_event("demo/portal-seed-26nov", "Fixes #23 y Fixes #26"), REPO) == [26]  # no se cierra a sí misma
 
+# --- Issue de relevo: varios agentes en un solo hilo; una PR de fase no la cierra
+def labelled(*names):
+    return {"labels": [{"name": n} for n in names]}
+
+
+assert is_relay_issue(labelled(*classify(MISSION, "")["labels"]))
+assert not is_relay_issue(labelled("mision-portal", "agent:codex"))         # misión de un solo agente
+assert not is_relay_issue(labelled("agent:copilot", "agent:claude", "gta-vii"))  # sin mision-portal
+assert not is_relay_issue({})
+# La PR de Copilot puede traer "Fixes #37": plan_close la detecta y run_close comenta en vez de cerrar.
+assert plan_close(pr_event("demo/portal-seed-26nov", "Fixes #37", number=38), REPO) == [37]
+
+
+def run_close_calls(issue_labels):
+    """Ejecuta run_close con un gh simulado y devuelve las llamadas de escritura."""
+    calls = []
+
+    def fake_gh(*args, payload=None, token=None, check=True):
+        if args[:2] == ("api", f"repos/{REPO}/issues/37"):
+            return 0, json.dumps({"state": "open", "labels": [{"name": n} for n in issue_labels]})
+        calls.append((args, payload))
+        return 0, "{}"
+
+    real_gh, issue_flow.gh = issue_flow.gh, fake_gh
+    try:
+        event = pr_event("demo/portal-seed-26nov", "Fixes #37", number=38)
+        event["pull_request"]["user"] = {"login": "Copilot"}
+        issue_flow.run_close(event, REPO)
+    finally:
+        issue_flow.gh = real_gh
+    return calls
+
+
+relay_calls = run_close_calls(classify(MISSION, "")["labels"])
+assert len(relay_calls) == 1 and relay_calls[0][0][-3].endswith("/issues/37/comments"), relay_calls
+assert "@" not in relay_calls[0][1]["body"] and "`Copilot`" in relay_calls[0][1]["body"]  # sin menciones
+assert not any(payload and payload.get("state") == "closed" for _, payload in relay_calls)
+single_calls = run_close_calls(["mision-portal", "agent:codex"])
+assert single_calls[-1][1] == {"state": "closed", "state_reason": "completed"}, single_calls
+
 assert parse_project_url("https://github.com/users/davidop/projects/3") == ("davidop", "3")
 assert parse_project_url("https://github.com/orgs/acme/projects/12/") == ("acme", "12")
 assert parse_project_url("https://github.com/davidop/academyverso-2026") is None
 
-print("PASS: issue flow classifies real titles, assigns only flow Issues and closes only same-repo keyword refs")
+print("PASS: issue flow classifies real titles, assigns only flow Issues, closes only same-repo keyword refs"
+      " and keeps the shared mission relay Issue open")
