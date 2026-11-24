@@ -174,7 +174,9 @@ def ensure_labels(repo: str, names: list[str]) -> None:
     for name in names:
         if name not in existing:
             color, description = LABELS[name]
-            gh("label", "create", name, "--repo", repo, "--color", color, "--description", description)
+            # --force: si otra ejecución simultánea la acaba de crear, no falla
+            # (solo se llega aquí si faltaba, así que no pisa etiquetas personalizadas).
+            gh("label", "create", name, "--repo", repo, "--color", color, "--description", description, "--force")
 
 
 def run_triage(event: dict, repo: str) -> None:
