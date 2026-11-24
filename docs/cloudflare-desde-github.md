@@ -26,11 +26,14 @@ Solo después de actualizar el UUID del repositorio:
 3. Configura:
    - **Nombre del Worker:** `academyverso-api`.
    - **Rama:** `main`.
-   - **Root directory:** `worker` (importante: el repositorio también tiene la app Three.js y Slidev).
-   - **Build command:** vacío si no se requiere; el Worker es JavaScript nativo.
-   - **Deploy command:** `npx wrangler deploy`.
+   - **Root directory:** `/` (raíz del repositorio; el comando entra en `worker`, porque el repositorio también tiene la app Three.js y Slidev).
+   - **Build command:** vacío; el Worker es JavaScript nativo.
+   - **Deploy command:** `cd worker && npx wrangler deploy`.
 4. Pulsa **Save and Deploy**. El nombre debe coincidir con el valor `name` de `worker/wrangler.toml`.
 5. Guarda la dirección `https://academyverso-api.<tu-subdominio>.workers.dev` que Cloudflare muestre.
+6. En **Settings → Builds → Base de vistas previas**, deja **desactivado** «Builds para ramas de vista previa». Solo `main` despliega el Worker.
+
+**Por qué no hay builds de vista previa:** en ramas distintas de `main`, Cloudflare ejecuta `cd worker && npx wrangler preview`, que exige un bloque `[previews]` en `worker/wrangler.toml` con sus propias variables y su propia D1. Sin ese bloque, el check «Workers Builds: academyverso-api» falla en todas las PR, aunque producción esté bien. No se reutiliza la D1 de producción para vistas previas: el código de PRs de agentes podría escribir en los datos reales del evento. La validación del Worker en PRs la hace la CI del repositorio (`npm run check && npm test` en `worker/`). Si en el futuro se quieren Workers de vista previa, crear antes una D1 aparte (p. ej. `academyverso-preview`) con `schema.sql` y las migraciones, y añadir `[previews]` apuntando a ella.
 
 La [documentación oficial de Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/) describe esta integración de GitHub para que posteriores commits desplieguen automáticamente el Worker.
 
