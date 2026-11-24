@@ -1,128 +1,268 @@
-/* AcademyVerso official-inspired theme · responsive Slidev canvas (1280x720) */
-:root{--navy:#182039;--lav:#dedbff;--mint:#78e6dc;--orange:#ffb26f;--white:#f5f7ff}
-.slidev-layout{position:relative!important;overflow:hidden!important;background:radial-gradient(ellipse at 73% 30%,#424879 0%,transparent 52%),#182039!important;color:var(--white)!important;font-family:Arial,Helvetica,sans-serif!important;padding:44px 58px!important}
-.slidev-layout:before{content:"";position:absolute;inset:0;background-image:url('https://davidop.github.io/academyverso-2026/assets/fondo-espacio.svg');background-size:cover;background-position:center;opacity:.5;pointer-events:none}
-.slidev-layout:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:linear-gradient(90deg,#72ead9,#a18de5,#f6ad68);pointer-events:none}
-.slidev-layout>*{position:relative;z-index:1}
-.slidev-layout h1,.slidev-layout h2,.slidev-layout h3,.slidev-layout p{margin:0}
-.slidev-layout a{color:#86ecdd;text-decoration:none}
-.kicker{font-size:18px;letter-spacing:4px;color:var(--mint);font-weight:900;margin:4px 0 24px}
-.gradient{background:linear-gradient(110deg,#88ecd5,#b6b5fa 72%,#d1abff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mint{color:var(--mint)}
-.hero-title{font-size:100px;line-height:1.01;font-weight:950;letter-spacing:-6px;max-width:900px;position:relative!important;z-index:2}
-.subline{font-size:28px;color:#d0e2f4;margin-top:25px}
-.hero-platforms{display:flex;gap:12px;margin-top:45px;position:relative!important;z-index:3}
-.hero-platforms span{background:#142444cd;border:1px solid #ccf6ff4b;border-radius:50px;padding:12px 18px;font-size:17px;font-weight:850}
-.astronaut{position:absolute!important;right:22px;top:65px;width:306px;filter:drop-shadow(0 0 35px #61dce86b);animation:float 6s ease-in-out infinite}
-.footer-stamp{position:absolute!important;bottom:29px;left:58px;color:#c4cce0;letter-spacing:2px;font-size:14px}
-.headline{font-size:68px;line-height:1.13;font-weight:950;letter-spacing:-2px}
-.headline.compact{font-size:59px}
-.two-up{display:grid;grid-template-columns:1fr 1fr;gap:40px}
-.glass{background:linear-gradient(145deg,#d5e0ff26,#1d2b4bc0);border:1px solid #cbe6ff66;padding:34px;border-radius:30px;min-height:285px}
-.glass.dim{opacity:.72}.glass.highlight{border:2px solid #89efdb;box-shadow:0 0 52px #58e5dd2e}
-.glass .eyebrow{font-size:16px;letter-spacing:3px;color:#90e6dc;font-weight:900}
-.glass .emoji{font-size:73px;margin:20px 0}.glass h2{font-size:30px;font-weight:900}.glass p{font-size:20px;color:#cdd4ec;margin-top:12px}
-.footnote{font-size:18px;color:#c8d7e8;position:absolute!important;bottom:28px;left:58px;right:58px;line-height:1.35}
-.footnote.warning{color:#ffcfaa}
-.mission-layout{display:grid;grid-template-columns:2fr 1fr;gap:50px;margin-top:20px;height:335px}
-.stats{display:flex;flex-direction:column;justify-content:center;gap:24px}.stats div{display:flex;align-items:center;gap:25px;border-bottom:1px solid #ffffff34;padding-bottom:14px}.stats b{font-size:56px;color:#86ecd9;min-width:145px}.stats span{font-size:21px;color:#e3ebf5}
-.speaker-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:61px}
-.speaker{background:#263653df;border:1px solid #a7cfff71;border-radius:28px;padding:30px;display:flex;gap:24px;align-items:center}
-.speaker img{width:155px;height:155px;object-fit:cover;border-radius:22px;box-shadow:0 10px 30px #0006}
-.speaker h2{font-size:28px;font-weight:950}.speaker p{font-size:20px;color:#d5daec;line-height:1.4;margin:10px 0}.speaker small{font-size:15px;letter-spacing:1px;color:#91eae0}
-.flow{display:flex;align-items:stretch;gap:12px;margin-top:104px}
-.node{flex:1;background:#273a59df;border:1px solid #8fe9dd7d;border-radius:25px;min-height:205px;padding:25px 13px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:13px}
-.node div{font-size:56px}.node b{font-size:22px}.node small{font-size:16px;color:#b9c6e2}
-.arrow{align-self:center;color:#89ecd9;font-size:34px}
-.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:25px;margin-top:45px}
-.agent{background:#24304ae8;border:1px solid #cce4ff5c;border-radius:29px;padding:36px;min-height:316px;display:flex;flex-direction:column;align-items:flex-start}
-.agent:nth-child(2){background:#34294ae5}.agent:nth-child(3){background:#1b3a49e5}
-.agent img{width:60px;height:60px;object-fit:contain;margin-bottom:20px;filter:brightness(0) invert(1)}
-.agent h2{font-weight:950;font-size:29px}.agent b{font-size:15px;letter-spacing:2px;color:#89ecdf;margin:12px 0}.agent p{font-size:21px;color:#d7dff0;line-height:1.42}
-.stack{display:flex;flex-direction:column;gap:17px;margin-top:35px}.stack-row{display:flex;align-items:center;gap:30px;padding:20px 27px;border:1px solid #b6d7e95b;background:#253250e0;border-radius:19px}
-.stack-row>b{font-size:25px;color:#83e9db}.stack-row strong{font-size:25px}.stack-row p{font-size:18px;color:#c2d0e3;margin-top:6px}.stack-row>span{margin-left:auto;font-size:37px}
-.qr-layout{display:grid;grid-template-columns:330px 1fr;gap:62px;align-items:center;margin-top:22px}
-.qr-panel{width:max-content;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;background:#fff;border-radius:26px;box-shadow:0 20px 50px #0005}
-.qr-panel span{color:#1b2b3d;font-size:14px;font-weight:950;letter-spacing:.5px;text-align:center}
-.qr-steps{display:flex;flex-direction:column;gap:19px}.qr-steps p{font-size:26px;color:#f5f5fc;display:flex;align-items:center;gap:20px}.qr-steps p b{display:grid;place-items:center;width:37px;height:37px;border-radius:50%;background:#79e8dc;color:#123047;font-size:18px;flex-shrink:0}.qr-steps small{font-size:15px;color:#ffceaa;line-height:1.5}
-.prompt-example{background:#e9e8ff;color:#253153;border-radius:30px;padding:35px 37px;margin-top:63px;box-shadow:0 15px 50px #0006}
-.prompt-tag{font-weight:850;font-size:17px;letter-spacing:2px;margin-bottom:25px;color:#396374}
-.prompt-text{font-size:35px;line-height:1.5;font-weight:550}.prompt-text b{color:#087e92}.prompt-footer{margin-top:25px;font-size:16px;font-weight:850;color:#3e5e7e}
-.live-frame{margin-top:10px;position:relative;width:100%;height:418px;border:2px solid #84e8e18c;border-radius:26px;overflow:hidden;box-shadow:0 15px 65px #0007}
-.live-frame iframe{width:100%;height:100%;border:none;background:#16203b}
-.live-flag{position:absolute;top:16px;left:16px;background:#0d1a31ec;border:1px solid #ffffff51;border-radius:16px;padding:12px 15px;font-weight:800;letter-spacing:1px;font-size:15px}
-.live-note{font-size:15px;color:#ffccaa;margin-top:12px}
-.architecture{display:flex;align-items:center;gap:7px;margin-top:102px}
-.arch{flex:1;min-width:0;border-radius:18px;padding:20px 8px;background:#263757e6;border:1px solid #90e9db7a;min-height:185px;display:flex;align-items:center;flex-direction:column;gap:13px;text-align:center}
-.arch.amber{border-color:#ffc17a}
-.arch span{font-size:44px}.arch b{font-size:19px}.arch small{font-size:14px;color:#c5d6e7}
-.architecture em{font-size:34px;color:#83eadf;font-style:normal}
-.agent-chain{display:flex;gap:15px;align-items:center;margin-top:60px}.agent-chain>span{color:#87eedc;font-size:37px}
-.chain{flex:1;background:#243453e6;border:1px solid #8febdf78;border-radius:24px;min-height:288px;padding:28px;display:flex;align-items:center;flex-direction:column;text-align:center}
-.chain img{height:52px;width:52px;filter:brightness(0) invert(1);margin-bottom:19px}.chain b{font-size:30px}.chain p{font-size:20px;line-height:1.3;color:#d5ddeb;margin-top:20px}.chain small{font-size:16px;color:#8be7da;margin-top:auto}
-.demo-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;height:520px}
-.pill{display:inline-block;background:#80e7dc;color:#122b40;border-radius:40px;font-size:16px;font-weight:900;letter-spacing:1px;padding:11px 18px;margin-bottom:30px}.amber-pill{background:#ffbf89}.blue-pill{background:#bdccff}
-.prompt-small{font-size:23px;line-height:1.52;background:#e9e9ff;color:#21304a;border-radius:24px;padding:28px;margin-top:28px;font-weight:600}
-.travel{height:380px;position:relative}.planet{border-radius:50%;position:absolute;box-shadow:inset -15px -10px 40px #0005,0 0 25px #7deae166}
-.planet.left{width:148px;height:148px;top:100px;left:8px;background:radial-gradient(circle at 25% 30%,#aaf7e2,#258c99 70%)}
-.planet.right{width:182px;height:182px;top:82px;right:0;background:radial-gradient(circle at 30% 25%,#f9c1ff,#8351b7 70%)}
-.dash{position:absolute;top:174px;left:150px;right:155px;border-top:3px dashed #a4f7e6}
-.rocket{font-size:57px;position:absolute;top:133px;left:180px;animation:rocket 4s ease-in-out infinite}
-.travel small{position:absolute;bottom:38px;left:40px;color:#9beee0;letter-spacing:2px;font-size:16px}
-.cosmic-art{height:400px;display:grid;place-items:center;position:relative}
-.core{height:218px;width:218px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff4bd,#ffa45c 35%,#8d55c9 75%);box-shadow:0 0 100px #bd60c6a6;animation:float 5s ease-in-out infinite}
-.ring{position:absolute;border:3px solid #94f2e7b8;border-radius:50%;width:345px;height:275px;transform:rotate(-25deg);animation:ring 14s linear infinite}
-.ring.r2{width:300px;height:350px;border-color:#a19df6aa;animation-direction:reverse}
-.cosmic-art span{position:absolute;bottom:35px;font-size:35px;color:#fff2be;letter-spacing:18px}
-.console{border:1px solid #8feadd75;border-radius:23px;overflow:hidden;background:#0e192b;box-shadow:0 10px 50px #0008;font-family:Consolas,monospace}
-.console-header{padding:19px;background:#263347;color:#c6d2e9}.console p{color:#a1eebb;padding:10px 24px;font-size:19px}.console b{display:block;font-size:28px;color:#99eddf;padding:18px 24px}.console i{animation:twinkle 2s infinite}.console small{display:block;color:#ffcb9b;font-size:12px;line-height:1.4;padding:0 24px 18px}
-.mission-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:78px}.mission-cards div{background:#243654e0;border:1px solid #92e6de83;border-radius:28px;min-height:230px;padding:30px;display:flex;flex-direction:column}.mission-cards span{font-size:63px;margin-bottom:13px}.mission-cards b{font-size:26px}.mission-cards p{margin-top:13px;font-size:20px;color:#d0d9ea}
-.final-title{font-size:94px;font-weight:950;line-height:1;letter-spacing:-5px}
-.final-layout{display:grid;grid-template-columns:325px 1fr;gap:60px;align-items:center;margin-top:15px}.final-layout>div:last-child{display:flex;flex-direction:column;gap:22px}
-.final-layout p{font-size:27px;font-weight:750;border-left:5px solid #89eada;padding-left:20px}
-.action-link{margin-top:10px;width:max-content;background:#87e8dc!important;color:#132b39!important;border-radius:45px;padding:17px 25px;font-size:21px;font-weight:900}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-17px)}}
-@keyframes rocket{0%,100%{transform:translateX(-14px) rotate(-7deg)}50%{transform:translateX(65px) rotate(6deg)}}
-@keyframes ring{to{transform:rotate(335deg)}}@keyframes twinkle{50%{opacity:.27}}
-@media(prefers-reduced-motion:reduce){.slidev-layout *{animation:none!important;transition:none!important}}
-
-/* Marca oficial AcademyVerso en todas las diapositivas. */
-.slidev-layout{
-  background-image:url('https://davidop.github.io/academyverso-2026/assets/academyverso-logo.png'),radial-gradient(ellipse at 73% 30%,#424879 0%,transparent 52%)!important;
-  background-position:right 26px bottom 17px, center!important;
-  background-size:140px auto, cover!important;
-  background-repeat:no-repeat!important;
-  background-color:#182039!important;
+/* AcademyVerso 2026 · estilo derivado de «Template Academyverso.potx» (lienzo Slidev 1280×720).
+   Tema Eventekki: lavanda #DBD6FC, verde oscuro #243837, crema #F2F4D9, lima #B1FA63, naranja #FE7833.
+   Tipos: Host Grotesk (texto) y CHANEY (títulos de portada/sección; Unbounded como sustituto abierto). */
+:root{
+ --av-lav:#DBD6FC;--av-lav-deep:#C9C2F7;--av-green:#243837;--av-green-2:#2F4A48;--av-cream:#F2F4D9;
+ --av-lime:#B1FA63;--av-orange:#FE7833;--av-teal:#5EBEBB;--av-teal-ink:#00695C;--av-navy:#1F2139;
+ --av-sans:'Host Grotesk',Arial,Helvetica,sans-serif;
+ --av-display:'CHANEY','Unbounded','Host Grotesk',Arial,sans-serif;
+ --av-mono:'JetBrains Mono',Consolas,monospace;
 }
 
-/* S10 · Estado de carga y alternativa visible si la galaxia no carga dentro del iframe. */
-.live-frame .live-loading { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:1; background:radial-gradient(ellipse at 50% 60%,#31446c 0%,#18213c 64%,#121b30 100%); color:#f5f7ff; text-align:center; }
-.live-frame .live-loading strong { font-size:30px; line-height:1.15; }
-.live-frame .live-loading p { font-size:18px; color:#d6dfff; }
-.live-frame .live-loading .loading-orbit { font-size:70px; filter:drop-shadow(0 0 23px #73dfd7); animation:float 3.5s ease-in-out infinite; }
-.live-frame .live-loading .live-backup { border:2px solid var(--mint); border-radius:14px; padding:12px 18px; font-size:18px; font-weight:850; color:var(--mint); background:#16223f; }
-.live-frame .live-loading .live-backup:focus-visible { outline:4px solid var(--orange); outline-offset:5px; }
-.live-frame .live-flag { z-index:2; }
-@media(prefers-reduced-motion:reduce){.live-frame .live-loading .loading-orbit{animation:none;}}
-/* Grand Terraforming Agents · visual originales creados con CSS, sin materiales de GTA. */
-.gta-hero{display:grid;grid-template-columns:1.18fr .82fr;gap:22px;align-items:center;height:520px}
-.gta-roman{font-weight:1000;font-size:clamp(68px,8vw,122px);line-height:1;letter-spacing:-.085em;color:#fff;text-shadow:0 10px 50px #55e7df77}
-.gta-roman span{color:#ffb781}
-.gta-subtitle{font-weight:950;font-size:36px;letter-spacing:.04em;line-height:.96;margin-top:5px;color:#a4f9ed}
-.gta-hero p{font-size:23px;line-height:1.5;max-width:650px;margin-top:24px}
-.gta-hero .gta-mini{font-size:15px;margin-top:20px;font-weight:850;color:#d6c8ff}
-.gta-orbital{position:relative;width:425px;height:425px;margin:auto;display:grid;place-items:center}
-.gta-sphere{width:315px;height:315px;border-radius:50%;background:radial-gradient(circle at 28% 28%,#f4a4de,#ae66cd 25%,#293973 60%,#111630 85%);box-shadow:0 0 75px #ce66df88,inset -30px -28px 55px #080f28;border:1px solid #ffffffaa}
-.gta-orbit{position:absolute;border:6px solid #7eedec;border-radius:50%;width:410px;height:120px;transform:rotate(-29deg);box-shadow:0 0 34px #7eedec75}
-.gta-orbit.o2{width:370px;height:105px;transform:rotate(37deg);border-color:#ffb276c7}
-.gta-city{position:absolute;bottom:110px;right:52px;font-size:90px;filter:drop-shadow(0 0 20px #f7a3e7)}
-.gta-vote{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
-.gta-choice{border:2px solid #7bcddc80;border-radius:24px;min-height:295px;padding:25px 30px;background:linear-gradient(145deg,#572456,#20294d)}
-.gta-choice.sentinel{background:linear-gradient(145deg,#0b5960,#20294d)}
-.gta-choice-icon{float:right;font-size:82px;filter:drop-shadow(0 0 25px #e69bff)}
-.gta-choice small{letter-spacing:.17em;font-weight:850;color:#9eede2}
-.gta-choice h2{font-size:44px;letter-spacing:-.05em;margin:37px 0 10px}
-.gta-choice p{font-size:20px;line-height:1.45;color:#e9efff}
-.gta-bottom{display:flex;align-items:center;gap:26px;margin-top:25px}
+/* ---------- Marcos (equivalentes a los diseños de la plantilla) ---------- */
+.slidev-layout.av-slide{position:relative;overflow:hidden;height:100%;padding:34px 88px 0;font-family:var(--av-sans);font-size:20px;line-height:1.35}
+.av-slide h1,.av-slide h2,.av-slide h3,.av-slide p{margin:0;padding:0;line-height:inherit}
+.av-slide h1,.av-slide h2,.av-slide h3{font-family:var(--av-sans);letter-spacing:normal}
+.av-slide a{text-decoration:none;border:0}
+.av-content{position:relative;z-index:2;height:100%}
+.av-pixel{position:absolute;left:20px;top:24px;width:49px;height:49px;z-index:3}
+
+.av-light{background:var(--av-lav);color:var(--av-green)}
+.av-light a{color:var(--av-green);font-weight:800}
+.av-space{background:var(--av-navy) url('./assets/template/fondo-espacio.svg') center/cover no-repeat;color:var(--av-lav)}
+.av-space a{color:var(--av-lime)}
+
+/* Portada */
+.av-cover{padding:0 0 0 56px}
+.av-cover-astronaut{position:absolute;left:729px;top:145px;width:551px;height:551px;z-index:1;animation:float 6s ease-in-out infinite}
+.av-cover-comet{position:absolute;left:560px;top:-16px;width:250px;height:170px;z-index:1;object-fit:contain}
+.av-cover-asteroid{position:absolute;z-index:1;object-fit:contain}
+.av-cover-asteroid.big{left:60px;top:22px;width:150px;height:104px;opacity:.9}
+.av-cover-asteroid.small{left:648px;top:558px;width:102px;height:60px}
+.cover-kicker{position:absolute;top:150px;left:0;font-size:16px;letter-spacing:4px;font-weight:800;color:var(--av-lime)}
+.cover-title{position:absolute;top:186px;left:0;width:760px;font-family:var(--av-display)!important;font-size:64px!important;line-height:1.04!important;font-weight:900!important;text-transform:uppercase;color:var(--av-lav)}
+.cover-sub{position:absolute;top:438px;left:0;width:720px;font-size:26px;font-weight:500;color:var(--av-cream)}
+.cover-platforms{position:absolute;top:498px;left:0;display:flex;gap:10px}
+.cover-platforms span{border:2px solid var(--av-lav);color:var(--av-lav);padding:7px 13px;font-size:16px;font-weight:700}
+.cover-stamp{position:absolute;top:572px;left:0;font-size:15px;letter-spacing:2px;font-weight:700;color:var(--av-teal)}
+
+/* ---------- Tipografía de contenido ---------- */
+.kicker{font-size:15px;letter-spacing:3px;font-weight:800;margin:6px 0 18px;text-transform:uppercase}
+.av-light .kicker{color:var(--av-green)}
+.av-space .kicker{color:var(--av-lime)}
+.headline{font-size:50px;line-height:1.08;font-weight:800;letter-spacing:-1px}
+.headline.compact{font-size:44px}
+.av-space .headline{font-family:var(--av-display);font-weight:800;font-size:40px;line-height:1.12;letter-spacing:0;text-transform:uppercase;color:var(--av-lav)}
+.av-space .headline.compact{font-size:36px}
+
+/* Énfasis: en claro, barra verde con texto lima (como las etiquetas PATROCINA/COLABORAN). */
+.av-light .gradient{background:var(--av-green);color:var(--av-lime);padding:0 .16em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.av-light .mint{color:var(--av-teal-ink)}
+.av-space .gradient{color:var(--av-lime)}
+.av-space .mint{color:var(--av-teal)}
+.lime{color:var(--av-lime)}
+
+.footnote{position:absolute;left:0;right:200px;bottom:108px;font-size:16px;line-height:1.35;font-weight:500}
+.av-light .footnote{color:var(--av-green-2)}
+.footnote.warning{padding-left:22px}
+.footnote.warning:before{content:"";position:absolute;left:0;top:.38em;width:11px;height:11px;background:var(--av-orange)}
+.av-space .footnote{color:var(--av-cream)}
+.av-space .footnote.warning{color:#FFC6A6}
+
+/* Tarjeta base: crema plana con sombra de «píxel». Destacada: verde oscuro. */
+.card,.glass,.node,.stack-row,.arch,.mission-board-item{background:var(--av-cream);color:var(--av-green);border-radius:4px;box-shadow:6px 6px 0 var(--av-green)}
+.card-dark,.agent,.chain,.glass.highlight{background:var(--av-green);color:var(--av-cream);border-radius:4px;box-shadow:6px 6px 0 var(--av-lime)}
+
+.action-link{display:inline-block;width:max-content;background:var(--av-lime)!important;color:var(--av-green)!important;padding:13px 20px;font-size:18px;font-weight:800;border-radius:2px}
+.av-light .action-link{background:var(--av-green)!important;color:var(--av-lime)!important}
+
+/* ---------- 2 · Hook GTA VII ---------- */
+.gta-hero{display:grid;grid-template-columns:1.25fr .75fr;gap:24px;align-items:center;height:500px}
+.gta-roman{font-family:var(--av-display);font-weight:900;font-size:104px;line-height:1;color:var(--av-lav)}
+.gta-roman span{color:var(--av-orange)}
+.gta-subtitle{font-family:var(--av-display);font-weight:800;font-size:30px;line-height:1.02;margin-top:8px;color:var(--av-lime)}
+.gta-hero p{font-size:23px;line-height:1.45;max-width:640px;margin-top:22px;color:var(--av-cream)}
+.gta-hero p strong{color:var(--av-lime)}
+.gta-hero .gta-mini{font-size:15px;margin-top:18px;font-weight:800;letter-spacing:1px;color:var(--av-lav)}
+.gta-orbital{position:relative;width:380px;height:380px;margin:auto;display:grid;place-items:center}
+.gta-sphere{width:250px;height:250px;border-radius:50%;background:radial-gradient(circle at 30% 28%,#ECE9FF,var(--av-lav) 30%,#7C73C9 70%,#3B3670);box-shadow:inset -26px -22px 50px #1F213999}
+.gta-orbit{position:absolute;border:5px solid var(--av-lime);border-radius:50%;width:380px;height:108px;transform:rotate(-24deg)}
+.gta-orbit.o2{width:340px;height:96px;transform:rotate(34deg);border-color:var(--av-orange)}
+.gta-astronaut{position:absolute;width:210px;right:-20px;top:-10px;animation:float 6s ease-in-out infinite}
+
+/* ---------- 3 · QR ---------- */
+.qr-layout{display:grid;grid-template-columns:290px 1fr;gap:56px;align-items:center;margin-top:24px}
+.qr-panel{width:max-content;display:flex;flex-direction:column;align-items:stretch;background:#fff;border-radius:4px;box-shadow:6px 6px 0 var(--av-green);padding:16px 16px 0}
+.qr-panel svg{display:block;margin:0 auto}
+.qr-panel span{display:block;margin:14px -16px 0;background:var(--av-green);color:var(--av-lav);font-size:14px;font-weight:800;letter-spacing:1px;text-align:center;padding:10px 12px}
+.qr-steps{display:flex;flex-direction:column;gap:16px}
+.qr-steps p{font-size:25px;display:flex;align-items:center;gap:18px;font-weight:500}
+.qr-steps p b{display:grid;place-items:center;width:38px;height:38px;background:var(--av-green);color:var(--av-lime);font-size:18px;flex-shrink:0}
+.qr-steps small{font-size:15px;line-height:1.45;color:var(--av-green-2);max-width:620px}
+
+/* ---------- 4 · Imagina ---------- */
+.imagine-layout{display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:end;margin-top:26px}
+.prompt-example{background:var(--av-cream);color:var(--av-green);border-radius:4px;padding:28px 34px;box-shadow:6px 6px 0 var(--av-green)}
+.prompt-tag{display:inline-block;background:var(--av-green);color:var(--av-lav);font-weight:800;font-size:14px;letter-spacing:2px;padding:7px 12px;margin-bottom:18px}
+.prompt-text{font-size:30px;line-height:1.42;font-weight:500}.prompt-text b{color:var(--av-teal-ink)}
+.prompt-footer{margin-top:18px;font-size:14px;font-weight:800;letter-spacing:1px;color:var(--av-green-2)}
+.imagine-astronaut{width:220px;transform:scale(1.7) translate(-6px,-14px);transform-origin:center}
+
+/* ---------- 5 · Elección de mundos ---------- */
+.gta-vote{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:22px}
+.gta-choice{border-radius:4px;min-height:228px;padding:22px 28px;color:var(--av-cream)}
+.gta-choice.vice{background:var(--av-green);box-shadow:6px 6px 0 var(--av-orange)}
+.gta-choice.sentinel{background:var(--av-navy);box-shadow:6px 6px 0 var(--av-lime)}
+.gta-choice-icon{float:right;font-size:64px}
+.gta-choice small{letter-spacing:.17em;font-weight:800;font-size:14px}
+.gta-choice.vice small{color:var(--av-orange)}.gta-choice.sentinel small{color:var(--av-lime)}
+.gta-choice h2{font-family:var(--av-display);font-size:32px;font-weight:800;margin:30px 0 10px;color:var(--av-lav)}
+.gta-choice p{font-size:19px;line-height:1.4}
+.gta-bottom{display:flex;align-items:center;gap:22px;margin-top:26px;max-width:1010px}
 .gta-bottom a{white-space:nowrap}
-.gta-bottom span{font-size:15px;color:#d7e2ec;line-height:1.4}
+.gta-bottom span{font-size:15px;line-height:1.4;color:var(--av-green-2)}
+
+/* ---------- 6 · Universo 3D (marco de la plantilla) ---------- */
+.live-frame{margin-top:8px;position:relative;width:100%;height:372px;border:6px solid var(--av-lav);border-radius:2px;overflow:hidden;background:var(--av-navy)}
+.live-frame iframe{width:100%;height:100%;border:none;background:var(--av-navy)}
+.live-flag{position:absolute;top:12px;left:12px;background:var(--av-green);color:var(--av-cream);padding:9px 13px;font-weight:800;letter-spacing:1px;font-size:14px}
+.live-flag a{color:var(--av-lime)}
+.live-note{font-size:15px;color:#FFC6A6;margin-top:10px;max-width:960px}
+
+/* ---------- 7 · Antes / ahora ---------- */
+.two-up{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:34px}
+.glass{padding:26px 30px;min-height:236px}
+.glass.dim{opacity:.8}
+.glass .eyebrow{font-size:14px;letter-spacing:3px;font-weight:800}
+.glass.highlight .eyebrow{color:var(--av-lime)}
+.glass .emoji{font-size:54px;margin:12px 0}
+.glass h2{font-size:28px;font-weight:800}
+.glass p{font-size:19px;margin-top:8px}
+
+/* ---------- 8 · Misión ---------- */
+.mission-layout{display:grid;grid-template-columns:1.7fr 1fr;gap:44px;margin-top:22px;height:300px}
+.stats{display:flex;flex-direction:column;justify-content:center;gap:16px}
+.stats div{display:flex;align-items:center;gap:22px;border-bottom:2px solid var(--av-green);padding-bottom:12px}
+.stats b{font-family:var(--av-display);font-size:42px;font-weight:900;min-width:140px;color:var(--av-green)}
+.stats span{font-size:19px;font-weight:500}
+
+/* ---------- 9 · Ponentes (diseño «Ponentes» de la plantilla) ---------- */
+.speaker-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:46px}
+.speaker{display:grid;grid-template-columns:250px 1fr;gap:28px;align-items:end}
+.speaker-photo{position:relative;width:250px;height:250px}
+.speaker-photo img{width:250px;height:250px;object-fit:cover;display:block}
+.speaker-photo:after{content:"";position:absolute;right:-23px;top:-23px;width:23px;height:23px;background:var(--av-green)}
+.speaker h2{font-size:28px;font-weight:800}
+.speaker p{font-size:18px;line-height:1.35;margin:6px 0 14px;font-weight:500}
+.speaker-handle{display:flex;align-items:stretch;height:42px}
+.speaker-handle i{width:42px;display:grid;place-items:center;background:var(--av-green);border-right:2px solid var(--av-lav)}
+.speaker-handle i img{width:22px;height:22px}
+.speaker-handle span{flex:1;background:var(--av-green);color:var(--av-lav);font-weight:700;font-size:17px;display:flex;align-items:center;padding:0 14px}
+.speaker small{display:block;margin-top:12px;font-size:14px;letter-spacing:1px;font-weight:800;color:var(--av-teal-ink)}
+
+/* ---------- 10 · Flujo ---------- */
+.flow{display:flex;align-items:stretch;gap:12px;margin-top:46px}
+.node{flex:1;min-height:196px;padding:22px 12px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;gap:10px}
+.node div{font-size:50px}.node b{font-size:21px;font-weight:800}.node small{font-size:15px;color:var(--av-green-2)}
+.arrow{align-self:center;color:var(--av-green);font-size:30px;font-weight:800}
+
+/* ---------- 11 · Agentes ---------- */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:30px}
+.agent{padding:28px 30px;min-height:250px;display:flex;flex-direction:column;align-items:flex-start}
+.agent img,.agent .agent-glyph{width:50px;height:50px;object-fit:contain;margin-bottom:16px}
+.agent-glyph{display:grid;place-items:center;font-size:46px;line-height:1;color:var(--av-lav)}
+.chain .agent-glyph{width:46px;height:46px;font-size:42px;margin-bottom:14px}
+.agent h2{font-family:var(--av-display);font-weight:800;font-size:24px;color:var(--av-lav)}
+.agent b{font-size:14px;letter-spacing:2px;color:var(--av-lime);margin:10px 0}
+.agent p{font-size:19px;line-height:1.4}
+
+/* ---------- 12 · Preparación ---------- */
+.stack{display:flex;flex-direction:column;gap:16px;margin-top:26px;max-width:1040px}
+.stack-row{display:flex;align-items:center;gap:24px;padding:14px 24px}
+.stack-row>b{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;background:var(--av-green);color:var(--av-lime);font-size:18px}
+.stack-row strong{font-size:22px}.stack-row p{font-size:16px;color:var(--av-green-2);margin-top:3px}
+.stack-row>span{margin-left:auto;font-size:32px}
+
+/* ---------- 13 · Arquitectura ---------- */
+.architecture{display:flex;align-items:center;gap:8px;margin-top:46px}
+.arch{flex:1;min-width:0;padding:20px 8px;min-height:176px;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:10px;text-align:center}
+.arch.amber{box-shadow:6px 6px 0 var(--av-orange)}
+.arch span{font-size:40px}.arch b{font-size:18px;font-weight:800}.arch small{font-size:14px;color:var(--av-green-2)}
+.architecture em{font-size:28px;font-style:normal;font-weight:800;color:var(--av-green)}
+
+/* ---------- 14 · Cadena de agentes ---------- */
+.agent-chain{display:flex;gap:14px;align-items:center;margin-top:34px}
+.agent-chain>span{color:var(--av-green);font-size:32px;font-weight:800}
+.chain{flex:1;min-height:250px;padding:24px;display:flex;align-items:center;flex-direction:column;text-align:center}
+.chain img{height:46px;width:46px;margin-bottom:14px}
+.chain b{font-family:var(--av-display);font-size:22px;color:var(--av-lav)}
+.chain p{font-size:19px;line-height:1.3;margin-top:14px}
+.chain small{font-size:14px;letter-spacing:2px;font-weight:800;color:var(--av-lime);margin-top:auto}
+
+/* ---------- 16-18 · Fases de la demo ---------- */
+.demo-layout{display:grid;grid-template-columns:1.12fr .88fr;gap:46px;align-items:center;height:540px}
+.pill{display:inline-block;background:var(--av-green);color:var(--av-lime);font-size:15px;font-weight:800;letter-spacing:1px;padding:9px 15px;margin-bottom:20px}
+.amber-pill{color:var(--av-orange)}.blue-pill{color:var(--av-lav)}
+.prompt-small{font-size:20px;line-height:1.5;background:var(--av-cream);color:var(--av-green);border-radius:4px;padding:22px 24px;margin-top:22px;font-weight:500;box-shadow:6px 6px 0 var(--av-green)}
+.travel{height:330px;position:relative}
+.planet{border-radius:50%;position:absolute;box-shadow:inset -14px -10px 32px #24383766}
+.planet.left{width:132px;height:132px;top:92px;left:8px;background:radial-gradient(circle at 28% 30%,#E5FFC6,var(--av-lime) 45%,#5C9A2B)}
+.planet.right{width:166px;height:166px;top:74px;right:0;background:radial-gradient(circle at 30% 25%,#FFD3BC,var(--av-orange) 50%,#A8461A)}
+.dash{position:absolute;top:158px;left:138px;right:164px;border-top:4px dashed var(--av-green)}
+.rocket{font-size:52px;position:absolute;top:118px;left:168px;animation:rocket 4s ease-in-out infinite}
+.travel small{position:absolute;bottom:20px;left:20px;letter-spacing:2px;font-size:14px;font-weight:800}
+.cosmic-art{height:360px;display:grid;place-items:center;position:relative}
+.core{height:190px;width:190px;border-radius:50%;background:radial-gradient(circle at 30% 25%,var(--av-cream),var(--av-lime) 38%,var(--av-green) 82%);animation:float 5s ease-in-out infinite}
+.ring{position:absolute;border:4px solid var(--av-green);border-radius:50%;width:320px;height:250px;transform:rotate(-25deg);animation:ring 14s linear infinite}
+.ring.r2{width:270px;height:320px;border-color:var(--av-orange);animation-direction:reverse}
+.cosmic-art span{position:absolute;bottom:18px;font-size:30px;color:var(--av-green);letter-spacing:18px}
+.console{border-radius:4px;overflow:hidden;background:var(--av-green);box-shadow:6px 6px 0 var(--av-lime);font-family:var(--av-mono)}
+.console-header{padding:14px 18px;background:#1A2928;color:var(--av-lav);font-size:15px}
+.console p{color:var(--av-lime);padding:7px 22px;font-size:17px}
+.console b{display:block;font-size:24px;color:var(--av-cream);padding:14px 22px}
+.console i{animation:twinkle 2s infinite;color:var(--av-lime)}
+.console small{display:block;color:#FFC6A6;font-size:13px;line-height:1.4;padding:0 22px 16px;font-family:var(--av-sans)}
+
+/* ---------- 19 · Gran final ---------- */
+.mission-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:40px}
+.mission-cards div{background:#24383799;border:2px solid var(--av-lav);border-radius:4px;min-height:200px;padding:24px;display:flex;flex-direction:column}
+.mission-cards span{font-size:54px;margin-bottom:10px}
+.mission-cards b{font-family:var(--av-display);font-size:22px;color:var(--av-lime)}
+.mission-cards p{margin-top:10px;font-size:19px;color:var(--av-cream)}
+
+/* ---------- 20 · Patrocinadores (diapositiva de la plantilla) ---------- */
+.sponsors{position:relative;height:100%}
+.sponsor-label{display:block;width:409px;background:var(--av-green);color:var(--av-lav);text-align:center;font-size:24px;font-weight:700;letter-spacing:2px;padding:7px 0}
+.sponsor-label.top{margin-top:24px}
+.sponsor-main{display:block;width:415px;height:95px;margin:52px 0 0 -3px}
+.sponsor-label.bottom{margin-top:168px;font-size:20px;padding:9px 0}
+.sponsor-row{display:flex;gap:33px;align-items:center;margin-top:42px}
+.sponsor-row img:first-child{width:201px;height:72px}.sponsor-row img:last-child{width:195px;height:97px}
+.sponsor-bubble{position:absolute;left:548px;top:9px;width:479px;height:233px;border-radius:50%;background:var(--av-cream);border:2px solid #008A7B;display:grid;place-items:center;transform:rotate(-4deg)}
+.sponsor-bubble:after{content:"";position:absolute;left:300px;bottom:-38px;border:22px solid transparent;border-top:44px solid var(--av-cream);transform:rotate(-12deg)}
+.sponsor-bubble b{font-family:var(--av-display);font-size:44px;line-height:1.05;color:#008A7B;text-align:center;transform:rotate(-12deg);text-transform:uppercase}
+.sponsor-astronaut{position:absolute;left:702px;top:143px;width:420px;height:420px}
+
+/* ---------- 21 · Banco de Alimentos (diapositiva de la plantilla) ---------- */
+.banco{position:relative;height:100%}
+.banco-logo{position:absolute;left:87px;top:4px;width:502px;height:167px}
+.banco-text{position:absolute;left:-52px;top:190px;width:780px;text-align:center;font-size:26px;line-height:1.3}
+.banco-text b{font-weight:800}
+.banco-org{position:absolute;left:78px;top:312px;width:229px;height:260px}
+.banco-qr{position:absolute;left:389px;top:322px;width:229px;height:229px;background:#fff;padding:8px}
+.banco-astronaut{position:absolute;left:700px;top:60px;width:470px;height:540px;object-fit:contain}
+
+/* ---------- 22 · Cierre ---------- */
+.final-title{font-family:var(--av-display);font-size:62px;font-weight:900;line-height:1.02;text-transform:uppercase;color:var(--av-lav);margin-top:6px}
+.final-layout{display:grid;grid-template-columns:272px 1fr;gap:46px;align-items:center;margin-top:26px;max-width:860px}
+.final-layout>div:last-child{display:flex;flex-direction:column;gap:14px}
+.final-layout p{font-size:23px;font-weight:700;padding-left:22px;position:relative;color:var(--av-cream)}
+.final-layout p:before{content:"";position:absolute;left:0;top:.4em;width:11px;height:11px;background:var(--av-lime)}
+.final-layout .qr-panel{box-shadow:6px 6px 0 var(--av-lime)}
+.final-astronaut{position:absolute;right:-60px;top:70px;width:390px;z-index:0;animation:float 6s ease-in-out infinite}
+.final-stamp{position:absolute;bottom:112px;left:0;font-size:14px;letter-spacing:2px;font-weight:700;color:var(--av-teal)}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes rocket{0%,100%{transform:translateX(-12px) rotate(-7deg)}50%{transform:translateX(58px) rotate(6deg)}}
+@keyframes ring{to{transform:rotate(335deg)}}
+@keyframes twinkle{50%{opacity:.27}}
+@media(prefers-reduced-motion:reduce){.slidev-layout *{animation:none!important;transition:none!important}}
+/* ---------- Estado de carga del iframe 3D (kit PR 1, adaptado a la plantilla) ---------- */
+.live-frame .live-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:1;background:var(--av-navy) url('./assets/template/fondo-espacio.svg') center/cover no-repeat;color:var(--av-lav);text-align:center}
+.live-frame .live-loading strong{font-family:var(--av-display);font-size:26px;line-height:1.15;text-transform:uppercase}
+.live-frame .live-loading p{font-size:16px;color:var(--av-cream)}
+.live-frame .live-loading .loading-orbit{font-size:56px;animation:float 3.5s ease-in-out infinite}
+.live-frame .live-loading .live-backup{display:inline-block;background:var(--av-lime);color:var(--av-green);padding:11px 16px;font-size:16px;font-weight:800;border-radius:2px}
+.live-frame .live-loading .live-backup:focus-visible{outline:3px solid var(--av-orange);outline-offset:4px}
+.live-frame .live-flag{z-index:2}
+@media(prefers-reduced-motion:reduce){.live-frame .live-loading .loading-orbit{animation:none;}}

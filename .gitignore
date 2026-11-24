@@ -4,6 +4,7 @@ node_modules/
 .dev.vars
 .DS_Store
 *.log
+.impeccable/hook.cache.json
 
 # APM — dependencias y skill desplegada
 apm_modules/

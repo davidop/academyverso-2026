@@ -1,7 +1,8 @@
 # Prompts para GitHub Mobile — portal interdimensional AcademyVerso
 
 **Charla:** 26/11/2026 · David Oliva + Sergio Valverde · público mixto 25–50 personas.  
-**Objetivo:** una misión evolutiva, no tres tareas independientes: Copilot construye → Claude enriquece → Codex verifica. El público aporta dos mundos por GitHub Issue.
+**Objetivo:** una misión evolutiva, no tres tareas independientes: Copilot construye → Claude enriquece → Codex verifica. El público aporta dos mundos por GitHub Issue.  
+**Issue de la misión:** una sola, [#37](https://github.com/davidop/academyverso-2026/issues/37). Se asigna por relevo a cada agente; cada fase abre su propia PR con `Refs #37` (sin `Closes`) y los ponentes cierran la Issue al terminar Codex. El relevo paso a paso está en el [guion](guion-demo.md#relevo-en-una-sola-issue).
 
 > No atribuir a los agentes la referencia preparada en [PR #22](https://github.com/davidop/academyverso-2026/pull/22) ni las PR de respaldo #23–#25: estas son de ChatGPT. Para demostrar ejecución de los coding agents, usar sesiones y PR **nuevas, reales y rastreables**.
 
@@ -14,7 +15,7 @@
 
 ## 1 · Copilot — construir (15:15–15:23)
 
-**[Issue #26](https://github.com/davidop/academyverso-2026/issues/26)** · [Respaldo #23](https://github.com/davidop/academyverso-2026/pull/23)
+**[Issue #37 · fase 1](https://github.com/davidop/academyverso-2026/issues/37)** · [Respaldo #23](https://github.com/davidop/academyverso-2026/pull/23)
 
 ```text
 Somos dos ponentes de AcademyVerso 2026 y dirigimos esta tarea desde GitHub Mobile.
@@ -37,7 +38,7 @@ Abre PR para revisión humana, sin fusionar automáticamente.
 
 ## 2 · Claude — enriquecer (15:23–15:31)
 
-**[Issue #27](https://github.com/davidop/academyverso-2026/issues/27)** · [Respaldo #24](https://github.com/davidop/academyverso-2026/pull/24)
+**[Issue #37 · fase 2](https://github.com/davidop/academyverso-2026/issues/37)** · [Respaldo #24](https://github.com/davidop/academyverso-2026/pull/24)
 
 ```text
 Parte del resultado que acaba de dejar Copilot en la rama
@@ -58,7 +59,7 @@ a una sesión Claude que no haya ocurrido.
 
 ## 3 · Codex — verificar (15:31–15:40)
 
-**[Issue #28](https://github.com/davidop/academyverso-2026/issues/28)** · [Respaldo #25](https://github.com/davidop/academyverso-2026/pull/25)
+**[Issue #37 · fase 3](https://github.com/davidop/academyverso-2026/issues/37)** · [Respaldo #25](https://github.com/davidop/academyverso-2026/pull/25)
 
 ```text
 Parte de la rama demo que conserva los cambios de Copilot y Claude

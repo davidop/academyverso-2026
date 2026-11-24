@@ -13,9 +13,10 @@
 |---|---|---|
 | Portal Three.js + Slidev y documentación | [PR #22](https://github.com/davidop/academyverso-2026/pull/22) | Integración de referencia desarrollada con ChatGPT; revisar CI y merge a main antes del evento |
 | Rama sin portal de partida | [demo/portal-seed-26nov](https://github.com/davidop/academyverso-2026/tree/demo/portal-seed-26nov) | Aislamiento para misiones reales, sin tocar producción |
-| Copilot construir | [Issue #26](https://github.com/davidop/academyverso-2026/issues/26) · [Backup PR #23](https://github.com/davidop/academyverso-2026/pull/23) | Backup escrito por ChatGPT |
-| Claude enriquecer | [Issue #27](https://github.com/davidop/academyverso-2026/issues/27) · [Backup PR #24](https://github.com/davidop/academyverso-2026/pull/24) | Backup escrito por ChatGPT |
-| Codex verificar | [Issue #28](https://github.com/davidop/academyverso-2026/issues/28) · [Backup PR #25](https://github.com/davidop/academyverso-2026/pull/25) | Backup escrito por ChatGPT |
+| Misión de los tres agentes | [Issue #37](https://github.com/davidop/academyverso-2026/issues/37) | Un solo hilo: se asigna por relevo a Copilot → Claude → Codex; cada fase abre su PR con `Refs #37` |
+| Respaldo fase 1 · Copilot construir | [Backup PR #23](https://github.com/davidop/academyverso-2026/pull/23) | Backup escrito por ChatGPT |
+| Respaldo fase 2 · Claude enriquecer | [Backup PR #24](https://github.com/davidop/academyverso-2026/pull/24) | Backup escrito por ChatGPT |
+| Respaldo fase 3 · Codex verificar | [Backup PR #25](https://github.com/davidop/academyverso-2026/pull/25) | Backup escrito por ChatGPT |
 | Renderizador WorldGen | [PR #19 ya fusionada](https://github.com/davidop/academyverso-2026/pull/19) | Fallback procedural, no prueba de Foundry live |
 | Ingesta de ensayo | [Issue #10](https://github.com/davidop/academyverso-2026/issues/10) y [#11](https://github.com/davidop/academyverso-2026/issues/11) | Dos objetos reales del equipo, no asistentes ni demostración de origen GitHub Mobile |
 | GitHub CI principal | [Actions](https://github.com/davidop/academyverso-2026/actions/workflows/ci.yml) | Consultar último SHA/resultado antes del GO |
@@ -25,6 +26,7 @@
 
 - [x] Definidas diez decisiones con misión colaborativa, tiempos y respaldo.
 - [x] Creados Issues de los tres agentes con prompts verificables.
+- [x] 25/11: sustituidas por una sola Issue de misión ([#37](https://github.com/davidop/academyverso-2026/issues/37)) donde los tres agentes trabajan por relevo; #26–#28 cerradas como no planificadas.
 - [x] Creadas PR preparadas #23–#25 y rama de ensayo separada (no son ejecuciones de agentes).
 - [ ] Revisar y fusionar PR #22 **solo si** pasan CI Node, navegador WebGL escritorio/móvil y compilación Slidev.
 - [ ] Publicar y comprobar la nueva versión de GitHub Pages; registrar SHA del despliegue.
@@ -32,7 +34,8 @@
 
 ## 3. Martes 24 · Prueba en móviles y agentes
 
-- [ ] **David:** GitHub Mobile autenticado → abrir Issue #26, crear sesión real Copilot cloud agent, rama base demo y PR contra esa rama.
+- [ ] **David:** GitHub Mobile autenticado → abrir Issue #37, asignarla a Copilot, rama base demo y PR contra esa rama.
+- [ ] **Ambos:** comprobar que la **misma Issue #37** se puede asignar después a Claude y a Codex (GitHub no documenta varios agentes en una Issue). Si no deja, plan B: lanzar la sesión desde **Agents → Nueva sesión** en GitHub Mobile con el prompt de la fase y el enlace a #37, y comentar el relevo en #37.
 - [ ] **Sergio:** confirmar habilitación del coding agent Claude en GitHub Mobile y permisos para ese repositorio. No inferirlo de modelos de chat.
 - [ ] **Ambos:** confirmar disponibilidad de Codex coding agent, consumo/créditos y políticas.
 - [ ] Android + otro móvil: abrir QR, generar Issue, navegar por portal, pulsar Intercambiar, Regresar y selección por teclado.
