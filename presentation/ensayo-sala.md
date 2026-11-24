@@ -17,13 +17,13 @@
 | Escena | Comprobación | Resultado |
 | --- | --- | --- |
 | S01 | Marca, astronauta, título y ponentes legibles desde el fondo | [ ] |
-| S01–S08 | Mando avanza y retrocede sin saltarse los pasos de animación | [ ] |
-| S08 | Escanear QR con dos móviles distintos, comprobar login y URL Issue | [ ] |
-| S08 | Portal se abre en un clic, cierra con retroceso y QR permanece quieto | [ ] |
-| S09–S11 | Galaxia real abre fuera del iframe; distinguir modo demo y datos reales | [ ] |
-| S11 | Issues → Actions → Worker+D1 → Three.js legibles y bien encadenados | [ ] |
-| S12–S16 | Cambiar entre demo y diapositivas sin perder proyección; mostrar PR/CI reales | [ ] |
-| S17 | QR del repositorio y enlace a galaxia funcionan | [ ] |
+| S01–S04 | Mando avanza y retrocede sin saltarse los pasos de animación | [ ] |
+| S03 | Escanear QR con dos móviles distintos, comprobar login y URL Issue | [ ] |
+| S03 | Portal se abre en un clic, cierra con retroceso y QR permanece quieto | [ ] |
+| S06–S13 | Galaxia real abre fuera del iframe; distinguir modo demo y datos reales | [ ] |
+| S13 | Issues → Actions → Worker+D1 → Three.js legibles y bien encadenados | [ ] |
+| S15–S19 | Cambiar entre demo y diapositivas sin perder proyección; mostrar PR/CI reales | [ ] |
+| S20 | QR del repositorio y enlace a galaxia funcionan | [ ] |
 | Accesibilidad | Movimiento reducido estable y navegación con teclado | [ ] |
 | Plan B | Simular pérdida de Wi-Fi y recuperar la sesión con respaldo etiquetado | [ ] |
 

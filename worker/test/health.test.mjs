@@ -17,6 +17,7 @@ test('health returns 200 only when D1 schema is initialized',async()=>{
   const body=await res.json();
   assert.equal(body.ok,true);
   assert.equal(body.database_connected,true);
+  assert.equal(body.create_enabled,false);
 });
 test('health returns 503 when D1 binding is missing',async()=>{
   const res=await worker.fetch(request(),{ALLOWED_ORIGIN:'https://davidop.github.io'},{});
@@ -27,4 +28,53 @@ test('health returns 503 when D1 tables are missing',async()=>{
   const res=await worker.fetch(request(),makeEnv(1),{});
   assert.equal(res.status,503);
   assert.equal((await res.json()).ok,false);
+});
+
+test('creation returns a controlled unavailable response until GitHub token is configured',async()=>{
+  const res=await worker.fetch(new Request('https://academyverso-api.example.workers.dev/api/create',{method:'POST',headers:{origin:'https://davidop.github.io','content-type':'application/json'},body:JSON.stringify({type:'estacion',alias:'davidop',name:'Thanos',description:'Una estacion espacial disparando cohetes'})}),makeEnv(2),{});
+  assert.equal(res.status,503);
+  assert.equal((await res.json()).code,'CREATE_NOT_READY');
+});
+
+test('ingest updates D1 for a previously closed Issue after an edit',async()=>{
+  const secret='integration-test-secret';
+  const incoming={action:'edited',issue:{number:3,state:'closed',html_url:'https://github.com/davidop/academyverso-2026/issues/3',body:'### Tipo de objeto\n\nestacion\n\n### Alias del explorador\n\nComandante Dev\n\n### Nombre del objeto\n\nNexus de los Tres Agentes\n\n### Descripción creativa\n\nEstación orbital de los tres agentes con anillos luminosos.'}};
+  const raw=JSON.stringify(incoming);
+  const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  const sig=Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(raw)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+  let writes=0;
+  const env={GITHUB_REPO:'davidop/academyverso-2026',INGEST_SECRET:secret,DB:{prepare(sql){
+    assert.match(sql,/INSERT INTO objects/);
+    return {bind(...values){assert.equal(values[0],3);return {async run(){writes++;return {success:true}}}}};
+  }}};
+  const req=new Request('https://academyverso-api.example.workers.dev/api/ingest',{method:'POST',headers:{'content-type':'application/json','x-academyverso-signature':'sha256='+sig},body:raw});
+  const res=await worker.fetch(req,env,{waitUntil(){}});
+  assert.equal(res.status,200);
+  assert.equal((await res.json()).issue_number,3);
+  assert.equal(writes,1);
+});
+
+
+test('WorldGen health only announces enabled when schema migration is present',async()=>{
+ const env={WORLDGEN_ENABLED:'true',DB:{prepare(sql){
+  if(sql.includes("name IN ('objects','rates')"))return {async first(){return {total:2}}};
+  if(sql.includes("name='world_revisions'"))return {async first(){return {total:1}}};
+  if(sql.includes('PRAGMA table_info'))return {async all(){return {results:['world_spec','world_status','world_version','world_owner_token_hash'].map(name=>({name}))}}};
+  throw Error('unexpected SQL '+sql);
+ }}};
+ const response=await worker.fetch(request(),env,{});
+ assert.equal(response.status,200);
+ assert.equal((await response.json()).worldgen_enabled,true);
+});
+test('WorldGen query failure does not break legacy object listing',async()=>{
+ let queries=0;
+ const env={WORLDGEN_ENABLED:'true',DB:{prepare(sql){return {async all(){
+  queries++;
+  if(sql.includes('world_spec'))throw Error('no migration yet');
+  return {results:[{issue_number:10,name:'Legacy',type:'planeta'}]};
+ }}}}};
+ const response=await worker.fetch(new Request('https://api.example.com/api/objects'),env,{});
+ assert.equal(response.status,200);
+ assert.equal((await response.json()).objects[0].name,'Legacy');
+ assert.equal(queries,2);
 });

@@ -4,7 +4,7 @@
 
 Una pregunta abre la charla: **¿puede un móvil dirigir trabajo de desarrollo real?** La respuesta se demuestra dos veces: el público crea una Issue para imaginar un mundo; los ponentes toman una función concreta —viajar entre planetas— y muestran cómo pasa de encargo a cambio revisado. Son dos recorridos distintos: **un planeta es una contribución; el viaje es un cambio de código**. No se presentan como el mismo flujo.
 
-La propuesta conserva las **17 escenas** del deck actual (portada más 16 numeradas) y sus rutas. Ajusta el énfasis y el orden de lo que se cuenta dentro de cada escena, sin convertir la sesión en 17 minidemos. Los IDs S01–S17 son los números de Slidev, no los del rótulo visual.
+La propuesta conservaba las **17 escenas** del corte de rediseño. Tras integrar main, el deck del evento tiene **20 escenas**: se añaden el hook GTA VII, la elección de dos mundos y el centro de control manual, y el QR de participación pasa al principio. Los IDs S01–S17 de este documento son los del corte de rediseño, no los números actuales de Slidev. Mapa de escenas: S01→S01, S02→S07, S03→S08, S04→S09, S05→S10, S06→S11, S07→S12, S08→S03, S09→S04, S10→S06, S11→S13, S12→S14, S13→S16, S14→S17, S15→S18, S16→S19, S17→S20.
 
 ## Acto I · Del chat al encargo · 15:00–15:14
 

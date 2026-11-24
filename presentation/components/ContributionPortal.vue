@@ -13,7 +13,7 @@ const issueUrl = 'https://github.com/davidop/academyverso-2026/issues/new?templa
     <div class="portal-copy">
       <header class="portal-brand">
         <MissionBrand />
-        <span>07 · TU PRIMERA CONTRIBUCIÓN</span>
+        <span>PARTICIPA · TU PRIMERA CONTRIBUCIÓN</span>
       </header>
       <h1><span>Escanea. Imagina.</span><br /><em>Crea tu planeta.</em></h1>
       <div class="portal-action">
@@ -24,7 +24,7 @@ const issueUrl = 'https://github.com/davidop/academyverso-2026/issues/new?templa
             <li>Elige un planeta, estrella, luna o estación.</li>
             <li>Indica nombre, alias y descripción; envía la Issue.</li>
           </ol>
-          <p>Necesitas iniciar sesión en GitHub.</p>
+          <p>Necesitas iniciar sesión en GitHub. Tu idea queda registrada en público; sin cuenta, la alternativa web usa Cloudflare Worker.</p>
         </div>
       </div>
     </div>

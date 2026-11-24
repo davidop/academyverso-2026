@@ -18,7 +18,7 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-17 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
+20 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
 
@@ -37,7 +37,7 @@ Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
 - MissionSky.vue: horizonte del planeta común y destellos SVG; el prop orbit activa una órbita decorativa. Para otro encuadre, importar assets/mission-planet.webp sin generar ni duplicar la textura.
 - MissionCover.vue: ejemplo de escena a sangre completa. Usa layout default en S01: el layout cover de Slidev envuelve el componente en un contenedor sin altura si el contenido es solo absoluto. En presentación, activar la entrada solo en la escena activa y anularla con movimiento reducido y en impresión.
 
-Para revisar S01: abre /#/1, avanza y vuelve con el mando, prueba a 1280 × 720 y en móvil, y activa movimiento reducido. S11 y S17 pueden avanzar en archivos de escena separados. S14 depende de fijar la geometría del viaje en S13.
+Para revisar S01: abre /#/1, avanza y vuelve con el mando, prueba a 1280 × 720 y en móvil, y activa movimiento reducido. S13 y S20 pueden avanzar en archivos de escena separados. Los cuatro fotogramas de conjunto del plan visual se corresponden ahora con S01, S13, S18 y S20.
 
 ## Riesgos y plan de respaldo
 
@@ -50,7 +50,7 @@ Branding original: materiales de Academyverso, fuera de la licencia MIT del repo
 
 ## Pruebas visuales reproducibles
 
-En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S08, S11 y S17 con Playwright y capturando además las 17 escenas. Comprueba los campos del formulario, navegación reversible por teclado, enlaces y decodificación real de ambos QR, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
+En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S03, S09, S13, S15 y S20 con Playwright y capturando además las 20 escenas. Comprueba los campos del formulario, navegación reversible por teclado, enlaces, decodificación real de los dos QR (Issue y repositorio), retratos locales de los ponentes, el panel manual de la sesión, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
 
 Para ejecutarlo localmente:
 
@@ -65,6 +65,23 @@ npm run test:visual
 
 [Checklist del ensayo con proyector y mando](ensayo-sala.md)
 
-La diapositiva S10 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
+La diapositiva S06 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
 
-Las fotografías de S04 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
+Las fotografías de S09 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
+## GTA VII: Grand Terraforming Agents
+
+La presentación mantiene el título oficial. Se añaden dos diapositivas originales (hook paródico y elección de escenarios) y se adapta la secuencia de agentes. No se utilizan imágenes, marcas gráficas ni personajes de Rockstar Games. La dinámica real consiste en crear objetos etiquetados y mostrar contadores calculados desde D1; los escenarios jugables complejos son ideas para futuras PRs, no funciones existentes.
+
+## Portal interdimensional · versión del evento
+
+La charla de 55 minutos conserva el título oficial, la experiencia móvil y el público mixto. Añade una escena con `MissionBoard.vue`, un **panel de estados actualizado manualmente**; nunca muestra resultados falsos de coding agents.
+
+- 15:00–15:05 introducción y QR.
+- 15:05–15:15 creaciones del público y elección de dos mundos.
+- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (Issues #26–#28; respaldos #23–#25).
+- 15:40–15:50 portal entre los mundos elegidos.
+- 15:50–15:55 conclusiones y preguntas.
+
+**Aviso de autoría:** la versión preparada del portal procede de ChatGPT, no de los tres agentes; sus ejecuciones en vivo deberán identificarse mediante nuevas sesiones, PR y GitHub Actions.
+
+[Guion operativo](../docs/guion-demo.md) · [GO/NO-GO](../docs/runbook-go-no-go-26nov.md) · [Prompts](../docs/prompts-agentes.md).

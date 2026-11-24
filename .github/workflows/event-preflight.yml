@@ -1,0 +1,23 @@
+name: Preflight · AcademyVerso en directo
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy · GitHub Pages"]
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  preflight:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check live pages, Worker health and D1 sample objects
+        run: python scripts/event-smoke.py

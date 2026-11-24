@@ -16,6 +16,7 @@ const active = useIsSlideActive()
       <h1>¿Y si dirigieras<br />un repo<br /><em>desde el móvil?</em></h1>
       <p class="mission-subtitle">Programa con IA desde tu móvil:<br />GitHub Copilot, Claude y Codex</p>
       <p class="mission-speakers">David Oliva · Sergio Valverde</p>
+      <p class="mission-date">26 NOVIEMBRE · 15:00</p>
     </div>
   </section>
 </template>
@@ -57,6 +58,7 @@ const active = useIsSlideActive()
   line-height: 1.15;
 }
 .mission-copy .mission-speakers { margin-top: 36px; font-size: 29px; font-weight: 700; }
+.mission-copy .mission-date { margin-top: 16px; font-size: 19px; font-weight: 800; letter-spacing: 4px; color: var(--mint); }
 
 [data-active="true"] h1 { animation: cover-reveal 440ms cubic-bezier(.22, 1, .36, 1) both; }
 [data-active="true"] .mission-astronaut { animation: cover-drift 1450ms cubic-bezier(.22, 1, .36, 1) both; }

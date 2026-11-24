@@ -16,22 +16,95 @@
   <a class="skip" href="#universe">Saltar al universo</a>
   <header class="nav">
     <img class="brand" src="./assets/academyverso-logo.png" alt="AcademyVerso" />
-    <div class="nav-actions"><span class="pill" id="connection" role="status">Modo demostración</span><a href="https://github.com/davidop/academyverso-2026" target="_blank" rel="noreferrer">Ver GitHub ↗</a></div>
+    <div class="nav-actions"><span class="pill" id="connection" role="status">Modo demostración</span><a href="./sesion.html">Enlaces de la sesión ↗</a><a href="https://github.com/davidop/academyverso-2026" target="_blank" rel="noreferrer">Ver GitHub ↗</a></div>
   </header>
   <main>
     <section class="intro">
-      <div class="intro-copy"><p class="eyebrow">ACADEMYVERSO 2026 · MISIÓN INTERACTIVA</p><h1>Un universo.<br><em>50 exploradores.</em><br>3 agentes de IA.</h1><p>Escanea, imagina y crea. Tu planeta, estrella o estación espacial puede formar parte de esta galaxia colaborativa.</p><div class="intro-actions"><a class="primary" id="github-create" target="_blank" rel="noopener noreferrer" href="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml">Crear desde GitHub Mobile ↗</a><button id="open-form" class="secondary">Preparar propuesta para GitHub</button><a class="secondary" href="./presentation/" aria-label="Abrir presentación interactiva de AcademyVerso">Ver charla Slidev ↗</a></div><p class="micro">Cada creación queda registrada como una GitHub Issue. Los cambios de código se revisan por pull request.</p></div>
+      <div class="intro-copy"><p class="eyebrow">ACADEMYVERSO 2026 · MISIÓN INTERACTIVA</p><h1>Un universo.<br><em>50 exploradores.</em><br>3 agentes de IA.</h1><p>Construye un mundo desde tu móvil: participa en Grand Terraforming Agents o crea tu propio planeta, estrella o estación espacial.</p><div class="intro-actions"><a class="primary" id="github-create" target="_blank" rel="noopener noreferrer" href="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml">Crear desde GitHub Mobile ↗</a><button id="open-form" class="secondary">Preparar propuesta para GitHub</button><a class="secondary" href="./presentation/" aria-label="Abrir presentación interactiva de AcademyVerso">Ver charla Slidev ↗</a></div><p class="micro">Cada creación queda registrada como una GitHub Issue. Los cambios de código se revisan por pull request.</p></div>
       <div class="mission-tag"><span>🚀</span><b>Tu misión</b><small>Ayúdanos a poblar el universo</small></div>
+    </section>
+    <section id="grand-terraforming-agents" class="terraform" aria-labelledby="terraform-title">
+      <header class="terraform-header">
+        <p class="eyebrow">🎮 NUEVA MISIÓN · CONCEPTO PARÓDICO INDEPENDIENTE</p>
+        <h2 id="terraform-title">GTA VII <span>Grand Terraforming Agents</span></h2>
+        <p>El próximo gran mundo abierto no se juega: <strong>se construye con agentes de IA.</strong> El público decide qué escenario desarrollar y cada creación se registra como una GitHub Issue real.</p>
+      </header>
+      <div class="terraform-grid">
+        <article class="terraform-card vice">
+          <div class="scenario-art" aria-hidden="true"><span class="scenario-symbol">🌆</span><span class="scenario-grid"></span></div>
+          <p class="scenario-kicker">ESCENARIO A · METRÓPOLIS</p>
+          <h3>Vice Nebula</h3>
+          <p>Una ciudad neón entre planetas: avenidas flotantes, vehículos antigravedad y barrios que los agentes pueden ampliar.</p>
+          <div class="mission-count"><strong id="vice-nebula-count">0</strong><span>creaciones de la comunidad</span></div>
+          <button type="button" class="primary mission-cta" data-mission="vice-nebula">Construir este mundo ↗</button>
+          <a class="mission-mobile" id="vice-nebula-github" target="_blank" rel="noopener noreferrer" href="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml">Crear desde GitHub Mobile ↗</a>
+        </article>
+        <article class="terraform-card sentinel">
+          <div class="scenario-art" aria-hidden="true"><span class="scenario-symbol">🛰️</span><span class="scenario-grid"></span></div>
+          <p class="scenario-kicker">ESCENARIO B · COLONIA ESPACIAL</p>
+          <h3>Colonia Centinela</h3>
+          <p>Una colonia vigilada por drones de rescate, rutas inteligentes y ciudades bajo cúpulas: seguridad y creatividad en equipo.</p>
+          <div class="mission-count"><strong id="colonia-centinela-count">0</strong><span>creaciones de la comunidad</span></div>
+          <button type="button" class="primary mission-cta" data-mission="colonia-centinela">Construir este mundo ↗</button>
+          <a class="mission-mobile" id="colonia-centinela-github" target="_blank" rel="noopener noreferrer" href="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml">Crear desde GitHub Mobile ↗</a>
+        </article>
+      </div>
+      <p id="mission-feedback" class="mission-feedback" role="status" aria-live="polite">Cada objeto nuevo con la etiqueta de una misión suma una creación; no es una votación de personas únicas. Los resultados provienen de D1.</p>
+      <div class="mission-pipeline" aria-label="Flujo real de participación">📱 Idea desde el móvil <span>→</span> 📋 GitHub Issue <span>→</span> ⚙️ GitHub Actions <span>→</span> 🌌 Planeta en Three.js</div>
+      <p class="micro parody">GTA VII: Grand Terraforming Agents es una parodia conceptual creada para esta charla. No está afiliada a Rockstar Games ni utiliza sus personajes, imágenes o recursos.</p>
     </section>
     <section id="universe" class="space-section" aria-label="Universo tridimensional interactivo">
       <div class="space-toolbar"><div><span class="section-tag">GALAXIA COLECTIVA</span><h2>Explora el AcademyVerso</h2></div><div class="counters"><div><strong id="count">0</strong><span>objetos</span></div><div><strong id="explorers">0</strong><span>exploradores</span></div></div></div>
       <div id="viewport" role="img" aria-label="Vista 3D interactiva del universo creado por asistentes; arrastra para rotar y usa la rueda para acercarte"><div id="fallback-text">Preparando el universo…</div></div>
-      <div class="scene-bottom"><span>🖱 Arrastra para explorar · Toca un objeto para descubrir su historia</span><button id="reset-camera" class="tiny">Recentrar vista</button></div>
+      <section id="portal-control" class="portal-control" aria-labelledby="portal-title">
+        <div class="portal-heading">
+          <div><span class="eyebrow">✨ MISIÓN EN DIRECTO · COPILOT → CLAUDE → CODEX</span><h3 id="portal-title">Portal interdimensional</h3><p>Elige dos mundos creados por la comunidad y atraviesa el puente entre ambos.</p></div>
+          <span id="portal-mode" class="portal-mode">Comprobando datos…</span>
+        </div>
+        <div class="portal-fields">
+          <label for="portal-source">Mundo de origen<select id="portal-source" aria-label="Seleccionar mundo de origen"></select></label>
+          <span class="portal-direction" aria-hidden="true">✦ → ✦</span>
+          <label for="portal-target">Mundo de destino<select id="portal-target" aria-label="Seleccionar mundo de destino"></select></label>
+          <button id="portal-swap" type="button" class="tiny" aria-label="Intercambiar mundos">⇄ Intercambiar</button>
+          <button id="portal-launch" type="button" class="primary" aria-controls="viewport" disabled>Activar portal ✦</button>
+        </div>
+        <p id="portal-feedback" role="status" aria-live="polite">Selecciona dos mundos para iniciar el viaje.</p>
+        <p class="micro">Si no hay conexión, se mostrarán exclusivamente los objetos de ejemplo identificados como modo demostración. El portal no crea nuevas Issues ni modifica D1.</p>
+      </section>
+      <div id="travel-panel" class="travel-panel" hidden>
+        <div><span class="eyebrow">🚀 VIAJE INTERPLANETARIO</span><strong id="travel-world"></strong><span id="travel-phase">En ruta</span></div>
+        <button id="return-home" type="button" class="primary" aria-controls="viewport">↩ Regresar a la galaxia</button>
+      </div>
+      <p id="travel-status" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
+      <aside class="mission-score" aria-label="Misiones de exploración ficticias">
+        <span class="mission-score-stars" id="mission-stars" aria-hidden="true">☆☆☆☆☆</span>
+        <span id="mission-progress" role="status" aria-live="polite">0/5 estrellas · visita mundos y descubre estructuras</span>
+        <button id="mission-reset" type="button" class="tiny">Reiniciar misión</button>
+      </aside>
+      <div class="scene-bottom"><span>🖱 Arrastra para explorar · Toca un planeta GTA VII para viajar desde su ficha</span><button id="reset-camera" class="tiny">Recentrar vista</button></div>
     </section>
     <section class="gallery" aria-label="Creaciones recientes"><div class="gallery-head"><div><span class="section-tag">CREACIONES DE LA COMUNIDAD</span><h2>Los últimos habitantes</h2></div><span id="last-sync" class="micro">Esperando datos</span></div><div id="cards" class="cards" aria-live="polite"></div></section>
     <section class="credits"><div><strong>Construido con GitHub Mobile</strong><p>Una sesión de David Oliva y Sergio Valverde · AcademyVerso 2026 · 26 de noviembre</p></div><p>Copilot + Claude + Codex: tres agentes, un mismo proyecto.</p></section>
   </main>
   <dialog id="create-dialog" aria-labelledby="dialog-title"><form id="create-form" method="dialog"><button type="button" class="close" id="close-form" aria-label="Cerrar">×</button><p class="eyebrow">MISIÓN EXPLORADOR</p><h2 id="dialog-title">Crea tu objeto cósmico</h2><label>Tu alias<input name="alias" minlength="2" maxlength="28" required placeholder="Comandante Python" autocomplete="nickname" /></label><label>Tipo de objeto<select name="type"><option value="planeta">🪐 Planeta</option><option value="estrella">⭐ Estrella</option><option value="luna">🌙 Luna</option><option value="agujero-negro">🕳️ Agujero negro</option><option value="estacion">🛸 Estación espacial</option><option value="asteroide">☄️ Asteroide</option></select></label><label>Nombre de tu creación<input name="name" minlength="3" maxlength="48" required placeholder="Pythonia" /></label><label>¿Cómo lo imaginas?<textarea name="description" minlength="8" maxlength="280" required placeholder="Un planeta turquesa con tres lunas y anillos de estrellas…"></textarea></label><p class="micro">Con backend conectado se registrará una Issue pública. Mientras tanto, te llevaremos al formulario de GitHub con los campos preparados. Evita datos personales.</p><button class="primary submit" id="submit-object" type="submit">Lanzar al universo 🚀</button><p id="form-status" role="status" aria-live="polite"></p></form></dialog>
-  <dialog id="detail-dialog" aria-labelledby="detail-title"><div class="detail"><button type="button" class="close" id="close-detail" aria-label="Cerrar">×</button><span class="section-tag" id="detail-type"></span><h2 id="detail-title"></h2><p id="detail-description"></p><p id="detail-alias"></p><a id="detail-issue" target="_blank" rel="noopener noreferrer">Ver la GitHub Issue ↗</a></div></dialog>
+  <dialog id="detail-dialog" aria-labelledby="detail-title"><div class="detail"><button type="button" class="close" id="close-detail" aria-label="Cerrar">×</button><span class="section-tag" id="detail-type"></span><h2 id="detail-title"></h2><p id="detail-description"></p><p id="detail-alias"></p><button id="travel-to-world" type="button" class="primary travel-action" aria-controls="viewport" hidden>🚀 Viajar a este mundo</button><a id="detail-issue" target="_blank" rel="noopener noreferrer">Ver la GitHub Issue ↗</a>
+      <details id="world-evolve-panel" class="world-evolve" hidden>
+        <summary>✨ Evolucionar este mundo</summary>
+        <p class="micro">Si lo creaste en GitHub Mobile, publica este comando como comentario en tu Issue. Solo el autor puede modificar el mundo.</p>
+        <button id="copy-evolve-command" type="button" class="tiny">Copiar comando de evolución</button>
+        <p class="micro">Si lo creaste desde el formulario web, utiliza la clave privada recibida al crearlo. El formulario puede evolucionar el mundo sin cuenta de GitHub.</p>
+        <form id="world-evolve-form">
+          <label>Clave privada de edición<input id="world-edit-token" type="password" minlength="43" maxlength="43" autocomplete="off" placeholder="Clave de 43 caracteres" required /></label>
+          <label>Nueva instrucción<textarea id="world-evolve-instruction" minlength="8" maxlength="240" required placeholder="Añade dos lunas y una ciudad flotante, conservando sus océanos"></textarea></label>
+          <button type="submit" class="primary">Evolucionar con IA o fallback</button>
+        </form>
+        <p id="world-evolve-status" role="status" aria-live="polite"></p>
+        <button type="button" class="tiny" id="world-history-button">Ver historial de versiones</button>
+        <ol id="world-history-list" aria-label="Versiones del mundo"></ol>
+        <form id="world-rollback-form">
+          <label>Versión anterior<input id="world-rollback-version" type="number" min="1" step="1" required placeholder="1" /></label>
+          <button type="submit" class="tiny">Restaurar versión con clave</button>
+        </form>
+      </details></div></dialog>
 </body>
 </html>

@@ -2,6 +2,8 @@
 
 **Guion aprobado; composición visual en revisión.** El [guion narrativo](storytelling.md) define qué cuenta la escena; [DESIGN.md](DESIGN.md) fija la marca, la escala y las reglas de movimiento. Las cuatro imágenes aprobadas son anclas de estilo, no un fondo que se exporta sin editar.
 
+> **Nota tras integrar main:** el deck pasa a 20 escenas. La tabla siguiente conserva los IDs S01–S17 del corte de rediseño; el mapa a los números actuales de Slidev está en [storytelling.md](storytelling.md).
+
 ## Escena a escena
 
 La última columna describe el cambio de estado y cómo enlaza con la siguiente escena. «Corte» significa sin transición larga ni clicks extra.

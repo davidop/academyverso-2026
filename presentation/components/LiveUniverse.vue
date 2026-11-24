@@ -23,6 +23,6 @@ const url = 'https://davidop.github.io/academyverso-2026/'
     </div>
   </div>
   <div class="live-note">
-    Hasta activar Cloudflare Worker + D1, la galaxia muestra objetos de ejemplo. No son contribuciones del público en directo.
+    Hasta activar Cloudflare Worker + D1, la galaxia muestra objetos de ejemplo. No son contribuciones del público en directo. Las Issues nuevas pueden tardar por la cola de GitHub Actions: verificar la URL y el estado real durante la demo.
   </div>
 </template>
