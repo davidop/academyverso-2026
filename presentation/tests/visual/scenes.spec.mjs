@@ -5,6 +5,7 @@ import { PNG } from 'pngjs'
 const repo = 'https://github.com/davidop/academyverso-2026'
 const issueUrl = repo + '/issues/new?template=crear-objeto.yml'
 const galaxyUrl = 'https://davidop.github.io/academyverso-2026/'
+const sessionHub = 'https://davidop.github.io/academyverso-2026/sesion.html'
 
 async function slide(page, number, selector) {
   await page.goto('/#/' + number, { waitUntil: 'domcontentloaded' })
@@ -100,13 +101,16 @@ test('S15 · centro de control manual, nunca telemetría simulada', async ({ pag
   await screenshot(page, testInfo, 'S15-centro-de-control-1280x720.png')
 })
 
-test('S20 · cierre, enlace galaxia y QR repositorio decodificable', async ({ page }, testInfo) => {
+test('S20 · cierre con enlaces de sesión y QR decodificable', async ({ page }, testInfo) => {
   const closing = await slide(page, 20, '.mission-closing')
   const galaxyLink = closing.getByRole('link', { name: /Explorar el universo 3D/i })
   await expect(galaxyLink).toHaveAttribute('href', galaxyUrl)
+  const hubLink = closing.getByRole('link', { name: /Enlaces de la sesión/i })
+  await expect(hubLink).toHaveAttribute('href', sessionHub)
   const repoLink = closing.getByRole('link', { name: /Código y documentación/i })
   await expect(repoLink).toHaveAttribute('href', repo)
-  expect(await qrValue(repoLink.locator('svg').first())).toBe(repo)
+  const qrLink = closing.getByRole('link', { name: /Enlaces y código/i })
+  expect(await qrValue(qrLink.locator('svg').first())).toBe(sessionHub)
   await screenshot(page, testInfo, 'S20-cierre-1280x720.png')
 })
 

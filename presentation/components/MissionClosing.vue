@@ -6,6 +6,7 @@ import QrPortal from './QrPortal.vue'
 
 const active = useIsSlideActive()
 const repository = 'https://github.com/davidop/academyverso-2026'
+const sessionHub = 'https://davidop.github.io/academyverso-2026/sesion.html'
 const galaxy = 'https://davidop.github.io/academyverso-2026/'
 </script>
 
@@ -16,10 +17,14 @@ const galaxy = 'https://davidop.github.io/academyverso-2026/'
       <MissionBrand />
       <h1>Tu móvil delega.<br /><em>Tú decides qué entra.</em></h1>
       <p class="closing-steps">Delegar · Revisar · Validar</p>
-      <a class="galaxy-link" :href="galaxy" target="_blank" rel="noopener noreferrer">🌌 Explorar el universo 3D ↗</a>
+      <div class="closing-links">
+        <a class="galaxy-link" :href="galaxy" target="_blank" rel="noopener noreferrer">🌌 Explorar el universo 3D ↗</a>
+        <a class="hub-link" :href="sessionHub" target="_blank" rel="noopener noreferrer">Enlaces de la sesión ↗</a>
+        <a class="repo-link" :href="repository" target="_blank" rel="noopener noreferrer">Código y documentación ↗</a>
+      </div>
     </div>
     <div class="closing-qr">
-      <QrPortal :url="repository" label="Código y documentación" label-below />
+      <QrPortal :url="sessionHub" label="Enlaces y código" label-below />
     </div>
   </section>
 </template>
@@ -55,9 +60,12 @@ const galaxy = 'https://davidop.github.io/academyverso-2026/'
   line-height: 1.2;
   font-weight: 800;
 }
-.galaxy-link { display: inline-block; margin-top: 26px; padding: 13px 20px; border: 2px solid var(--mint); border-radius: 12px; color: var(--mint); background: #121b30dc; font-size: 22px; line-height: 1.25; font-weight: 800; text-decoration: none; }
-.galaxy-link:hover, .galaxy-link:focus-visible { background: var(--mint); color: #121b30; }
-.galaxy-link:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; }
+.closing-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.galaxy-link, .hub-link, .repo-link { display: inline-block; padding: 11px 18px; border: 2px solid var(--mint); border-radius: 12px; color: var(--mint); background: #121b30dc; font-size: 20px; line-height: 1.25; font-weight: 800; text-decoration: none; }
+.hub-link { background: var(--mint); color: #121b30; }
+.galaxy-link:hover, .galaxy-link:focus-visible, .repo-link:hover, .repo-link:focus-visible { background: var(--mint); color: #121b30; }
+.hub-link:hover, .hub-link:focus-visible { background: var(--white); color: #121b30; }
+.galaxy-link:focus-visible, .hub-link:focus-visible, .repo-link:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; }
 .closing-qr { justify-self: center; width: 390px; text-align: center; }
 .closing-qr :deep(.qr-label) { white-space: nowrap; }
 .closing-qr :deep(.qr-panel:focus-visible) {
