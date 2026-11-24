@@ -1,26 +1,30 @@
 ---
 theme: default
 title: AcademyVerso 2026 · Programa con IA desde tu móvil
-colorSchema: dark
+colorSchema: light
 aspectRatio: 16/9
 canvasWidth: 1280
 routerMode: hash
 transition: fade
+layout: cover
 fonts:
-  sans: Arial
-  mono: Consolas
+  sans: Host Grotesk
+  serif: Unbounded
+  mono: JetBrains Mono
+  weights: '400,500,600,700,800'
+  provider: google
 ---
 
-<div class="kicker">ACADEMYVERSO 2026 · MISIÓN INTERACTIVA</div>
-<div class="hero-title">PROGRAMA<br><span class="gradient">CON IA</span><br>DESDE TU <span class="mint">MÓVIL</span></div>
-<div class="subline">Un móvil. Tres agentes. Un universo creado por todos.</div>
-<div class="hero-platforms"><span>◈ GitHub Mobile</span><span>◉ Copilot</span><span>✳ Claude</span><span>◎ Codex</span></div>
-<img class="astronaut" src="https://davidop.github.io/academyverso-2026/assets/astronauta.png" alt="Astronauta oficial AcademyVerso" />
-<div class="footer-stamp">DAVID OLIVA + SERGIO VALVERDE · 26 NOVIEMBRE · 15:00</div>
+<div class="cover-kicker">ACADEMYVERSO 2026 · MISIÓN INTERACTIVA</div>
+<h1 class="cover-title">Programa<br>con IA desde<br>tu <span class="lime">móvil</span></h1>
+<div class="cover-sub">Un móvil. Tres agentes. Un universo creado por todos.</div>
+<div class="cover-platforms"><span>◈ GitHub Mobile</span><span>◉ Copilot</span><span>✳ Claude</span><span>◎ Codex</span></div>
+<div class="cover-stamp">DAVID OLIVA + SERGIO VALVERDE · 26 NOVIEMBRE · 15:00</div>
 
 <!-- David abre preguntando quién ha programado desde el móvil. Sergio anuncia que juntos poblaremos una galaxia. -->
 
 ---
+layout: space
 transition: fade
 ---
 
@@ -30,7 +34,7 @@ transition: fade
  <div class="gta-subtitle">GRAND<br>TERRAFORMING<br>AGENTS</div>
  <p>Todos hablan del próximo gran mundo abierto.<br>¿Y si esta vez <strong>no lo jugáramos, sino que lo construyéramos</strong> con IA desde el móvil?</p>
  <div class="gta-mini">📱 GITHUB MOBILE　·　🤖 COPILOT　·　✳ CLAUDE　·　◎ CODEX</div></div>
- <div class="gta-orbital" aria-hidden="true"><div class="gta-sphere"></div><div class="gta-orbit o1"></div><div class="gta-orbit o2"></div><div class="gta-city">🌆</div></div>
+ <div class="gta-orbital" aria-hidden="true"><div class="gta-sphere"></div><div class="gta-orbit o1"></div><div class="gta-orbit o2"></div><img class="gta-astronaut" src="./assets/template/astronauta-volando.svg" alt="" /></div>
 </div>
 <div class="footnote">GTA VII: Grand Terraforming Agents es un concepto paródico propio, no afiliado a Rockstar Games. Sin imágenes ni logotipos del videojuego.</div>
 
@@ -56,7 +60,10 @@ transition: slide-left
 
 <div class="kicker">PARTICIPA · IMAGINA TU MUNDO</div>
 <div class="headline">¿Qué mundo<br><span class="mint">quieres inventar?</span></div>
-<div class="prompt-example"><div class="prompt-tag">🪐 NUEVA ISSUE · PLANETA</div><div class="prompt-text">«Quiero un planeta <b>violeta</b> con anillos de cristal, <b>tres lunas</b> y tormentas eléctricas. Se llama <b>Neón-42</b> y mi alias es <b>Comandante Pixel</b>».</div><div class="prompt-footer">TIPO · PLANETA　 |　 ALIAS · COMANDANTE PIXEL　 |　 ISSUE · TRAZABLE</div></div>
+<div class="imagine-layout">
+ <div class="prompt-example"><div class="prompt-tag">🪐 NUEVA ISSUE · PLANETA</div><div class="prompt-text">«Quiero un planeta <b>violeta</b> con anillos de cristal, <b>tres lunas</b> y tormentas eléctricas. Se llama <b>Neón-42</b> y mi alias es <b>Comandante Pixel</b>».</div><div class="prompt-footer">TIPO · PLANETA　 |　 ALIAS · COMANDANTE PIXEL　 |　 ISSUE · TRAZABLE</div></div>
+ <img class="imagine-astronaut" src="./assets/template/astronauta-lapiz.svg" alt="" />
+</div>
 
 <!-- David pide al público una propuesta divertida. Sergio muestra la estructura de una Issue. -->
 
@@ -75,6 +82,7 @@ transition: slide-left
 <!-- Sergio enseña dos opciones en la web. David pide al público crear un planeta desde el formulario o GitHub Mobile. El recuento se alimenta de D1; nunca simular participación. -->
 
 ---
+layout: space
 transition: fade
 ---
 
@@ -91,7 +99,7 @@ transition: slide-left
 
 <div class="kicker">CÓMO FUNCIONA · LA IDEA</div>
 <div class="headline">No vamos a hablar de IA.<br><span class="gradient">Vamos a ponerla a trabajar.</span></div>
-<div class="two-up" style="margin-top:60px">
+<div class="two-up">
  <div class="glass dim"><div class="eyebrow">ANTES</div><div class="emoji">💬</div><h2>«Escríbeme código»</h2><p>Copiar. Pegar. Repetir.</p></div>
  <div class="glass highlight" v-click><div class="eyebrow">AHORA</div><div class="emoji">🚀</div><h2>«Hazte cargo de esta tarea»</h2><p>Repositorio · agente · PR · revisión.</p></div>
 </div>
@@ -120,8 +128,8 @@ transition: fade
 <div class="kicker">CÓMO FUNCIONA · TRIPULACIÓN</div>
 <div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
 <div class="speaker-grid">
- <div class="speaker"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><small>Arquitectura · agentes · demo</small></div></div>
- <div class="speaker" v-click><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><small>GitHub · experiencia · demo</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/></div><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
+ <div class="speaker" v-click><div class="speaker-photo"><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
 </div>
 
 <!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->
@@ -149,9 +157,9 @@ transition: slide-left
 <div class="kicker">CÓMO FUNCIONA · TRES AGENTES / UN REPO</div>
 <div class="headline">Cada uno aporta<br><span class="gradient">algo diferente.</span></div>
 <div class="agent-grid">
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff" alt="Logo GitHub Copilot"/><h2>COPILOT</h2><b>CONSTRUIR</b><p>Construir un portal entre dos mundos del público.</p></div>
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff" alt="Logo Anthropic"/><h2>CLAUDE</h2><b>MEJORAR</b><p>Dar energía y personalidad visual al portal.</p></div>
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/openai/ffffff" alt="Logo OpenAI"/><h2>CODEX</h2><b>VALIDAR</b><p>Validar cruce, accesibilidad y móvil.</p></div>
+ <div class="agent" v-click><img src="https://cdn.simpleicons.org/githubcopilot/DBD6FC" alt="Logo GitHub Copilot"/><h2>COPILOT</h2><b>CONSTRUIR</b><p>Construir un portal entre dos mundos del público.</p></div>
+ <div class="agent" v-click><img src="https://cdn.simpleicons.org/anthropic/DBD6FC" alt="Logo Anthropic"/><h2>CLAUDE</h2><b>MEJORAR</b><p>Dar energía y personalidad visual al portal.</p></div>
+ <div class="agent" v-click><span class="agent-glyph" aria-hidden="true">◎</span><h2>CODEX</h2><b>VALIDAR</b><p>Validar cruce, accesibilidad y móvil.</p></div>
 </div>
 <div class="footnote warning">Un modelo Claude dentro del chat Copilot no es el agente independiente Claude Code.</div>
 
@@ -197,18 +205,19 @@ transition: slide-left
 <div class="kicker">MISIÓN · TRABAJO ENCADENADO</div>
 <div class="headline">Un escenario.<br><span class="gradient">Tres agentes. PRs revisados.</span></div>
 <div class="agent-chain">
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/ffffff"/><b>COPILOT</b><p>Conecta dos mundos del público</p><small>TAREA 1</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/ffffff"/><b>CLAUDE</b><p>Convierte el enlace en portal de energía</p><small>TAREA 2</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/openai/ffffff"/><b>CODEX</b><p>Valida cruce, móvil y CI</p><small>TAREA 3</small></div>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/DBD6FC"/><b>COPILOT</b><p>Conecta dos mundos del público</p><small>TAREA 1</small></div><span v-after>→</span>
+ <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/DBD6FC"/><b>CLAUDE</b><p>Convierte el enlace en portal de energía</p><small>TAREA 2</small></div><span v-after>→</span>
+ <div class="chain" v-click><span class="agent-glyph" aria-hidden="true">◎</span><b>CODEX</b><p>Valida cruce, móvil y CI</p><small>TAREA 3</small></div>
 </div>
 <div class="footnote">Cada nuevo agente parte de una versión revisada e integrada del trabajo anterior.</div>
 
 <!-- David y Sergio alternan GitHub Mobile y las explicaciones. Las ramas de referencia son de ChatGPT, no de coding agents. -->
- 
+
 ---
+layout: space
 transition: fade
 ---
- 
+
 <div class="kicker">CENTRO DE CONTROL · EN DIRECTO</div>
 <div class="headline compact">Una misión. <span class="gradient">Tres etapas verificables.</span></div>
 <MissionBoard />
@@ -254,6 +263,7 @@ transition: fade
 <!-- David abre la PR real de Codex en GitHub Mobile; Sergio muestra la ejecución de Actions. Consola ilustrativa, nunca sustituye evidencia real. -->
 
 ---
+layout: space
 transition: slide-left
 ---
 
@@ -268,12 +278,43 @@ transition: slide-left
 transition: fade
 ---
 
+<div class="sponsors">
+ <span class="sponsor-label top">PATROCINA</span>
+ <img class="sponsor-main" src="./assets/template/logo-vvalley-dark.svg" alt="V-Valley" />
+ <span class="sponsor-label bottom">COLABORAN</span>
+ <div class="sponsor-row"><img src="./assets/template/logo-tajamar-dark.svg" alt="Tajamar" /><img src="./assets/template/logo-techriders.svg" alt="Tech Riders" /></div>
+ <div class="sponsor-bubble"><b>¡Gracias<br>sponsors!</b></div>
+ <img class="sponsor-astronaut" src="./assets/template/astronauta-corazon.svg" alt="" />
+</div>
+
+<!-- Agradecimiento a patrocinadores y colaboradores del evento (diapositiva de la plantilla oficial). -->
+
+---
+transition: fade
+---
+
+<div class="banco">
+ <img class="banco-logo" src="./assets/template/logo-academyverso.svg" alt="AcademyVerso" />
+ <p class="banco-text">Colabora en este evento con la<br><b>Fundación Banco de Alimentos de Madrid</b></p>
+ <img class="banco-org" src="./assets/template/logo-banco-alimentos.svg" alt="Fundación Banco de Alimentos de Madrid" />
+ <img class="banco-qr" src="./assets/template/qr-banco-alimentos.png" alt="QR para colaborar con la Fundación Banco de Alimentos de Madrid" />
+ <img class="banco-astronaut" src="./assets/template/astronauta-bolsa.svg" alt="" />
+</div>
+
+<!-- Diapositiva solidaria de la plantilla oficial: invitar a colaborar con el Banco de Alimentos. -->
+
+---
+layout: space
+transition: fade
+---
+
 <div class="kicker">CIERRE · EL UNIVERSO CONTINÚA</div>
-<div class="final-title">ESTO NO<br><span class="gradient">TERMINA HOY.</span></div>
+<div class="final-title">Esto no<br><span class="lime">termina hoy.</span></div>
 <div class="final-layout">
  <QrPortal url="https://davidop.github.io/academyverso-2026/sesion.html" label="ENLACES Y CÓDIGO"/>
  <div><p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p><a class="action-link" href="https://davidop.github.io/academyverso-2026/sesion.html" target="_blank">ENLACES DE LA SESIÓN ↗</a></div>
 </div>
-<div class="footer-stamp">DAVID OLIVA × SERGIO VALVERDE · ACADEMYVERSO 2026</div>
+<img class="final-astronaut" src="./assets/template/astronauta-capa.svg" alt="" />
+<div class="final-stamp">DAVID OLIVA × SERGIO VALVERDE · ACADEMYVERSO 2026</div>
 
 <!-- Cierre conjunto con QR persistente del repositorio; animar a seguir aprendiendo y revisando pull requests. -->

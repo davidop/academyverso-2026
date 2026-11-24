@@ -18,13 +18,23 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-20 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS · estilo basado en los gráficos del ZIP Academyverso. Las notas están dentro de slides.md (modo presentador).
+22 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS. Las notas están dentro de slides.md (modo presentador).
+
+### Plantilla oficial
+
+El diseño sigue `Template Academyverso.potx` (tema Eventekki):
+
+- `layouts/cover.vue`, `layouts/default.vue` y `layouts/space.vue` reproducen la portada, el diseño «solo título» lavanda y el diseño oscuro espacial, con el motivo de píxeles y el footer de patrocinadores (`components/AvFooter.vue`).
+- Paleta: lavanda `#DBD6FC`, verde `#243837`, crema `#F2F4D9`, lima `#B1FA63`, naranja `#FE7833` (variables en `style.css`).
+- Tipos: Host Grotesk (Google Fonts). Los títulos usan CHANEY si está instalada en el equipo; si no, Unbounded (Google Fonts, OFL) como sustituto abierto. CHANEY no se extrae del .potx por licencia.
+- Ilustraciones, logos, fondo y QR del Banco de Alimentos se copiaron de la plantilla a `assets/template/`.
+- Se añadieron las diapositivas de patrocinadores y Banco de Alimentos que incluye la plantilla.
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
 
 ## Riesgos y plan de respaldo
 
-La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva 14 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.
+La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva 18 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.
 
 Guía de agentes: ../docs/activar-agentes.md  
 Guion: ../docs/guion-demo.md
@@ -41,7 +51,7 @@ La charla de 55 minutos conserva el título oficial, la experiencia móvil y el 
 
 - 15:00–15:05 introducción y QR.
 - 15:05–15:15 creaciones del público y elección de dos mundos.
-- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (Issues #26–#28; respaldos #23–#25).
+- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (una sola Issue #37 con relevo de agentes; respaldos #23–#25).
 - 15:40–15:50 portal entre los mundos elegidos.
 - 15:50–15:55 conclusiones y preguntas.
 
