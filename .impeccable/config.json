@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "presentation/style.css"
+        ],
+        "createdAt": "2026-11-24T23:26:34.154Z",
+        "reason": "Claude triage: style.css L230 is .sponsor-bubble:after, the CSS border-triangle tail (transparent 22px borders + 44px border-top, no border-radius) of the speech bubble on the sponsors slide copied from the official AcademyVerso template; not an accent border on a rounded card"
+      }
+    ]
+  }
+}
