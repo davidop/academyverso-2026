@@ -14,7 +14,7 @@
 
 - **[Universo: activar el portal entre dos mundos](https://davidop.github.io/academyverso-2026/#universe)** · [Slidev](https://davidop.github.io/academyverso-2026/presentation/) · [Guion de 55 min](docs/guion-demo.md).
 - **Integración de referencia:** [PR #22](https://github.com/davidop/academyverso-2026/pull/22). Selección de dos IDs válidos, anillos originales Three.js, cruce animado, regreso y modo reduced-motion. No requiere Foundry ni nuevas migraciones D1.
-- **Misiones reales desde GitHub Mobile:** [Copilot #26](https://github.com/davidop/academyverso-2026/issues/26), [Claude #27](https://github.com/davidop/academyverso-2026/issues/27), [Codex #28](https://github.com/davidop/academyverso-2026/issues/28) sobre la [rama aislada de ensayo](https://github.com/davidop/academyverso-2026/tree/demo/portal-seed-26nov).
+- **Misión real desde GitHub Mobile:** una sola [Issue #37](https://github.com/davidop/academyverso-2026/issues/37) en la que Copilot construye, Claude mejora y Codex verifica por relevo, sobre la [rama aislada de ensayo](https://github.com/davidop/academyverso-2026/tree/demo/portal-seed-26nov).
 - **Respaldos progresivos preparados:** [PR #23](https://github.com/davidop/academyverso-2026/pull/23) → [#24](https://github.com/davidop/academyverso-2026/pull/24) → [#25](https://github.com/davidop/academyverso-2026/pull/25). **Las PR de respaldo fueron creadas con ChatGPT**, nunca atribuirlas a las ejecuciones en directo de los tres agentes.
 - **GO/NO-GO y pruebas físicas:** [runbook para el 26/11](docs/runbook-go-no-go-26nov.md). Las pruebas Chromium no demuestran FPS ni compatibilidad en un móvil físico; comprobar Android/iOS, QR, proyector, red y acceso real a cada coding agent.
 
