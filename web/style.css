@@ -104,3 +104,16 @@ dialog input:focus-visible,dialog textarea:focus-visible,dialog select:focus-vis
 
 /* Cabecera móvil: zona táctil de 44px en los enlaces. */
 @media(max-width:700px){.nav-actions a{min-height:44px;display:inline-flex;align-items:center}}
+
+/* Auditoría 26/11 · móvil y proyector. */
+/* Las estrellas del fondo cruzaban letras y etiquetas de botones: cielo algo atenuado, botones
+   secundarios opacos y un halo del color del cielo que despeja el contorno de cada letra. */
+body{background:linear-gradient(#20243766,#20243766) 0 0/100% 100% no-repeat,#202437 url('./assets/fondo-espacio.svg') center top/1920px auto repeat-y}
+.secondary{background:#2e3348}
+.intro-copy,.terraform-header,.space-toolbar,.gallery-head,.mission-feedback,.parody,.scene-bottom,.credits{text-shadow:0 0 3px #202437,0 0 8px #202437}
+.intro-copy :is(.primary,.secondary),.scene-bottom button{text-shadow:none}
+/* Zonas táctiles de al menos 44px: el enlace a GitHub Mobile de cada misión medía 18px. */
+.mission-mobile{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:4px}
+.tiny{min-height:44px;background:#232a40}
+/* Foco de teclado visible también en el proyector: el anillo por defecto era de 1px. */
+:where(a,button,select,input,textarea,summary,[tabindex]):focus-visible{outline:3px solid #a9fff0;outline-offset:3px}

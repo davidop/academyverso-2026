@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,easedProgress,flightPose,zoomDistance} from '../travel.mjs';
+import {orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,easedProgress,flightPose,zoomDistance,fitHomeDistance,HOME_DISTANCE_BOUNDS,HOME_ORBIT} from '../travel.mjs';
 import {listPois,cameraPoseForPoi} from '../worlds/poi.mjs';
 
 const point=(x=0,y=0,z=0)=>({x,y,z});
@@ -92,6 +92,37 @@ test('reduced motion reaches the POI instantly',()=>{
  const pose=flightPose({from:homeCameraPose(),to,startedAt:50,duration:0},50);
  assert.equal(pose.done,true);
  assert.deepEqual(pose.eye,to.eye);
+});
+
+// Home framing (audit 26/11): every world in view on a 360px phone, and larger on the projector.
+const RING=14; // largest world radius with its rings (a star is 7)
+const galaxy=n=>Array.from({length:n},(_,i)=>worldPosition({issue_number:i+1,name:'Mundo '+i},i));
+const extentOf=worlds=>Math.max(...worlds.map(p=>Math.hypot(p.x,p.z)+RING));
+// Viewport shapes measured in Chromium: phone 360px (315x500) and projector 1440px (1175x650).
+const PHONE=315/500,PROJECTOR=1175/650,TAN_V=Math.tan(58*Math.PI/360);
+function fitsHorizontally(worlds,aspect){
+ const {eye}=homeCameraPose(fitHomeDistance(extentOf(worlds),aspect));
+ // Camera on the +z axis (yaw 0) looking at the origin: project each world's widest edge.
+ return worlds.every(p=>(Math.abs(p.x)+RING)/(eye.z-p.z-RING)<=TAN_V*aspect);
+}
+test('home framing keeps every world on screen from a phone to a projector',()=>{
+ for(const n of [2,6,8])assert.ok(fitsHorizontally(galaxy(n),PHONE),n+' worlds must fit a 360px phone');
+ for(const n of [2,6,24,50])assert.ok(fitsHorizontally(galaxy(n),PROJECTOR),n+' worlds must fit the projector');
+});
+test('home framing pulls back on narrow screens and comes closer on wide ones',()=>{
+ const extent=extentOf(galaxy(6));
+ const phone=fitHomeDistance(extent,PHONE),projector=fitHomeDistance(extent,PROJECTOR);
+ assert.ok(phone>HOME_ORBIT.distance,'the phone must see more than the old fixed view, which cut worlds off');
+ assert.ok(projector<HOME_ORBIT.distance,'the projector must show worlds larger than the old fixed view');
+ assert.ok(fitHomeDistance(extent,.5)>=fitHomeDistance(extent,1)&&fitHomeDistance(extent,1)>=fitHomeDistance(extent,2));
+});
+test('home framing stays within bounds and survives empty or invalid input',()=>{
+ for(const [extent,aspect] of [[0,1],[Number.NaN,Number.NaN],[1e6,.1],[50,0],[50,Infinity]]){
+  const d=fitHomeDistance(extent,aspect);
+  assert.ok(Number.isFinite(d)&&d>=HOME_DISTANCE_BOUNDS.min&&d<=HOME_DISTANCE_BOUNDS.max,`${extent},${aspect} → ${d}`);
+ }
+ assert.deepEqual(homeCameraPose(),homeCameraPose(HOME_ORBIT.distance),'default pose is unchanged');
+ assert.ok(Math.abs(Math.hypot(...Object.values(homeCameraPose(250).eye))-250)<1e-9);
 });
 
 test('pinch zoom keeps independent galaxy and destination bounds',()=>{

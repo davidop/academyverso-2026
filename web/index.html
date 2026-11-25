@@ -56,6 +56,16 @@
     <section id="universe" class="space-section" aria-label="Universo tridimensional interactivo">
       <div class="space-toolbar"><div><span class="section-tag">GALAXIA COLECTIVA</span><h2>Explora el AcademyVerso</h2></div><div class="counters"><div><strong id="count">0</strong><span>objetos</span></div><div><strong id="explorers">0</strong><span>exploradores</span></div></div></div>
       <div id="viewport" role="img" aria-label="Vista 3D interactiva del universo creado por asistentes; arrastra para rotar y usa la rueda para acercarte"><div id="fallback-text">Preparando el universo…</div></div>
+      <div class="scene-bottom"><span>🖱 Arrastra para explorar · Toca un planeta GTA VII para viajar desde su ficha</span><button id="reset-camera" class="tiny">Recentrar vista</button></div>
+      <div id="travel-panel" class="travel-panel" hidden>
+        <div><span class="eyebrow">🚀 VIAJE INTERPLANETARIO</span><strong id="travel-world"></strong><span id="travel-phase">En ruta</span></div>
+        <button id="return-home" type="button" class="primary" aria-controls="viewport">↩ Regresar a la galaxia</button>
+      </div>
+      <section id="poi-panel" class="poi-panel" aria-labelledby="poi-heading" hidden>
+        <h3 id="poi-heading">📍 Puntos de interés</h3>
+        <div id="poi-list" class="poi-list" role="group" aria-label="Sobrevolar puntos de interés de este mundo"></div>
+        <p id="poi-detail" class="poi-detail" aria-live="polite"></p>
+      </section>
       <section id="portal-control" class="portal-control" aria-labelledby="portal-title">
         <div class="portal-heading">
           <div><span class="eyebrow">✨ MISIÓN EN DIRECTO · COPILOT → CLAUDE → CODEX</span><h3 id="portal-title">Portal interdimensional</h3><p>Elige dos mundos creados por la comunidad y atraviesa el puente entre ambos.</p></div>
@@ -71,22 +81,12 @@
         <p id="portal-feedback" role="status" aria-live="polite">Selecciona dos mundos para iniciar el viaje.</p>
         <p class="micro">Si no hay conexión, se mostrarán exclusivamente los objetos de ejemplo identificados como modo demostración. El portal no crea nuevas Issues ni modifica D1.</p>
       </section>
-      <div id="travel-panel" class="travel-panel" hidden>
-        <div><span class="eyebrow">🚀 VIAJE INTERPLANETARIO</span><strong id="travel-world"></strong><span id="travel-phase">En ruta</span></div>
-        <button id="return-home" type="button" class="primary" aria-controls="viewport">↩ Regresar a la galaxia</button>
-      </div>
-      <section id="poi-panel" class="poi-panel" aria-labelledby="poi-heading" hidden>
-        <h3 id="poi-heading">📍 Puntos de interés</h3>
-        <div id="poi-list" class="poi-list" role="group" aria-label="Sobrevolar puntos de interés de este mundo"></div>
-        <p id="poi-detail" class="poi-detail" aria-live="polite"></p>
-      </section>
       <p id="travel-status" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
       <aside class="mission-score" aria-label="Misiones de exploración ficticias">
         <span class="mission-score-stars" id="mission-stars" aria-hidden="true">☆☆☆☆☆</span>
         <span id="mission-progress" role="status" aria-live="polite">0/5 estrellas · visita mundos y descubre estructuras</span>
         <button id="mission-reset" type="button" class="tiny">Reiniciar misión</button>
       </aside>
-      <div class="scene-bottom"><span>🖱 Arrastra para explorar · Toca un planeta GTA VII para viajar desde su ficha</span><button id="reset-camera" class="tiny">Recentrar vista</button></div>
     </section>
     <section class="gallery" aria-label="Creaciones recientes"><div class="gallery-head"><div><span class="section-tag">CREACIONES DE LA COMUNIDAD</span><h2>Los últimos habitantes</h2></div><span id="last-sync" class="micro">Esperando datos</span></div><div id="cards" class="cards" aria-live="polite"></div></section>
     <section class="credits"><div><strong>Construido con GitHub Mobile</strong><p>Una sesión de David Oliva y Sergio Valverde · AcademyVerso 2026 · 26 de noviembre</p></div><p>Copilot + Claude + Codex: tres agentes, un mismo proyecto.</p></section>
