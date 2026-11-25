@@ -1,6 +1,6 @@
 # WorldGen: despliegue controlado y evolución de mundos
 
-**Estado:** código en PR #19 (draft). NO desplegado. No activar antes del ensayo de móvil y proyector del 25/11. Evento 26/11/2026.
+**Estado:** código integrado en `main` (PR #19) con `WORLDGEN_ENABLED = "false"`. NO desplegado: faltan los pasos manuales de esta guía (Foundry real, backup y migración D1 remota, secretos y E2E). Se mantiene apagado durante el evento del 26/11/2026; seguimiento en #13.
 
 ## Requisitos
 
@@ -74,7 +74,7 @@ La GitHub Action firma el evento con HMAC; el Worker confirma que `sender.id`, `
 - [ ] Modelo Foundry real compatible con JSON Schema estricto y consumo verificado.
 - [ ] Android físico: tacto, pellizco, lector de pantalla, movimiento reducido, FPS y proyector.
 - [ ] Evolución real: Issue GitHub Mobile del autor y objeto web con clave privada.
-- [ ] Pruebas de timeout, error 429/5xx y fallback sin duplicar Issues.
+- [x] Pruebas de timeout, error 429/5xx y fallback sin duplicar Issues (`worker/test/worldgen-resilience.test.mjs`, con SQLite en memoria; también límite diario y condiciones de carrera).
 - [ ] Ensayo David + Sergio y SHA de rollback fijado el 25/11.
 
 **Desactivar WorldGen:** cambiar `WORLDGEN_ENABLED` a false en Cloudflare y volver a desplegar. No borrar las columnas nuevas ni el historial.
