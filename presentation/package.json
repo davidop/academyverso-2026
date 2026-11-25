@@ -6,11 +6,15 @@
   "scripts": {
     "dev": "slidev --open",
     "build": "slidev build --base /academyverso-2026/presentation/",
-    "export": "slidev export --format pdf --output AcademyVerso_2026.pdf"
+    "export": "slidev export --format pdf --output AcademyVerso_2026.pdf",
+    "test:visual": "playwright test"
   },
   "devDependencies": {
     "@slidev/cli": "53.1.0",
     "@slidev/theme-default": "0.25.0",
-    "qrcode.vue": "3.6.0"
+    "qrcode.vue": "3.6.0",
+    "@playwright/test": "1.56.1",
+    "jsqr": "1.4.0",
+    "pngjs": "7.0.0"
   }
 }

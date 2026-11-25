@@ -84,7 +84,7 @@
 .qr-layout{display:grid;grid-template-columns:290px 1fr;gap:56px;align-items:center;margin-top:24px}
 .qr-panel{width:max-content;display:flex;flex-direction:column;align-items:stretch;background:#fff;border-radius:4px;box-shadow:6px 6px 0 var(--av-green);padding:16px 16px 0}
 .qr-panel svg{display:block;margin:0 auto}
-.qr-panel span{display:block;margin:14px -16px 0;background:var(--av-green);color:var(--av-lav);font-size:14px;font-weight:800;letter-spacing:1px;text-align:center;padding:10px 12px}
+.qr-panel .qr-label{display:block;margin:14px -16px 0;background:var(--av-green);color:var(--av-lav);font-size:14px;font-weight:800;letter-spacing:1px;text-align:center;padding:10px 12px}
 .qr-steps{display:flex;flex-direction:column;gap:16px}
 .qr-steps p{font-size:25px;display:flex;align-items:center;gap:18px;font-weight:500}
 .qr-steps p b{display:grid;place-items:center;width:38px;height:38px;background:var(--av-green);color:var(--av-lime);font-size:18px;flex-shrink:0}
@@ -258,3 +258,43 @@
 @keyframes ring{to{transform:rotate(335deg)}}
 @keyframes twinkle{50%{opacity:.27}}
 @media(prefers-reduced-motion:reduce){.slidev-layout *{animation:none!important;transition:none!important}}
+/* ---------- Estado de carga del iframe 3D (kit PR 1, adaptado a la plantilla) ---------- */
+.live-frame .live-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:1;background:var(--av-navy) url('./assets/template/fondo-espacio.svg') center/cover no-repeat;color:var(--av-lav);text-align:center}
+.live-frame .live-loading strong{font-family:var(--av-display);font-size:26px;line-height:1.15;text-transform:uppercase}
+.live-frame .live-loading p{font-size:16px;color:var(--av-cream)}
+.live-frame .live-loading .loading-orbit{font-size:56px;animation:float 3.5s ease-in-out infinite}
+.live-frame .live-loading .live-backup{display:inline-block;background:var(--av-lime);color:var(--av-green);padding:11px 16px;font-size:16px;font-weight:800;border-radius:2px}
+.live-frame .live-loading .live-backup:focus-visible{outline:3px solid var(--av-orange);outline-offset:4px}
+.live-frame .live-flag{z-index:2}
+@media(prefers-reduced-motion:reduce){.live-frame .live-loading .loading-orbit{animation:none;}}
+/* ---------- Cierre: enlaces de contexto (kit PR 1 sobre la plantilla) ---------- */
+.final-links{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:6px}
+.final-link{font-size:16px;font-weight:800;color:var(--av-lime);border-bottom:2px solid currentColor;padding-bottom:2px}
+.final-layout .action-link:focus-visible,.final-link:focus-visible{outline:3px solid var(--av-orange);outline-offset:4px}
+/* ---------- Ajustes de contraste en escenas espaciales (kit PR 1) ---------- */
+.av-space .stats b { color: var(--av-lime); }
+.av-space .stats div { border-bottom-color: var(--av-lav); }
+.av-space .stats span { color: var(--av-cream); }
+.av-space .flow .arrow,
+.av-space .agent-chain > span { color: var(--av-lime); }
+.av-space .agent-grid .agent p,
+.av-space .agent-chain .chain p { color: var(--av-cream); }
+.av-space .live-note { color: #ffc6a6; }
+/* ---------- 14 · El relevo: una Issue, tres PRs (kit PR 1) ---------- */
+.relay{display:grid;grid-template-columns:208px 1fr;gap:46px;align-items:start;margin-top:38px;max-width:1090px}
+.relay-issue{background:var(--av-cream);color:var(--av-green);padding:18px 20px 20px;box-shadow:6px 6px 0 var(--av-lime)}
+.relay-issue-tag{display:inline-block;background:var(--av-green);color:var(--av-lime);font-size:12px;font-weight:800;letter-spacing:1.6px;padding:5px 9px;margin-bottom:10px}
+.relay-issue b{display:block;font-family:var(--av-display);font-size:34px;line-height:1}
+.relay-issue small{display:block;margin-top:10px;font-size:13px;line-height:1.35;font-weight:700;color:var(--av-green-2)}
+.relay-stops{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:0;padding:0;list-style:none;position:relative}
+.relay-stops:before{content:"";position:absolute;left:0;right:33.33%;top:14px;height:3px;background:linear-gradient(90deg,var(--av-lime),var(--av-orange));opacity:.6}
+.relay-stop{position:relative;display:flex;flex-direction:column;align-items:flex-start;padding-top:40px}
+.relay-dot{position:absolute;left:0;top:5px;width:21px;height:21px;border-radius:50%;background:var(--av-lime);border:3px solid var(--av-navy)}
+.relay-stop b{font-family:var(--av-display);font-size:26px;letter-spacing:0;color:var(--av-lav)}
+.relay-stop em{display:block;margin-top:6px;font-style:normal;font-size:13px;letter-spacing:1.6px;font-weight:800;color:var(--av-lime);text-transform:uppercase}
+.relay-stop p{margin-top:8px;font-size:17px;line-height:1.35;color:var(--av-cream);max-width:230px}
+.relay-stop small{margin-top:10px;font:800 12px var(--av-mono);letter-spacing:1px;color:var(--av-lav);opacity:.85}
+/* Sin logos de agente: los nombres son la marca tipográfica. */
+.agent h2{font-size:30px}
+.agent h2:first-child{margin-top:2px}
+.speaker-handle i svg{width:22px;height:22px;color:var(--av-lav)}
