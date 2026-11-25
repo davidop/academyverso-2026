@@ -159,7 +159,7 @@ transition: fade
 <div class="agent-grid">
  <div class="agent" v-click><h2>COPILOT</h2><b>CONSTRUIR</b><p>Construir un portal entre dos mundos del público.</p></div>
  <div class="agent" v-click><h2>CLAUDE</h2><b>MEJORAR</b><p>Dar energía y personalidad visual al portal.</p></div>
- <div class="agent" v-click><h2>CODEX</h2><b>VALIDAR</b><p>Validar cruce, accesibilidad y móvil.</p></div>
+ <div class="agent" v-click><h2>CODEX</h2><b>VERIFICAR</b><p>Verificar cruce, accesibilidad y móvil.</p></div>
 </div>
 <div class="footnote warning">Un modelo Claude dentro del chat Copilot no es el agente independiente Claude Code.</div>
 
@@ -190,9 +190,9 @@ clicks: 4
 <div class="kicker">CÓMO FUNCIONA · DE LA ISSUE A LA GALAXIA</div>
 <div class="headline compact">Cada objeto tiene<br><span class="mint">una historia en GitHub.</span></div>
 <MissionTrace :clicks="$clicks" tone="space" />
-<div class="footnote">GitHub Pages sirve la experiencia 3D; Worker y D1 sincronizan las aportaciones. Cada propuesta queda trazada en una Issue pública.</div>
+<div class="footnote">Un agente de IA revisa cada Issue: la modera, ajusta la descripción y la marca como lista. Solo entonces el Worker la guarda en D1 y aparece en la galaxia.</div>
 
-<!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
+<!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. El triage es un GitHub Agentic Workflow: comenta lo que entendió y etiqueta planet:ready, o planet:rejected si es spam o fuera de tema; sin aprobación humana. Solo planet:ready activa la ingesta firmada hacia el Worker. Ver docs/triage-agentico-planetas.md. -->
 
 ---
 layout: space

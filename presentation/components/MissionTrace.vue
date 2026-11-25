@@ -5,7 +5,7 @@ const props = defineProps<{ clicks: number; tone?: 'light' | 'space' }>()
 const steps = [
   { label: 'GitHub Mobile', detail: 'Formulario' },
   { label: 'GitHub Issues', detail: 'Registro público' },
-  { label: 'GitHub Actions', detail: 'Validación y firma' },
+  { label: 'GitHub Actions', detail: 'Triage con IA y firma' },
   { label: 'Worker + D1', detail: 'Datos persistidos en D1' },
   { label: 'Three.js', detail: 'Universo 3D' },
 ]

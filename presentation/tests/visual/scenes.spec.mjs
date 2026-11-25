@@ -91,7 +91,7 @@ test('S13 · cinco pasos Issue → Actions → D1 → Three.js, avance reversibl
   for (const name of ['GitHub Mobile', 'GitHub Issues', 'GitHub Actions', 'Worker + D1', 'Three.js']) {
     await expect(trace.getByText(name, { exact: true }).first()).toBeVisible()
   }
-  await expect(trace.getByText('Validación y firma')).toBeVisible()
+  await expect(trace.getByText('Triage con IA y firma')).toBeVisible()
   await expect(trace.getByText('recorrido conceptual, no estado en vivo')).toBeVisible()
   await expect(trace).toHaveAttribute('data-step', '0')
   for (const expected of ['1', '2', '3', '4']) {
