@@ -16,6 +16,8 @@ jobs:
       - name: Static JavaScript checks
         run: |
           node --check web/app.js
+          node --check web/webmcp.mjs
+          node --test web/test/webmcp.test.mjs
           node --check web/worlds/spec.mjs
           node --check web/worlds/builder.mjs
           node --check web/worlds/birth.mjs
@@ -67,6 +69,8 @@ jobs:
           echo $! > /tmp/academyverso-web.pid
       - name: Browser smoke and real screenshots
         run: node scripts/worldgen-visual.mjs
+      - name: WebMCP mock browser integration (no API writes)
+        run: node scripts/webmcp-smoke.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
