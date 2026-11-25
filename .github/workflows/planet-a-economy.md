@@ -9,6 +9,11 @@ model: router/economy
 timeout-minutes: 5
 max-ai-credits: 1
 safe-outputs:
+  create-issue: false
+  report-failure-as-issue: false
+  report-failed-jobs: false
+  threat-detection:
+    report-as-issue: false
   upload-artifact:
     max-uploads: 1
     max-size-bytes: 16384
