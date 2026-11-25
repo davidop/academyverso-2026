@@ -44,7 +44,15 @@
 #viewport.travelling{border-color:#85fdf2;box-shadow:0 0 55px #53cbb978,0 22px 90px #0b0c215c}
 #viewport.travelling:after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;background:repeating-conic-gradient(from 10deg at 50% 52%,transparent 0deg 16deg,#a5f9ee32 17deg 18deg,transparent 19deg 32deg);mask-image:radial-gradient(circle,transparent 8%,#000 75%);animation:warp-flight 1s linear infinite}
 @keyframes warp-flight{to{transform:rotate(28deg)}}
-@media(max-width:700px){.travel-panel{flex-direction:column;align-items:stretch;padding:17px}.travel-panel button{width:100%}.travel-action{width:100%;margin:15px 0}}
+.poi-panel{margin-top:10px;padding:14px 22px;border-radius:17px;border:1px solid #82eadb55;background:#101f36e6}
+.poi-panel h3{margin:0 0 10px;font-size:15px;color:#abf4e7}
+.poi-list{display:flex;flex-wrap:wrap;gap:8px}
+.poi-list button{min-height:44px;padding:10px 14px;border-radius:12px;border:1px solid #82eadb85;background:#1c3350;color:#fff;font:inherit;cursor:pointer}
+.poi-list button[aria-pressed="true"]{background:#2f6a78;border-color:#a5f9ee}
+.poi-list button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.poi-detail{margin:10px 0 0;font-size:14px;color:#d1e6f5}
+.poi-detail:empty{display:none}
+@media(max-width:700px){.travel-panel{flex-direction:column;align-items:stretch;padding:17px}.travel-panel button{width:100%}.travel-action{width:100%;margin:15px 0}.poi-panel{padding:14px 17px}.poi-list button{flex:1 1 100%}}
 @media(prefers-reduced-motion:reduce){#viewport.travelling:after{display:none}}
 
 /* Accessible WorldGen evolution controls; layout remains scrollable on phones. */
