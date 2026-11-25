@@ -9,7 +9,7 @@ import {listPois,cameraPoseForPoi} from './worlds/poi.mjs';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
-import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,zoomDistance,HOME_ORBIT} from './travel.mjs';
+import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,zoomDistance,fitHomeDistance,HOME_ORBIT} from './travel.mjs';
 
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
@@ -39,7 +39,8 @@ let quality=initialQuality(navigator.hardwareConcurrency||4,devicePixelRatio||1)
 
 const viewport=$('viewport');
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x11182d,0.004);
+const BASE_FOG=0.004;
+scene.fog=new THREE.FogExp2(0x11182d,BASE_FOG);
 const camera=new THREE.PerspectiveCamera(58,1,.1,2000);
 camera.position.set(0,65,185);
 // Some phones, kiosk browsers and battery-saver modes have no WebGL. The constructor then throws, and
@@ -194,18 +195,35 @@ function paint(items){
  for(const old of oldById.values())disposeWorld(old);
  initialWorldPaint=false;
  updatePortalControls();
+ refitHome();
  if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
   returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
  }
 }
-function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
-new ResizeObserver(resize).observe(viewport);resize();
+function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);refitHome()}
 // Orbiting remains available both in the galaxy and after reaching a destination.
 const focus=new THREE.Vector3(0,0,0);
 let pointerDown=null,dragging=false,yaw=HOME_ORBIT.yaw,pitch=HOME_ORBIT.pitch,dist=HOME_ORBIT.distance;
 let flight=null,travelMode='galaxy',activeWorldId=null;
 // While a POI is focused its world stops spinning, so the camera keeps looking at it.
 let poiFocusWorldId=null,activePoiId=null;
+// The home view is framed for the viewport's shape and the galaxy's size (see fitHomeDistance).
+// Once the visitor drags or zooms, a resize or a new world no longer moves their camera.
+let homeDistance=HOME_ORBIT.distance,homeUntouched=true;
+function galaxyExtent(){
+ let r=0;
+ for(const m of meshes){const p=m.group.position;r=Math.max(r,Math.hypot(p.x,p.z)+m.size*2);}
+ return r;
+}
+function refitHome(){
+ const next=fitHomeDistance(galaxyExtent(),camera.aspect);
+ if(Math.abs(next-homeDistance)<0.5)return;
+ homeDistance=next;
+ // Keep the home view as deep as before: thinner fog when the camera has to pull back.
+ scene.fog.density=BASE_FOG*HOME_ORBIT.distance/homeDistance;
+ if(travelMode==='galaxy'&&!flight&&homeUntouched){dist=homeDistance;updateCamera();}
+}
+new ResizeObserver(resize).observe(viewport);resize();
 
 let missionState=emptyMissionState();
 function updateMissionUI(){
@@ -247,7 +265,7 @@ function finishFlight(){
   viewport.classList.remove('travelling','portal-crossing');
   deriveOrbit();
   if(completed.kind==='home'){
-    travelMode='galaxy';activeWorldId=null;
+    travelMode='galaxy';activeWorldId=null;homeUntouched=true;
     $('travel-panel').hidden=true;
     statusMessage('Has regresado a la galaxia. Selecciona otro planeta para viajar.');
     $('reset-camera').focus({preventScroll:true});
@@ -358,7 +376,7 @@ function startTravel(obj){
 }
 function returnHome(message){
   if(travelMode==='galaxy'&&!flight){
-    yaw=HOME_ORBIT.yaw;pitch=HOME_ORBIT.pitch;dist=HOME_ORBIT.distance;
+    yaw=HOME_ORBIT.yaw;pitch=HOME_ORBIT.pitch;dist=homeDistance;homeUntouched=true;
     focus.set(0,0,0);updateCamera();
     return;
   }
@@ -366,7 +384,7 @@ function returnHome(message){
   const from=currentPose();
   activeWorldId=null;
   travelMode='returning';
-  flight={from,to:homeCameraPose(),startedAt:performance.now(),duration:reduced?0:1100,kind:'home'};
+  flight={from,to:homeCameraPose(homeDistance),startedAt:performance.now(),duration:reduced?0:1100,kind:'home'};
   $('travel-panel').hidden=false;
   $('travel-phase').textContent='Regresando a la galaxia';
   viewport.classList.toggle('travelling',!reduced);
@@ -396,7 +414,7 @@ renderer.domElement.addEventListener('pointermove',e=>{
    const gap=pinchGap();
    if(gap>0&&previousPinchGap>0){
      dist=zoomDistance(dist,previousPinchGap/gap,travelMode==='world');
-     updateCamera();
+     homeUntouched=false;updateCamera();
    }
    previousPinchGap=gap;pointerDown=null;dragging=true;
    return;
@@ -405,7 +423,7 @@ renderer.domElement.addEventListener('pointermove',e=>{
  const dx=e.clientX-prior.x,dy=e.clientY-prior.y;
  if(Math.abs(e.clientX-pointerDown.x)+Math.abs(e.clientY-pointerDown.y)>4)dragging=true;
  yaw-=dx*.004;pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.003));
- updateCamera();
+ homeUntouched=false;updateCamera();
 });
 renderer.domElement.addEventListener('pointerup',e=>{
  const tap=activePointers.size===1&&pointerDown!==null&&!dragging&&!flight;
@@ -429,7 +447,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  e.preventDefault();
  if(flight)return;
  dist=zoomDistance(dist,(dist+Math.sign(e.deltaY)*10)/dist,travelMode==='world');
- updateCamera();
+ homeUntouched=false;updateCamera();
 },{passive:false});
 $('return-home').addEventListener('click',()=>returnHome());
 $('reset-camera').addEventListener('click',()=>returnHome());

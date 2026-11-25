@@ -19,8 +19,24 @@ export function worldPosition(obj,index){
  const radius=33+Math.sqrt(index+1)*16;
  return {x:Math.cos(angle)*radius,y:((h%27)-13)*1.6,z:Math.sin(angle)*radius};
 }
-export function homeCameraPose(){
- const {yaw,pitch,distance}=HOME_ORBIT;
+// Home orbit distance that frames every world for the viewport's shape. A fixed distance cut
+// worlds off on portrait phones and left them tiny on a wide projector. `extent` is the radius
+// the worlds reach from the centre (rings included), `aspect` is width/height and `fovDeg` the
+// camera's vertical field of view. The maximum matches the zoom limit: past it worlds are dots,
+// so a phone with a very large galaxy still crops the outer ring and the visitor can drag.
+export const HOME_DISTANCE_BOUNDS=Object.freeze({min:110,max:380});
+export function fitHomeDistance(extent,aspect,fovDeg=58){
+ const r=Math.max(40,Number.isFinite(extent)?extent:0);
+ const a=Number.isFinite(aspect)&&aspect>0?aspect:1;
+ const tanV=Math.tan(fovDeg*Math.PI/360);
+ const across=r*1.05/(tanV*a);
+ // The camera looks at the galaxy almost edge-on, so its height is about 0.6 of its radius.
+ const tall=r*0.6*1.1/tanV;
+ // Worlds on the near side sit closer to the camera and look wider: add a third of a radius.
+ return between(Math.max(across,tall)+r*0.35,HOME_DISTANCE_BOUNDS.min,HOME_DISTANCE_BOUNDS.max);
+}
+export function homeCameraPose(distance=HOME_ORBIT.distance){
+ const {yaw,pitch}=HOME_ORBIT;
  return {eye:{x:Math.sin(yaw)*distance*Math.cos(pitch),y:Math.sin(pitch)*distance,z:Math.cos(yaw)*distance*Math.cos(pitch)},focus:{x:0,y:0,z:0}};
 }
 export function cameraPoseForWorld(world,viewer,radius=6){
