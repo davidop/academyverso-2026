@@ -25,6 +25,8 @@ try{
   const canvas=await page.locator('#viewport canvas').evaluate(el=>({width:el.width,height:el.height}));
   if(canvas.width<100||canvas.height<100)throw Error('WebGL canvas too small');
   await page.waitForTimeout(1500);
+  if(!await page.locator('#portal-launch').isEnabled())throw Error('Portal should be enabled for 4 distinct worlds');
+  if(await page.locator('#portal-source option').count()!==4)throw Error('Portal source choices mismatch');
   await page.screenshot({path:'artifacts/worldgen/'+viewport.name+'.png',fullPage:true,animations:'disabled'});
   const mission=await page.locator('#vice-nebula-count').innerText();
   if(mission.trim()!=='1')throw Error('Mission count '+mission+' is not one');
@@ -44,6 +46,20 @@ try{
     await page.locator('#mission-reset').click();
     await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('0/5'));
     await page.screenshot({path:'artifacts/worldgen/desktop-travel.png',animations:'disabled'});
+    await page.locator('#return-home').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-panel')?.hidden===true,{timeout:10000});
+    await page.locator('#portal-source').selectOption('102');
+    await page.locator('#portal-target').selectOption('103');
+    await page.locator('#portal-launch').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/desktop-portal.png',animations:'disabled'});
+    await page.locator('#return-home').click();
+  }else{
+    await page.locator('#portal-source').selectOption('102');
+    await page.locator('#portal-target').selectOption('103');
+    await page.locator('#portal-launch').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:10000});
+    await page.screenshot({path:'artifacts/worldgen/mobile-portal.png',animations:'disabled'});
     await page.locator('#return-home').click();
   }
   results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested'});
