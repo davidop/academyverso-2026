@@ -42,7 +42,8 @@ transition: fade
 
 
 ---
-transition: slide-left
+layout: space
+transition: fade
 clicks: 1
 ---
 
@@ -179,13 +180,14 @@ transition: fade
 
 
 ---
-transition: slide-left
+layout: space
+transition: fade
 clicks: 4
 ---
 
 <div class="kicker">CÓMO FUNCIONA · DE LA ISSUE A LA GALAXIA</div>
 <div class="headline compact">Cada objeto tiene<br><span class="mint">una historia en GitHub.</span></div>
-<MissionTrace :clicks="$clicks" />
+<MissionTrace :clicks="$clicks" tone="space" />
 <div class="footnote">GitHub Pages sirve la experiencia 3D; Worker y D1 sincronizan las aportaciones. Cada propuesta queda trazada en una Issue pública.</div>
 
 <!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
