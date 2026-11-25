@@ -1,14 +1,14 @@
 name: Registro de objeto cósmico
 on:
   issues:
-    types: [opened, edited, reopened]
+    types: [labeled]
   issue_comment:
     types: [created]
 permissions:
   issues: write
 jobs:
   ingest:
-    if: (github.event_name == 'issues' && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
+    if: (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'planet:ready' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
     runs-on: ubuntu-latest
     steps:
       - name: Ingest signed issue event

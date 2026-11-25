@@ -126,5 +126,17 @@ assert parse_project_url("https://github.com/users/davidop/projects/3") == ("dav
 assert parse_project_url("https://github.com/orgs/acme/projects/12/") == ("acme", "12")
 assert parse_project_url("https://github.com/davidop/academyverso-2026") is None
 
-print("PASS: issue flow classifies real titles, assigns only flow Issues, closes only same-repo keyword refs"
-      " and keeps the shared mission relay Issue open")
+# --- La ingesta de objetos cósmicos espera a que el agente termine el triage.
+ROOT = Path(__file__).resolve().parents[1]
+ingest_workflow = (ROOT / ".github/workflows/issue-to-universe.yml").read_text(encoding="utf-8")
+triage_workflow = (ROOT / ".github/workflows/cosmic-object-triage.md").read_text(encoding="utf-8")
+assert "types: [labeled]" in ingest_workflow, "la ingesta debe esperar al evento labeled"
+assert "github.event.label.name == 'planet:ready'" in ingest_workflow, "solo planet:ready debe abrir la compuerta"
+assert "types: [opened, edited, reopened]" not in ingest_workflow, "la Issue sin triage no debe ingerirse"
+assert "issue_comment:" in ingest_workflow, "se deben conservar los comandos de evolución/rollback"
+assert "add-labels:" in triage_workflow, "el agente debe emitir la etiqueta terminal"
+assert "allowed: [planet:ready, planet:rejected]" in triage_workflow
+assert "planet:ready" in triage_workflow and "planet:rejected" in triage_workflow
+assert "add-comment" in triage_workflow and "update_issue" in triage_workflow
+
+print("PASS: issue flow gates cosmic ingestion after triage and preserves project-issue routing and closure rules")

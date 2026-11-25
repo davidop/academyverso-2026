@@ -7,3 +7,7 @@ test('rechaza enlaces y correos',()=>assert.throws(()=>validate({...valid,descri
 test('rechaza descripciones cortas',()=>assert.throws(()=>validate({...valid,description:'corto'})));
 test('rechaza algunos términos ofensivos',()=>assert.throws(()=>validate({...valid,name:'Puto planeta'})));
 test('permite round-trip de una Issue',()=>assert.deepEqual(parseIssue(issueBody(valid)),valid));
+test('conserva la descripción multilinea del formulario al ingerirla',()=>{
+ const body=issueBody({...valid,description:'Un planeta verde\ncon tres lunas visibles'});
+ assert.equal(parseIssue(body).description,'Un planeta verde con tres lunas visibles');
+});
