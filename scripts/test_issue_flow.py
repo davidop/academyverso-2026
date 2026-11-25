@@ -7,7 +7,8 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import issue_flow  # noqa: E402
 from issue_flow import (  # noqa: E402
-    LABELS, classify, closing_refs, is_relay_issue, parse_project_url, plan_close, plan_triage,
+    LABELS, classify, closing_refs, is_relay_issue, mention_refs, parse_project_url, plan_close,
+    plan_mentions, plan_triage,
 )
 
 REPO = "davidop/academyverso-2026"
@@ -95,7 +96,21 @@ assert not is_relay_issue({})
 assert plan_close(pr_event("demo/portal-seed-26nov", "Fixes #37", number=38), REPO) == [37]
 
 
-def run_close_calls(issue_labels):
+# --- "Refs #N": el protocolo de la misión pide Refs, no Fixes (PR #88 de Claude: solo "Refs #72").
+PR_88_BODY = ("Fase 2 del relevo de agentes sobre `docs/prueba-agentes.md`.\n\n- Añade la columna **Hora**.\n\n"
+              "No se modifica ningún otro fichero.\n\nRefs #72")
+assert mention_refs(PR_88_BODY, REPO) == [72]
+assert closing_refs(PR_88_BODY, REPO) == []                       # Refs nunca cierra
+assert mention_refs(f"Ref: #5\nrefs davidop/academyverso-2026#6\nRefs https://github.com/{REPO}/issues/7", REPO) == [5, 6, 7]
+assert mention_refs("Prefs #9, refsx #8, `Refs #4`, Refs other/repo#3", REPO) == []
+assert plan_mentions(pr_event("demo/prueba-agentes-25nov", PR_88_BODY, number=88), REPO) == [72]
+assert plan_mentions(pr_event("main", PR_88_BODY, number=88), REPO) == []
+assert plan_mentions(pr_event("demo/prueba-agentes-25nov", PR_88_BODY, merged=False, number=88), REPO) == []
+# Si la PR trae Fixes y Refs a la misma Issue, se trata una sola vez (por la vía de cierre).
+assert plan_mentions(pr_event("demo/portal-seed-26nov", "Refs #37\n\nFixes #37", number=38), REPO) == []
+
+
+def run_close_calls(issue_labels, body="Fixes #37"):
     """Ejecuta run_close con un gh simulado y devuelve las llamadas de escritura."""
     calls = []
 
@@ -107,7 +122,7 @@ def run_close_calls(issue_labels):
 
     real_gh, issue_flow.gh = issue_flow.gh, fake_gh
     try:
-        event = pr_event("demo/portal-seed-26nov", "Fixes #37", number=38)
+        event = pr_event("demo/portal-seed-26nov", body, number=38)
         event["pull_request"]["user"] = {"login": "Copilot"}
         issue_flow.run_close(event, REPO)
     finally:
@@ -121,6 +136,16 @@ assert "@" not in relay_calls[0][1]["body"] and "`Copilot`" in relay_calls[0][1]
 assert not any(payload and payload.get("state") == "closed" for _, payload in relay_calls)
 single_calls = run_close_calls(["mision-portal", "agent:codex"])
 assert single_calls[-1][1] == {"state": "closed", "state_reason": "completed"}, single_calls
+# El agente obedece y escribe solo "Refs #37": el relevo se comenta igual y la Issue sigue abierta.
+refs_calls = run_close_calls(classify(MISSION, "")["labels"], body="Refs #37")
+assert len(refs_calls) == 1 and refs_calls[0][0][-3].endswith("/issues/37/comments"), refs_calls
+assert not any(payload and payload.get("state") == "closed" for _, payload in refs_calls)
+# Fixes y Refs a la vez: un solo comentario de relevo, sin cerrar.
+both_calls = run_close_calls(classify(MISSION, "")["labels"], body="Refs #37\n\nFixes #37")
+assert len(both_calls) == 1 and both_calls[0][0][-3].endswith("/issues/37/comments"), both_calls
+# Refs a una Issue que no es de relevo: no se comenta ni se cierra.
+assert run_close_calls(["mision-portal", "agent:codex"], body="Refs #37") == []
+assert run_close_calls(["documentation"], body="Refs #37") == []
 
 assert parse_project_url("https://github.com/users/davidop/projects/3") == ("davidop", "3")
 assert parse_project_url("https://github.com/orgs/acme/projects/12/") == ("acme", "12")
