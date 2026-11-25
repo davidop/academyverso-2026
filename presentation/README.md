@@ -44,7 +44,7 @@ Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
 
 - [Archivo de maquetas](../docs/design/academyverso-mockups/README.md): referencias para revisión, nunca se importan al bundle.
 - `ContributionPortal.vue` (S03): QR de Issue inmóvil con apertura reversible de ~950 ms y tres destellos SVG. Usa `clicks` de Slidev y respeta `prefers-reduced-motion`.
-- `LiveUniverse.vue` (S06): iframe con estado de carga, `aria-live` y enlace de respaldo permanente a la galaxia.
+- `LiveUniverse.vue` (S06): iframe con estado de carga, `aria-live` y enlace de respaldo permanente. Apunta a `/?embed=1#universe`, que en la web oculta cabecera, portada, panel del portal y galería: solo queda el lienzo 3D.
 - `MissionTrace.vue` (S13): recorrido de cinco pasos —GitHub Mobile, Issues, Actions, Worker + D1, Three.js— con progreso por clic y aviso de integración pendiente.
 - `SpeakerPortrait.vue` (S09): retratos WebP locales dentro del marco `.speaker-photo` de la plantilla; el handle `@davidop` / `@svg153` se mantiene.
 - El resto de escenas usa el HTML y las clases de la plantilla (`style.css`), no componentes propios.
