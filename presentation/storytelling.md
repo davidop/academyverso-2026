@@ -4,7 +4,7 @@
 
 Una pregunta abre la charla: **¿puede un móvil dirigir trabajo de desarrollo real?** La respuesta se demuestra dos veces: el público crea una Issue para imaginar un mundo; los ponentes toman una función concreta —viajar entre planetas— y muestran cómo pasa de encargo a cambio revisado. Son dos recorridos distintos: **un planeta es una contribución; el viaje es un cambio de código**. No se presentan como el mismo flujo.
 
-La propuesta conservaba las **17 escenas** del corte de rediseño. Tras integrar main, el deck del evento tiene **20 escenas**: se añaden el hook GTA VII, la elección de dos mundos y el centro de control manual, y el QR de participación pasa al principio. Los IDs S01–S17 de este documento son los del corte de rediseño, no los números actuales de Slidev. Mapa de escenas: S01→S01, S02→S07, S03→S08, S04→S09, S05→S10, S06→S11, S07→S12, S08→S03, S09→S04, S10→S06, S11→S13, S12→S14, S13→S16, S14→S17, S15→S18, S16→S19, S17→S20.
+Este documento es el guion del corte de rediseño (17 escenas). El deck publicado sigue el guion de main con **22 escenas** sobre la plantilla oficial, y la misión se cuenta en una sola Issue (#37) con relevo Copilot → Claude → Codex. Los IDs S01–S17 de aquí no son los números actuales de Slidev; el mapa es: S01→S01, S02→S07, S03→S08, S04→S09, S05→S10, S06→S11, S07→S12, S08→S03, S09→S04, S10→S06, S11→S13, S12→S14, S13→S16, S14→S17, S15→S18, S16→S19, S17→S22. S20 y S21 son las escenas de patrocinadores y Banco de Alimentos de la plantilla.
 
 ## Acto I · Del chat al encargo · 15:00–15:14
 

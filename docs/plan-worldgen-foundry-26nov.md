@@ -26,7 +26,7 @@
 - `.github/workflows/issue-to-universe.yml` firma la ingesta con HMAC y cierra Issues después del éxito de D1. No introducir llamadas bloqueantes a Foundry en este trayecto.
 - `.github/workflows/ci.yml` valida sintaxis y pruebas Node, pero no hay golden snapshots 3D, pruebas de especificaciones ni Playwright de navegador en `main`.
 - Preflight CI/Pages está verde para el commit auditado. El runbook indica explícitamente que faltan pruebas visuales físicas, QR y sesiones reales de agentes.
-- PR #1 de Slidev permanece en Draft y `mergeable=false`; NO mezclarla con la evolución 3D.
+- PR #1 de Slidev ya integra main (plantilla oficial) y trabaja solo en `presentation/`; no toca la app 3D ni el Worker.
 
 ## 3. Arquitectura
 
@@ -147,7 +147,7 @@ Si Foundry no tiene despliegue compatible, la migración falla, la latencia supe
 - Issue #6: integrar como paraguas visual; PR-C y PR-D pueden satisfacerla parcialmente.
 - Issue #7: misiones locales Codex son opcionales; NO bloquear WorldGen por ellas.
 - Issue #8: demo E2E y runbook actuales; sumar checks WorldGen sin duplicar el ensayo.
-- PR #1 Slidev sigue Draft con conflictos; no mezclar con las PRs del motor 3D.
+- PR #1 Slidev sigue en Draft sin conflictos con main; su alcance es exclusivamente la presentación.
 
 Documentación oficial de referencia:
 - Microsoft Foundry Structured Outputs: https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/structured-outputs

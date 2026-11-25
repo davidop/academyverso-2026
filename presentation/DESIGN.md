@@ -1,58 +1,57 @@
 ---
-version: alpha
-name: AcademyVerso · Escenas de misión
-description: Identidad del deck de AcademyVerso 2026; combina la marca de la charla original con el piloto del portal.
+version: beta
+name: AcademyVerso · Escenas de misión sobre la plantilla oficial
+description: Reglas para añadir movimiento y componentes al deck del evento sin salir de la plantilla Academyverso (tema Eventekki).
 colors:
-  background: "#182039"
-  stageDeep: "#121B30"
-  surface: "#2C2D50"
-  text: "#F5F7FF"
-  primary: "#78E6DC"
-  secondary: "#DEDBFF"
-  accent: "#FFB26F"
+  background: "#DBD6FC"
+  stageDeep: "#1F2139"
+  surface: "#F2F4D9"
+  text: "#243837"
+  primary: "#B1FA63"
+  secondary: "#5EBEBB"
+  accent: "#FE7833"
   qrPaper: "#FFFFFF"
   qrInk: "#000000"
 typography:
-  hero:
-    fontFamily: Arial
-    fontSize: 96px
-    fontWeight: 900
-    lineHeight: 1
-    letterSpacing: -4px
-  headline:
-    fontFamily: Arial
+  display:
+    fontFamily: "CHANEY, Unbounded, Host Grotesk, Arial"
     fontSize: 64px
     fontWeight: 900
-    lineHeight: 1.05
-    letterSpacing: -3px
+    lineHeight: 1.04
+  headline:
+    fontFamily: "Host Grotesk, Arial"
+    fontSize: 50px
+    fontWeight: 800
+    lineHeight: 1.08
   body:
-    fontFamily: Arial
-    fontSize: 24px
-    fontWeight: 400
+    fontFamily: "Host Grotesk, Arial"
+    fontSize: 20px
+    fontWeight: 500
     lineHeight: 1.35
   telemetry:
-    fontFamily: Consolas
-    fontSize: 17px
-    fontWeight: 700
-    lineHeight: 1.2
-    letterSpacing: 2px
+    fontFamily: "JetBrains Mono, Consolas"
+    fontSize: 15px
+    fontWeight: 800
+    letterSpacing: 1px
 spacing:
-  stageInsetX: 58px
-  stageInsetY: 44px
-  clusterGap: 24px
-  qrQuietZone: 20px
+  stageInsetX: 88px
+  stageInsetY: 34px
+  footerReserve: 100px
+  clusterGap: 26px
+  qrQuietZone: 16px
 rounded:
-  small: 4px
+  small: 2px
+  card: 4px
 components:
-  stage:
+  stageLight:
     backgroundColor: "{colors.background}"
     textColor: "{colors.text}"
-  stageDeep:
+  stageSpace:
     backgroundColor: "{colors.stageDeep}"
+    textColor: "{colors.background}"
+  card:
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
-  headlineAccent:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.accent}"
   qr:
     backgroundColor: "{colors.qrPaper}"
     textColor: "{colors.qrInk}"
@@ -64,51 +63,51 @@ components:
 
 ## Overview
 
-Guía para la revisión visual del rediseño. Un escenario 16:9 oscuro, con aire editorial y humor espacial. Cada escena tiene un foco: una pregunta, una acción, un objeto o una comprobación. El movimiento dirige la mirada sin reemplazar la explicación.
+El deck del evento sigue `Template Academyverso.potx` (tema Eventekki): tres layouts locales (`cover`, `default`, `space`), footer de patrocinadores `AvFooter.vue` y paleta lavanda/lima. Este documento rige **cómo se añade movimiento e interactividad** a esa base sin romperla; no propone rediseñar la plantilla ni la app Three.js.
 
-Fuentes: paleta y tipografía del deck en [style.css](style.css); encuadre, planetas y ritmo del piloto A1 (todavía separado de esta PR); logotipo y mascota oficiales en [recursos de la web](../web/assets/). Este archivo rige la carpeta de la presentación, no propone rediseñar la app Three.js.
+Antes de este corte existía un sistema navy/menta propio (portada, planeta y horizonte propios). Se retiró al integrar la plantilla: la marca, la portada y el cierre pertenecen al material oficial del evento.
 
 ## Colors
 
-Azul noche y blanco roto sostienen la lectura. Menta guía el recorrido y señala acciones; lavanda da profundidad y sirve para anotaciones; naranja destaca una frase o un evento, sin ser la única forma de distinguir estados. Los cinco colores del deck original se conservan. Azul profundo y violeta de superficie salen del piloto. QR negro puro sobre blanco puro; no aplicar el degradado de marca al código.
+Lavanda `#DBD6FC` como lienzo claro, verde `#243837` como tinta y estructura, crema `#F2F4D9` para tarjetas, lima `#B1FA63` para acción y foco, naranja `#FE7833` para una advertencia o un evento puntual. Navy `#1F2139` para las escenas espaciales. QR negro puro sobre blanco puro; nunca aplicar degradado al código.
+
+No introducir colores fuera de los tokens `--av-*` de `style.css`. El color nunca es la única señal: los estados llevan además texto, posición o `aria-current`.
 
 ## Typography
 
-Titulares en Arial/Helvetica/sans-serif con peso fuerte. Consolas/monospace para rótulos técnicos, no para párrafos. Valores en coordenadas del lienzo: 64 px como titular habitual; 96 px en una frase corta heroica. Texto necesario para actuar, preferiblemente 22–24 px; el margen mínimo lo decide la prueba de proyección. No convertir texto, código, URL o QR en parte de una ilustración.
+Titulares con Host Grotesk; en escenas espaciales y rótulos grandes, CHANEY o Unbounded (sustituto abierto). Consolas o JetBrains Mono solo para rótulos técnicos. Valores en coordenadas del lienzo: 50 px para titular habitual, 44 px en versión compacta, 64 px para la portada. Texto accionable no baja de 18 px; el mínimo real lo fija la prueba de proyección.
 
 ## Layout
 
-Lienzo Slidev de 1280 × 720. Mantener los márgenes para información y permitir recortes en planetas/órbitas decorativos. Alternar plano editorial (texto a la izquierda), escenario amplio (galaxia), primer plano (un objeto o dato) y espacio sin animación para leer o escanear. No cambiar el orden de lectura para móvil; comprobar encuadre y QR en la escala real.
+Lienzo 1280 × 720. `layouts/*.vue` aplican `.av-slide` con `padding: 34px 88px 0` y `AvFooter` ocupa los últimos 100 px a sangre. Por eso: los componentes de escena no pueden usar `position: absolute; inset: 0`, y cualquier contenido propio deja al menos 104 px libres abajo. Las escenas espaciales usan `layout: space`; las de contenido, `default` (lavanda).
 
 ## Elevation & Depth
 
-Profundidad por recorte, escala, solapamiento y contraste. Tres planos como máximo en una composición normal. Portada, portal, viaje y cierre comparten el planeta violeta: recorte, giro y escala cambian el encuadre sin cambiar el cuerpo. Evitar repetir tarjetas translúcidas, brillos detrás de texto o ruido que compita con un enlace. Solo las escenas de acción necesitan una superficie blanca para el QR.
-
-## Shapes
-
-Órbitas elípticas, círculos y esquinas de registro de película. Para el portal, dos o tres destellos pequeños de cuatro puntas en naranja/lavanda, entre anillos; uno puede acentuar la apertura una vez. Dibujarlos como SVG decorativo, con tamaños independientes; sin parpadeo ni destellos cerca del QR. No imitar el logo con texto generado.
+Profundidad por sombra de píxel (`6px 6px 0`), recorte y contraste. Máximo tres planos en una composición. El footer y los logos no se cubren con tarjetas ni con fundidos.
 
 ## Motion & Micro-interaction
 
-Una pulsación cambia un hecho o el foco, nunca solo agrega ornamento. Las transiciones entre escenas son cortes o continuidad visual de un mismo objeto. CSS/SVG primero; Web Animations API o GSAP solo si la prueba de una escena necesita coordinación que CSS no resuelva claramente. Sin autoplay de la charla. Volver, saltar o recargar permite recuperar el fotograma; un cambio de escena no deja animaciones corriendo. Con movimiento reducido se conserva el mismo contenido con cambios instantáneos; impresión/exportación usa un fotograma legible por escena.
+Una pulsación cambia un hecho o el foco, nunca solo añade ornamento. CSS/SVG primero. Sin autoplay de la charla: al volver, saltar o recargar se recupera el fotograma. Con movimiento reducido se conserva el contenido con cambios instantáneos; impresión y exportación usan un fotograma legible.
 
-**Duraciones de referencia:** corte con fundido opcional, 220 ms; revelado, 440 ms; iris, 950 ms; movimiento reducido, 0 ms. Para revelado e iris, probar una salida rápida y frenada suave con cubic-bezier(.22, 1, .36, 1). El CLI fijado no exporta tokens de movimiento; aquí se declaran en prosa.
+**Duraciones de referencia:** corte con fundido 220 ms; revelado 440 ms; apertura de portal (iris) 950 ms; movimiento reducido 0 ms. Para revelado e iris: `cubic-bezier(.22, 1, .36, 1)`.
 
 ## Voice & Content Strategy
 
-Español claro, técnico cuando hace falta: «abre una Issue», «revisa la PR», «prueba el viaje». No inventar cifras, trazas, logos, accesos ni estados de CI. Identificar explícitamente muestra, ejecución real o respaldo. Solo fecha del evento si tiene una función en portada o cierre.
+Español claro y técnico. No inventar cifras, trazas, logos ni estados de CI. Identificar explícitamente muestra, ejecución real o respaldo. La Issue de la misión es una sola (#37) con relevo de agentes; cada fase abre su PR con `Refs #37`.
 
 ## Components
 
-- **Marca:** usar los archivos oficiales existentes sin redibujar ni cambiar proporción; usar 144 px de ancho en el lienzo de 1280 px para portada y cierre; reducir o retirar en escenas de contenido para no competir con el titular. Mantener la atribución de marca del repositorio.
-- **Portal/QR:** volver a usar el componente de QR y su enlace accesible. Mantener margen blanco de al menos cuatro módulos, verificado sobre el QR real; 20 px es un punto de partida, no sustituto de la prueba. Sin desplazamiento, escala u opacidad durante la escena.
-- **Órbita:** una trayectoria que conserva el objeto; etiquetas DOM y estado activo también visible mediante posición o texto, no solo color.
-- **Cinta de misión:** mismo encuadre y objeto entre cortes; rótulo de agente y PR superpuesto en HTML, no generado dentro de la ilustración.
+- **`AvFooter` (plantilla):** obligatorio. Nunca taparlo; al posicionar arte decorativo, comprobar que los logos Eventekki, Tajamar, V-Valley e insignia quedan legibles.
+- **`ContributionPortal` (S03):** QR inmóvil con margen blanco de al menos cuatro módulos; apertura reversible con `data-open`; destellos decorativos lejos del QR y sin parpadeo.
+- **`LiveUniverse` (S06):** marco del iframe con estado de carga y enlace de respaldo permanente; el movimiento pertenece a la app, no al deck.
+- **`MissionTrace` (S13):** cinco marcas con `aria-current`, progreso en lima y aviso de conexión pendiente; legible sin color.
+- **`SpeakerPortrait` (S09):** retratos locales en WebP dentro de `.speaker-photo`, con handle visible; no depender de avatares remotos.
+- **`QrPortal`:** un solo componente para los dos QR (Issue y hub de sesión); etiqueta accesible y foco visible.
 
 ## Do's and Don'ts
 
-**Sí:** conservar marca, anotar el origen de los recursos, reutilizar el planeta y generar solo lo que no se pueda separar o dibujar bien.
+**Sí:** reutilizar la plantilla y sus assets, mantener el orden de lectura, anotar la procedencia de lo añadido y verificar la captura a 1280 × 720.
 
-**No:** componer desde una captura de pantalla como única capa; cambiar la app, sus permisos o el pipeline por razones estéticas; publicar avances o maquetas sin validación.
+**No:** componer escenas a sangre sobre el layout, cambiar la plantilla por motivos de estilo, publicar avances sin validación ni atribuir a los agentes trabajo preparado.
 
 Formato de referencia: [especificación DESIGN.md de Google Labs](https://github.com/google-labs-code/design.md/blob/main/docs/spec.md). La guía por escena vive en [plan-visual.md](plan-visual.md).

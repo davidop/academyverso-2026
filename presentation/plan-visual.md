@@ -2,7 +2,7 @@
 
 **Guion aprobado; composición visual en revisión.** El [guion narrativo](storytelling.md) define qué cuenta la escena; [DESIGN.md](DESIGN.md) fija la marca, la escala y las reglas de movimiento. Las cuatro imágenes aprobadas son anclas de estilo, no un fondo que se exporta sin editar.
 
-> **Nota tras integrar main:** el deck pasa a 20 escenas. La tabla siguiente conserva los IDs S01–S17 del corte de rediseño; el mapa a los números actuales de Slidev está en [storytelling.md](storytelling.md).
+> **Nota tras integrar la plantilla oficial:** el deck publicado tiene 22 escenas y su estética es la de Template Academyverso.potx. Las composiciones de esta tabla describen las escenas del corte de rediseño (S01–S17) y se aplican solo donde el kit sigue vigente (S03 portal, S06 galaxia, S09 ponentes, S13 trazabilidad); portada, cierre y andamiaje visual los fija la plantilla. El mapa de IDs actuales está en [storytelling.md](storytelling.md).
 
 ## Escena a escena
 
@@ -28,7 +28,7 @@ La última columna describe el cambio de estado y cómo enlaza con la siguiente 
 | S16 · Resultado | Ventana de demo estable con salida separada a la app y una frase de criterio. | Viajar/volver en la app o clip de respaldo. Sin arranque automático ni interrupciones para esperar agentes. |
 | S17 · Cierre | Logo, titular, QR del repo y horizonte de la apertura en segundo plano. | Revelado de fondo corto sin mover el QR. El estado final se queda en pantalla para preguntas. |
 
-## Cómo revisar 17 escenas sin generar 17 fondos
+## Cómo revisar las escenas del kit sin generar fondos nuevos
 
 - **Primero, reutilizar:** S05 ← A3, S08 ← A1/piloto, S09 ← A2, S12 ← A4. Revisarlas con marca real y sin fecha de maqueta. El fotograma de S08 puede salir directamente del piloto una vez ajustadas las estrellas.
 - **Capas de proyecto:** logo, astronauta y fondo existentes; planeta WebP del piloto; fotos ya usadas con nombres verificados; capturas nuevas solo para móvil, app y CI con datos adecuados para proyección. No se recrean pantallas de producto con texto inventado.
