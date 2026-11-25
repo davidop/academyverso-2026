@@ -270,3 +270,12 @@
 .final-links{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:6px}
 .final-link{font-size:16px;font-weight:800;color:var(--av-lime);border-bottom:2px solid currentColor;padding-bottom:2px}
 .final-layout .action-link:focus-visible,.final-link:focus-visible{outline:3px solid var(--av-orange);outline-offset:4px}
+/* ---------- Ajustes de contraste en escenas espaciales (kit PR 1) ---------- */
+.av-space .stats b { color: var(--av-lime); }
+.av-space .stats div { border-bottom-color: var(--av-lav); }
+.av-space .stats span { color: var(--av-cream); }
+.av-space .flow .arrow,
+.av-space .agent-chain > span { color: var(--av-lime); }
+.av-space .agent-grid .agent p,
+.av-space .agent-chain .chain p { color: var(--av-cream); }
+.av-space .live-note { color: #ffc6a6; }

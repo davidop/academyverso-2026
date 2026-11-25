@@ -106,7 +106,8 @@ transition: slide-left
 <!-- Sergio explica la diferencia entre preguntar a un chatbot y delegar un cambio real sobre GitHub. -->
 
 ---
-transition: slide-left
+layout: space
+transition: fade
 ---
 
 <div class="kicker">CÓMO FUNCIONA · LA MISIÓN</div>
@@ -149,7 +150,8 @@ transition: slide-left
 <!-- David y Sergio avanzan las cuatro etapas con clics. -->
 
 ---
-transition: slide-left
+layout: space
+transition: fade
 ---
 
 <div class="kicker">CÓMO FUNCIONA · TRES AGENTES / UN REPO</div>
@@ -193,7 +195,8 @@ clicks: 4
 <!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
 
 ---
-transition: slide-left
+layout: space
+transition: fade
 ---
 
 <div class="kicker">MISIÓN · TRABAJO ENCADENADO</div>
