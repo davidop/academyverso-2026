@@ -102,7 +102,7 @@ Español claro y técnico. No inventar cifras, trazas, logos ni estados de CI. I
 - **`AvFooter` (plantilla):** obligatorio. Nunca taparlo; al posicionar arte decorativo, comprobar que los logos Eventekki, Tajamar, V-Valley e insignia quedan legibles.
 - **`ContributionPortal` (S04):** QR inmóvil con margen blanco de al menos cuatro módulos; apertura reversible con `data-open`; destellos decorativos lejos del QR y sin parpadeo.
 - **`LiveUniverse` (S07):** marco del iframe con estado de carga y enlace de respaldo permanente; el movimiento pertenece a la app, no al deck.
-- **`MissionTrace` (S13):** cinco marcas con `aria-current`, progreso en lima y aviso de conexión pendiente; legible sin color.
+- **`MissionTrace` (S10):** cinco marcas con `aria-current`, progreso en lima y aviso de conexión pendiente; legible sin color.
 - **`SpeakerPortrait` (S02):** retratos locales en WebP dentro de `.speaker-photo`, con handle visible; no depender de avatares remotos.
 - **`QrPortal`:** un solo componente para los dos QR (Issue y hub de sesión); etiqueta accesible y foco visible.
 

@@ -2,7 +2,7 @@
 
 **Guion aprobado; composición visual en revisión.** El [guion narrativo](storytelling.md) define qué cuenta la escena; [DESIGN.md](DESIGN.md) fija la marca, la escala y las reglas de movimiento. Las cuatro imágenes aprobadas son anclas de estilo, no un fondo que se exporta sin editar.
 
-> **Nota tras integrar la plantilla oficial:** el deck publicado tiene 22 escenas y su estética es la de Template Academyverso.potx. Las composiciones de esta tabla describen las escenas del corte de rediseño (S01–S17) y se aplican solo donde el kit sigue vigente (S03 portal, S06 galaxia, S09 ponentes, S13 trazabilidad); portada, cierre y andamiaje visual los fija la plantilla. El mapa de IDs actuales está en [storytelling.md](storytelling.md).
+> **Nota tras integrar la plantilla oficial:** el deck publicado tiene 19 escenas y su estética es la de Template Academyverso.potx. Las composiciones de esta tabla describen las escenas del corte de rediseño (S01–S17) y se aplican solo donde el kit sigue vigente (S03 portal, S06 galaxia, S09 ponentes, S13 trazabilidad); portada, cierre y andamiaje visual los fija la plantilla. El mapa de IDs actuales está en [storytelling.md](storytelling.md).
 
 ## Escena a escena
 

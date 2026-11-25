@@ -18,7 +18,7 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-22 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS. Las notas están dentro de slides.md (modo presentador).
+19 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS. Las notas están dentro de slides.md (modo presentador).
 
 ### Plantilla oficial
 
@@ -45,7 +45,7 @@ Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
 - [Archivo de maquetas](../docs/design/academyverso-mockups/README.md): referencias para revisión, nunca se importan al bundle.
 - `ContributionPortal.vue` (S04): QR de Issue inmóvil con apertura reversible de ~950 ms y tres destellos SVG. Usa `clicks` de Slidev y respeta `prefers-reduced-motion`.
 - `LiveUniverse.vue` (S07): iframe con estado de carga, `aria-live` y enlace de respaldo permanente. Apunta a `/?embed=1#universe`, que en la web oculta cabecera, portada, panel del portal y galería: solo queda el lienzo 3D.
-- `MissionTrace.vue` (S13): recorrido de cinco pasos —GitHub Mobile, Issues, Actions, Worker + D1, Three.js— con progreso por clic y aviso de integración pendiente.
+- `MissionTrace.vue` (S10): recorrido de cinco pasos —GitHub Mobile, Issues, Actions, Worker + D1, Three.js— con progreso por clic y aviso de integración pendiente.
 - `SpeakerPortrait.vue` (S02): retratos WebP locales dentro del marco `.speaker-photo` de la plantilla; el handle `@davidop` / `@svg153` se mantiene.
 - El resto de escenas usa el HTML y las clases de la plantilla (`style.css`), no componentes propios.
 
@@ -55,7 +55,7 @@ Para revisar: abre /#/1, avanza y vuelve con el mando, prueba a 1280 × 720 y en
 
 ## Riesgos y plan de respaldo
 
-La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva S18 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.
+La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva S15 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.
 
 Guía de agentes: ../docs/activar-agentes.md  
 Guion: ../docs/guion-demo.md
@@ -64,7 +64,7 @@ Branding original: materiales de Academyverso, fuera de la licencia MIT del repo
 
 ## Pruebas visuales reproducibles
 
-En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S02, S04, S06, S07, S13, S15, S20 y S22 con Playwright y capturando además las 22 escenas. Comprueba los pasos del formulario, navegación reversible por teclado, enlaces, decodificación real de ambos QR (Issue y hub de sesión), retratos locales de los ponentes, el panel manual de la sesión, los logos de patrocinadores, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
+En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S02, S04, S06, S07, S10, S12, S17 y S19 con Playwright y capturando además las 19 escenas. Comprueba los pasos del formulario, navegación reversible por teclado, enlaces, decodificación real de ambos QR (Issue y hub de sesión), retratos locales de los ponentes, el panel manual de la sesión, los logos de patrocinadores, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
 
 Para ejecutarlo localmente:
 

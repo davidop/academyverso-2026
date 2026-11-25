@@ -86,8 +86,8 @@ test('S07 · galaxia integrada, enlace alternativo y aviso de datos', async ({ p
   await screenshot(page, testInfo, 'S07-iframe-con-fallback-1280x720.png')
 })
 
-test('S13 · cinco pasos Issue → Actions → D1 → Three.js, avance reversible', async ({ page }, testInfo) => {
-  const trace = await slide(page, 13, '.mission-trace')
+test('S10 · cinco pasos Issue → Actions → D1 → Three.js, avance reversible', async ({ page }, testInfo) => {
+  const trace = await slide(page, 10, '.mission-trace')
   for (const name of ['GitHub Mobile', 'GitHub Issues', 'GitHub Actions', 'Worker + D1', 'Three.js']) {
     await expect(trace.getByText(name, { exact: true }).first()).toBeVisible()
   }
@@ -100,39 +100,39 @@ test('S13 · cinco pasos Issue → Actions → D1 → Three.js, avance reversibl
   }
   await page.keyboard.press('ArrowLeft')
   await expect(trace).toHaveAttribute('data-step', '3')
-  await screenshot(page, testInfo, 'S13-trazabilidad-1280x720.png')
+  await screenshot(page, testInfo, 'S10-trazabilidad-1280x720.png')
 })
 
-test('S15 · centro de control manual, nunca telemetría simulada', async ({ page }, testInfo) => {
-  const board = await slide(page, 15, '.mission-board')
+test('S12 · centro de control manual, nunca telemetría simulada', async ({ page }, testInfo) => {
+  const board = await slide(page, 12, '.mission-board')
   await expect(board.getByText('ESTADO MANUAL DEL PRESENTADOR', { exact: false })).toBeVisible()
   await expect(board.getByRole('button', { name: /Cambiar estado de COPILOT/i })).toBeVisible()
   await expect(board.getByRole('link', { name: /VER EVIDENCIA/i }).first()).toBeVisible()
-  await screenshot(page, testInfo, 'S15-centro-de-control-1280x720.png')
+  await screenshot(page, testInfo, 'S12-centro-de-control-1280x720.png')
 })
 
-test('S20 · patrocinadores con logos locales visibles', async ({ page }, testInfo) => {
-  const sponsors = await slide(page, 20, '.sponsors')
+test('S17 · patrocinadores con logos locales visibles', async ({ page }, testInfo) => {
+  const sponsors = await slide(page, 17, '.sponsors')
   for (const name of ['V-Valley', 'Tajamar', 'Tech Riders']) {
     const logo = sponsors.getByRole('img', { name })
     await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true)
   }
-  await screenshot(page, testInfo, 'S20-patrocinadores-1280x720.png')
+  await screenshot(page, testInfo, 'S17-patrocinadores-1280x720.png')
 })
 
-test('S22 · cierre con QR del hub y enlaces de contexto', async ({ page }, testInfo) => {
-  const closing = await slide(page, 22, '.final-layout')
+test('S19 · cierre con QR del hub y enlaces de contexto', async ({ page }, testInfo) => {
+  const closing = await slide(page, 19, '.final-layout')
   const hubLink = closing.getByRole('link', { name: /ENLACES DE LA SESIÓN/i })
   await expect(hubLink).toHaveAttribute('href', sessionHub)
   await expect(closing.getByRole('link', { name: /universo 3D/i })).toHaveAttribute('href', galaxyUrl)
   await expect(closing.getByRole('link', { name: /Código y documentación/i })).toHaveAttribute('href', repo)
   const qrLink = closing.getByRole('link', { name: /ENLACES Y CÓDIGO/i })
   expect(await qrValue(qrLink.locator('svg').first())).toBe(sessionHub)
-  await screenshot(page, testInfo, 'S22-cierre-1280x720.png')
+  await screenshot(page, testInfo, 'S19-cierre-1280x720.png')
 })
 
 test('Capturas de escenas tras completar sus revelados por clic', async ({ page }, testInfo) => {
-  const clickCounts = { 4: 1, 6: 2, 8: 1, 10: 4, 11: 3, 12: 3, 13: 4, 14: 3, 19: 3 }
+  const clickCounts = { 4: 1, 6: 2, 8: 1, 9: 3, 10: 4, 11: 3, 16: 3 }
   for (const [no, clicks] of Object.entries(clickCounts)) {
     await page.goto('/#/' + no, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
@@ -142,8 +142,8 @@ test('Capturas de escenas tras completar sus revelados por clic', async ({ page 
   }
 })
 
-test('Recorrido completo · 22 escenas 16:9 renderizadas en Chrome', async ({ page }, testInfo) => {
-  for (let number = 1; number <= 22; number++) {
+test('Recorrido completo · 19 escenas 16:9 renderizadas en Chrome', async ({ page }, testInfo) => {
+  for (let number = 1; number <= 19; number++) {
     await page.goto('/#/' + number, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
     await page.waitForTimeout(180)
