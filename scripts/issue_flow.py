@@ -11,9 +11,11 @@ Dos subcomandos, cada uno usado por un workflow:
   cierra las Issues que la PR enlaza con ``Closes #N`` / ``Fixes #N`` /
   ``Resolves #N``. GitHub solo lo hace por sí mismo al fusionar en ``main``.
   Excepción: la Issue de relevo de la misión (``MISIÓN · …``), donde Copilot,
-  Claude y Codex trabajan uno tras otro, no se cierra con la PR de una fase
-  (Copilot añade ``Fixes #N`` por su cuenta): se comenta el avance y la cierran
-  los ponentes al terminar la última fase.
+  Claude y Codex trabajan uno tras otro, no se cierra con la PR de una fase:
+  se comenta el avance y la cierran los ponentes al terminar la última fase.
+  El protocolo pide ``Refs #N``, así que el relevo también se comenta con
+  ``Refs``. Algunos agentes añaden ``Fixes #N`` por su cuenta y otros no.
+  ``Refs`` nunca cierra nada.
 
 Las decisiones son funciones puras (probadas en scripts/test_issue_flow.py);
 solo ``main()`` habla con la API de GitHub a través de la CLI ``gh``.
@@ -51,14 +53,23 @@ _AGENT_WORD = re.compile(r"\b(copilot|claude|codex)\b", re.I)
 _MISSION_PREFIX = re.compile(r"MISI[OÓ]N\s*·", re.I)
 AGENT_LABELS = ("agent:copilot", "agent:claude", "agent:codex")
 
+def _ref_patterns(keyword: str) -> tuple[re.Pattern, re.Pattern]:
+    short = re.compile(
+        rf"(?<![\w-]){keyword}:?\s+(?:(?P<owner>[\w.-]+)/(?P<name>[\w.-]+))?#(?P<num>\d+)\b", re.I
+    )
+    url = re.compile(
+        rf"(?<![\w-]){keyword}:?\s+https://github\.com/(?P<owner>[\w.-]+)/(?P<name>[\w.-]+)/issues/(?P<num>\d+)\b",
+        re.I,
+    )
+    return short, url
+
+
 _KEYWORD = r"(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)"
-_SHORT_REF = re.compile(
-    rf"(?<![\w-]){_KEYWORD}:?\s+(?:(?P<owner>[\w.-]+)/(?P<name>[\w.-]+))?#(?P<num>\d+)\b", re.I
-)
-_URL_REF = re.compile(
-    rf"(?<![\w-]){_KEYWORD}:?\s+https://github\.com/(?P<owner>[\w.-]+)/(?P<name>[\w.-]+)/issues/(?P<num>\d+)\b",
-    re.I,
-)
+_SHORT_REF, _URL_REF = _ref_patterns(_KEYWORD)
+# "Refs #N" no cierra nada: solo sirve para comentar el avance en la Issue de relevo.
+# El protocolo de la misión pide Refs (no Fixes), así que el relevo no puede depender
+# de que el agente añada una palabra de cierre por su cuenta.
+_SHORT_MENTION, _URL_MENTION = _ref_patterns(r"refs?")
 # Texto que GitHub no muestra o que es código: no debe cerrar nada.
 _IGNORED = re.compile(r"<!--.*?-->|```.*?```|~~~.*?~~~|`[^`\n]*`", re.S)
 
@@ -121,11 +132,10 @@ def plan_triage(event: dict, default_assignee: str) -> dict | None:
     }
 
 
-def closing_refs(text: str | None, repo: str) -> list[int]:
-    """Números de Issue de ``repo`` que el texto cierra con las palabras clave de GitHub."""
+def _find_refs(text: str | None, repo: str, patterns: tuple[re.Pattern, ...]) -> list[int]:
     clean = _IGNORED.sub(" ", text or "")
     found: set[int] = set()
-    for pattern in (_SHORT_REF, _URL_REF):
+    for pattern in patterns:
         for match in pattern.finditer(clean):
             owner, name = match.group("owner"), match.group("name")
             if owner and f"{owner}/{name}".lower() != repo.lower():
@@ -134,16 +144,44 @@ def closing_refs(text: str | None, repo: str) -> list[int]:
     return sorted(found)
 
 
-def plan_close(event: dict, repo: str) -> list[int]:
-    """Issues a cerrar tras fusionar una PR en una rama que no es la de por defecto."""
+def closing_refs(text: str | None, repo: str) -> list[int]:
+    """Números de Issue de ``repo`` que el texto cierra con las palabras clave de GitHub."""
+    return _find_refs(text, repo, (_SHORT_REF, _URL_REF))
+
+
+def mention_refs(text: str | None, repo: str) -> list[int]:
+    """Números de Issue de ``repo`` que el texto enlaza con ``Refs #N`` (sin cerrarlas)."""
+    return _find_refs(text, repo, (_SHORT_MENTION, _URL_MENTION))
+
+
+def _merged_pr_text(event: dict) -> tuple[dict, str] | None:
+    """La PR y su texto si se fusionó en una rama que no es la de por defecto."""
     pr = event.get("pull_request") or {}
     if not pr.get("merged"):
-        return []
+        return None
     default_branch = (event.get("repository") or {}).get("default_branch", "main")
     if pr.get("base", {}).get("ref") == default_branch:
-        return []  # GitHub ya cierra de forma nativa al fusionar en la rama por defecto.
-    refs = closing_refs(f"{pr.get('title') or ''}\n{pr.get('body') or ''}", repo)
-    return [number for number in refs if number != pr.get("number")]
+        return None  # GitHub ya cierra de forma nativa al fusionar en la rama por defecto.
+    return pr, f"{pr.get('title') or ''}\n{pr.get('body') or ''}"
+
+
+def plan_close(event: dict, repo: str) -> list[int]:
+    """Issues a cerrar tras fusionar una PR en una rama que no es la de por defecto."""
+    merged = _merged_pr_text(event)
+    if not merged:
+        return []
+    pr, text = merged
+    return [number for number in closing_refs(text, repo) if number != pr.get("number")]
+
+
+def plan_mentions(event: dict, repo: str) -> list[int]:
+    """Issues enlazadas solo con ``Refs #N``: se comenta el relevo si son de misión; nunca se cierran."""
+    merged = _merged_pr_text(event)
+    if not merged:
+        return []
+    pr, text = merged
+    closing = set(closing_refs(text, repo))
+    return [n for n in mention_refs(text, repo) if n != pr.get("number") and n not in closing]
 
 
 def is_relay_issue(issue: dict) -> bool:
@@ -230,33 +268,53 @@ def run_triage(event: dict, repo: str) -> None:
         print(f"#{number}: añadida al Project {owner}/{project_number}")
 
 
+def _open_issue(repo: str, number: int) -> dict | None:
+    code, out = gh("api", f"repos/{repo}/issues/{number}", check=False)
+    if code:
+        print(f"::warning::#{number} no existe o no es accesible; se omite.")
+        return None
+    issue = json.loads(out)
+    if issue.get("pull_request"):
+        print(f"#{number} es una PR, no una Issue; se omite.")
+        return None
+    if issue.get("state") == "closed":
+        print(f"#{number} ya estaba cerrada.")
+        return None
+    return issue
+
+
+def comment_relay(repo: str, number: int, pr: dict, base: str) -> None:
+    gh("api", "--method", "POST", f"repos/{repo}/issues/{number}/comments", "--input", "-", payload={
+        # El autor va entre comillas invertidas, sin @: mencionar a @copilot/@claude/@codex
+        # podría despertar a un agente en mitad del relevo.
+        "body": (f"Relevo: la PR #{pr.get('number')} (`{(pr.get('user') or {}).get('login', '?')}`) se fusionó "
+                 f"en `{base}`. La misión sigue abierta: el siguiente agente parte de esta rama y los "
+                 "ponentes cierran la Issue al terminar la última fase.")})
+    print(f"#{number}: Issue de relevo; se comenta el avance sin cerrarla (PR #{pr.get('number')} -> {base})")
+
+
 def run_close(event: dict, repo: str) -> None:
     pr = event.get("pull_request") or {}
     numbers = plan_close(event, repo)
-    if not numbers:
-        print("La PR no enlaza Issues con Closes/Fixes/Resolves, o no aplica: sin cambios.")
+    mentions = plan_mentions(event, repo)
+    if not numbers and not mentions:
+        print("La PR no enlaza Issues con Closes/Fixes/Resolves ni Refs, o no aplica: sin cambios.")
         return
     base = pr.get("base", {}).get("ref", "?")
-    for number in numbers:
-        code, out = gh("api", f"repos/{repo}/issues/{number}", check=False)
-        if code:
-            print(f"::warning::#{number} no existe o no es accesible; se omite.")
-            continue
-        issue = json.loads(out)
-        if issue.get("pull_request"):
-            print(f"#{number} es una PR, no una Issue; se omite.")
-            continue
-        if issue.get("state") == "closed":
-            print(f"#{number} ya estaba cerrada.")
+    for number in mentions:
+        issue = _open_issue(repo, number)
+        if issue is None:
             continue
         if is_relay_issue(issue):
-            gh("api", "--method", "POST", f"repos/{repo}/issues/{number}/comments", "--input", "-", payload={
-                # El autor va entre comillas invertidas, sin @: mencionar a @copilot/@claude/@codex
-                # podría despertar a un agente en mitad del relevo.
-                "body": (f"Relevo: la PR #{pr.get('number')} (`{(pr.get('user') or {}).get('login', '?')}`) se fusionó "
-                         f"en `{base}`. La misión sigue abierta: el siguiente agente parte de esta rama y los "
-                         "ponentes cierran la Issue al terminar la última fase.")})
-            print(f"#{number}: Issue de relevo; se comenta el avance sin cerrarla (PR #{pr.get('number')} -> {base})")
+            comment_relay(repo, number, pr, base)
+        else:
+            print(f"#{number}: enlazada con Refs y no es de relevo; no se modifica.")
+    for number in numbers:
+        issue = _open_issue(repo, number)
+        if issue is None:
+            continue
+        if is_relay_issue(issue):
+            comment_relay(repo, number, pr, base)
             continue
         gh("api", "--method", "POST", f"repos/{repo}/issues/{number}/comments", "--input", "-", payload={
             "body": (f"Cerrada automáticamente: la PR #{pr.get('number')} se fusionó en `{base}` y la enlaza "
