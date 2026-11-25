@@ -1,8 +1,10 @@
 name: academyverso-2026
 version: 1.0.0
-description: Guía local para revisar y mantener las escenas de AcademyVerso.
+description: Skills locales de AcademyVerso para agentes (frontend, motion, vídeo, worldgen y presentación).
 targets:
   - agent-skills
+  - claude
+  - copilot
 dependencies:
   apm: []
   mcp: []
