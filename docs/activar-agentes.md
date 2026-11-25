@@ -1,6 +1,6 @@
 # Activar GitHub Copilot, Claude y Codex para la demo móvil
 
-> Guía contrastada con documentación de GitHub, noviembre de 2026. La captura de «Modelos» **no confirma** que Claude y Codex estén habilitados como agentes. Estado comprobado el 25/11 en la prueba #72: **Copilot** y **Claude** funcionan como agentes en este repo (`copilot-swe-agent` y `anthropic-code-agent` son asignables); **Codex** no aparece como asignable y está sin probar.
+> Guía contrastada con documentación de GitHub, noviembre de 2026. La captura de «Modelos» **no confirma** que Claude y Codex estén habilitados como agentes. Estado comprobado el 25/11 en la prueba #72: los **tres agentes funcionan** en este repo y completaron el relevo (Copilot #73, Claude #88 y Codex #94). Son asignables `copilot-swe-agent`, `anthropic-code-agent` y `openai-code-agent`.
 
 ## Preparación web (titular de `davidop`)
 
@@ -14,28 +14,34 @@
 
 ## Lanzar una sesión de agente sin caer en el chat
 
-En la prueba del 25/11 (#72), una sesión lanzada desde el móvil acabó en el **chat** de Copilot con el modelo Claude: respondió en la conversación, terminó y no dejó ni rama ni PR. Para lanzar el **agente**:
+**Claude y Codex se lanzan desde la web, con el entorno Actions:**
 
-1. **Copilot → Agents → Nueva sesión**, no **Chat**.
-2. Repositorio `davidop/academyverso-2026`, opción **Nube** y **la rama de demo** (por ejemplo, `demo/portal-seed-26nov`).
-3. **Selector de agente:** Copilot, Claude o Codex. No el desplegable de «Modelos».
-4. Pegar el prompt de la fase y lanzar.
+1. Abrir la pestaña **Agents** del repo: https://github.com/davidop/academyverso-2026/agents
+2. En el desplegable de entorno elegir **Actions**. Con **Cloud** solo aparece Copilot; Claude y Codex solo salen en el selector con **Actions**.
+3. **Selector de agente:** Claude o Codex. No el desplegable de «Modelos».
+4. **Rama:** la de demo (por ejemplo, `demo/portal-seed-26nov`), no `main`.
+5. Pegar el prompt de la fase y lanzar. La sesión corre como un workflow de Actions («Claude» u «OpenAI Codex») y abre el PR contra esa rama.
 
-**Comprobación inmediata:** en 1–2 minutos tiene que aparecer un PR en borrador en el repo, y la sesión debe verse en la lista de Agents con un estado. Por la API, Copilot abrió el PR en unos 10 segundos y Claude en 7. Si no aparece, es el chat: relanzar.
+**Copilot** se lanza igual, con el entorno Cloud, o desde GitHub Mobile: **Copilot → Agents → Nueva sesión** (no **Chat**) → repositorio → **Nube** → rama → prompt. En la prueba, una sesión lanzada desde el móvil acabó en el **chat** de Copilot con el modelo Claude: respondió en la conversación y no dejó ni rama ni PR.
+
+**Comprobación inmediata:** en 1–3 minutos tiene que aparecer un PR contra la rama de demo. Si no aparece, no era el agente: relanzar.
 
 ## Comportamientos observados con agentes reales (25/11)
 
-| | Copilot (`copilot-swe-agent`) | Claude (`anthropic-code-agent`) |
-|---|---|---|
-| Rama base al **asignar la Issue** | Respeta la rama si se indica por la API (`agent_assignment.base_branch`) | **La ignora**: parte de `main` y abre el PR contra `main` |
-| Tiempo en una tarea mínima | ~3 min | <1 min |
-| Autoría visible | PR a nombre de quien lanza la sesión; el agente aparece como co-autor de los commits | PR a nombre de quien lanza la sesión; commits firmados por `Claude` |
-| Cuerpo del PR | Añade `Fixes` + número de Issue, aunque se pida Refs | También añade `Fixes` + número de Issue |
+| | Copilot (`copilot-swe-agent`) | Claude (`anthropic-code-agent`) | Codex (`openai-code-agent`) |
+|---|---|---|---|
+| Cómo se lanzó en la prueba | Asignando la Issue por la API (#73) | Pestaña Agents, entorno Actions (#88) | Pestaña Agents, entorno Actions (#94) |
+| Rama base | Respeta la rama si se indica por la API (`agent_assignment.base_branch`) o en Agents | Desde Agents, respeta la rama elegida. **Asignando la Issue la ignora**: parte de `main` y abre el PR contra `main` (#74) | Respeta la rama elegida en Agents |
+| Tiempo en una tarea mínima | unos 3 min | unos 70 s | unos 3 min |
+| PR | Borrador, a nombre de quien lanza la sesión | Borrador, a nombre de la app del agente | **Listo para revisar**, a nombre de la app del agente |
+| Commits | Copilot como coautor | Firmados por `Claude` | Firmados por `Codex` |
+| `Refs` en el cuerpo | Añade `Fixes` + número de Issue por su cuenta | Desde Agents, respetó `Refs` sin `Fixes`. Asignado por la API (#74) añadió `Fixes` | Respetó `Refs` sin `Fixes` |
 
 - **Rama equivocada:** si un PR llega contra `main`, cambiar la base no sirve, porque arrastra todos los commits de `main`. Hay que cerrarlo y relanzar desde Agents eligiendo la rama.
-- **Workflows pendientes de aprobación:** el CI de cada PR de agente queda en `action_required` hasta pulsar **«Approve and run workflows»**. El workflow de relevo que corre al fusionar (`pull_request_target`) también queda pendiente y hay que aprobarlo o relanzarlo en Actions. Desde la CLI, `gh run rerun <id>` funciona; el endpoint `.../runs/{id}/approve` no (solo vale para forks).
-- **Borrador:** los PRs llegan en borrador; marcarlos como listos antes de fusionar.
-- **Menciones:** no escribir `@claude` en comentarios para invocar al agente. Es una cuenta real de GitHub y no activa al agente.
+- **CI pendiente de aprobación:** el CI de cada PR de agente queda en `action_required` hasta pulsar **«Approve and run workflows»**. Desde la CLI, `gh run rerun <id>` funciona; el endpoint `.../runs/{id}/approve` no (solo vale para forks).
+- **Relevo al fusionar:** el workflow de relevo (`pull_request_target`) comenta el avance en la Issue de misión tanto con `Fixes #N` como con `Refs #N`. Lo de `Refs` se arregló en #90; antes solo funcionaba si el agente añadía `Fixes`. En #88 y #94 arrancó solo al fusionar; en #73 quedó pendiente y hubo que relanzarlo. Mirar Actions después de cada fusión.
+- **Borrador:** Copilot y Claude abren el PR en borrador; hay que marcarlo como listo antes de fusionar.
+- **Menciones:** no escribir `@claude` en comentarios para invocar al agente. Es una cuenta real de GitHub y no activa al agente. Tampoco `@codex`: puede responder otra integración (ChatGPT Codex Connector).
 
 ## Control de acceso y uso
 
