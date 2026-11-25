@@ -1,1 +1,2 @@
 - Fase 1/3 · COPILOT
+- Fase 2/3 · CLAUDE
