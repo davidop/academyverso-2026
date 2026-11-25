@@ -4,7 +4,6 @@ description: Skills locales de AcademyVerso para agentes (frontend, motion, víd
 targets:
   - agent-skills
   - claude
-  - copilot
 dependencies:
   apm: []
   mcp: []
