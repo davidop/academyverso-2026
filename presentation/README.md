@@ -71,9 +71,11 @@ Para ejecutarlo localmente:
 ```bash
 cd presentation
 npm install
-npx playwright install chromium
+npx playwright install chrome   # solo si no tienes Google Chrome instalado
 npm run test:visual
 ```
+
+La configuración usa `channel: 'chrome'` (Google Chrome, igual que en CI), así que el Chromium empaquetado de Playwright no sirve. Los informes se generan en `test-results/` y `playwright-report/`, que están ignorados por git.
 
 **Importante:** el navegador automatizado no reemplaza una prueba con proyector, mando y dos móviles físicos. No mover este PR fuera de Draft antes del visto bueno de ambos ponentes.
 

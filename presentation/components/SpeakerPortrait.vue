@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import david from '../assets/david-oliva.png'
-import sergio from '../assets/sergio-valverde.png'
+import david from '../assets/david-oliva.webp'
+import sergio from '../assets/sergio-valverde.webp'
 defineProps<{ person: 'david' | 'sergio'; name: string }>()
 const photos = { david, sergio }
 </script>

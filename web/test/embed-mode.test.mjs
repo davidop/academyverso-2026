@@ -24,3 +24,20 @@ test('the deck embeds the 3D canvas only', () => {
   assert.ok(deck.includes('academyverso-2026/?embed=1#universe'), 'the live iframe must point to embed mode');
   assert.ok(!deck.includes('src="https://davidop.github.io/academyverso-2026/#universe"'), 'no iframe may load the full site');
 });
+
+test('bound iframe sources resolve to embed mode', () => {
+  // LiveUniverse enlaza `:src="url"`; el literal de arriba no cubre ese caso.
+  let bound = 0;
+  for (const name of readdirSync('presentation/components').filter(n => n.endsWith('.vue'))) {
+    const source = readFileSync('presentation/components/' + name, 'utf8');
+    for (const [, binding] of source.matchAll(/<iframe\b[^>]*?\s:src="(\w+)"/g)) {
+      const value = source.match(new RegExp('const\\s+' + binding + "\\s*=\\s*'([^']+)'"))?.[1];
+      assert.ok(value, name + ': :src="' + binding + '" must be a string constant in the same component');
+      if (value.includes('academyverso-2026')) {
+        assert.ok(value.includes('?embed=1'), name + ': iframe ' + binding + ' must load embed mode, got ' + value);
+      }
+      bound++;
+    }
+  }
+  assert.ok(bound > 0, 'expected at least one iframe with a bound src in the deck');
+});
