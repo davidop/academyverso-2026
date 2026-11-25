@@ -127,8 +127,8 @@ transition: fade
 <div class="kicker">CÓMO FUNCIONA · TRIPULACIÓN</div>
 <div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
 <div class="speaker-grid">
- <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="david" name="David Oliva"/></div><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
- <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="sergio" name="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><div class="speaker-handle"><i><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="david" name="David Oliva"/></div><div><h2>DAVID OLIVA</h2><img class="speaker-company" src="./assets/logos/knowmad-mood.svg" alt="Knowmad mood"/><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="sergio" name="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><img class="speaker-company" src="./assets/logos/accenture.svg" alt="Accenture"/><p>Platform Engineer · GitHub Star</p><div class="speaker-handle"><i><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
 </div>
 
 <!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->
@@ -243,9 +243,8 @@ transition: fade
 <div class="kicker">CENTRO DE CONTROL · EN DIRECTO</div>
 <div class="headline compact">Una misión. <span class="gradient">Tres etapas verificables.</span></div>
 <MissionBoard />
-<div class="footnote warning">Los estados se actualizan manualmente: NO simulan telemetría de GitHub. Una PR de respaldo es trabajo preparado, nunca una ejecución de agente en directo.</div>
 
-<!-- Control de la sesión: 15:15–15:40. Sergio y David alternan móvil y proyector. Mostrar una Issue y una PR real por fase si el acceso está disponible. -->
+<!-- Control de la sesión: 15:15–15:40. Sergio y David alternan móvil y proyector. Mostrar una Issue y una PR real por fase si el acceso está disponible. Los estados del tablero se cambian a mano: no son telemetría de GitHub. Si se usa una PR de respaldo, decir en voz alta que es trabajo preparado, no una ejecución de agente en directo. -->
 
 
 ---
@@ -278,11 +277,11 @@ transition: fade
 
 <div class="kicker">FASE 3/3 · CODEX / VERIFICAR</div>
 <div class="demo-layout">
- <div><div class="pill blue-pill">03 · VALIDAR</div><div class="headline compact">La IA genera.<br><span class="mint">Tú verificas.</span></div><div class="prompt-small">«Sobre la PR anterior, añade pruebas para dos destinos distintos, sincronización D1, tránsito, regreso, modo reducido y 50 objetos. Verifica CI y no inventes resultados».</div></div>
- <div class="console"><div class="console-header">● ● ●　 academyverso / CI</div><p>✓ navigation · planet-to-planet</p><p>✓ keyboard · accessible</p><p>✓ reduced-motion · supported</p><p>✓ regression · monitored</p><b>CI SUCCESS <i>●</i></b><small>Ejemplo visual. Comprobar el CI real durante la demo.</small></div>
+ <div><div class="pill blue-pill">03 · VERIFICAR</div><div class="headline compact">La IA genera.<br><span class="mint">Tú verificas.</span></div><div class="prompt-small">«Sobre la PR anterior, añade pruebas para dos destinos distintos, sincronización D1, tránsito, regreso, modo reducido y 50 objetos. Verifica CI y no inventes resultados».</div></div>
+ <div class="console"><div class="console-header">● ● ●　 academyverso / CI</div><p>✓ navigation · planet-to-planet</p><p>✓ keyboard · accessible</p><p>✓ reduced-motion · supported</p><p>✓ regression · monitored</p><b>CI SUCCESS <i>●</i></b><small>Ejemplo ilustrativo, no es el CI real.</small></div>
 </div>
 
-<!-- David abre la PR real de Codex en GitHub Mobile; Sergio muestra la ejecución de Actions. Consola ilustrativa, nunca sustituye evidencia real. -->
+<!-- David abre la PR real de Codex en GitHub Mobile; Sergio muestra la ejecución de Actions. Consola ilustrativa, nunca sustituye evidencia real: comprobar el CI real durante la demo antes de anunciarlo. -->
 
 ---
 layout: space
@@ -292,9 +291,8 @@ transition: slide-left
 <div class="kicker">GRAN FINAL · PORTAL INTERDIMENSIONAL</div>
 <div class="headline">Dos mundos de asistentes.<br><span class="gradient">Un portal construido con agentes.</span></div>
 <div class="mission-cards"><div v-click><span>📱</span><b>ENVÍA</b><p>Tu descripción en una Issue</p></div><div v-click><span>🌌</span><b>EXPLORA</b><p>Visita un universo compartido</p></div><div v-click><span>🚀</span><b>VIAJA</b><p>Atravesad el portal entre dos creaciones</p></div></div>
-<div class="footnote warning">Seleccionar dos creaciones visibles y distintas. Si no hay suficientes aportaciones reales, usar dos mundos de respaldo identificados como ejemplo.</div>
 
-<!-- 15:40–15:50: Sergio selecciona origen; David elige destino. Abrir #universe y activar el portal. Mostrar vuelta a galaxia y enlace a Issues. -->
+<!-- 15:40–15:50: Sergio selecciona origen; David elige destino. Seleccionar dos creaciones visibles y distintas; si no hay suficientes aportaciones reales, usar dos mundos de respaldo y decir que son ejemplos. Abrir #universe y activar el portal. Mostrar vuelta a galaxia y enlace a Issues. -->
 
 ---
 transition: fade

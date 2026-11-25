@@ -5,6 +5,7 @@ import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs
 import {resolvedWorldSpec} from './worlds/spec.mjs';
 import {buildWorld} from './worlds/builder.mjs';
 import {birthProgress,birthScale,createBirthParticles} from './worlds/birth.mjs';
+import {disposeGroup} from './worlds/dispose.mjs';
 import {listPois,cameraPoseForPoi} from './worlds/poi.mjs';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
@@ -83,14 +84,7 @@ function makeBody(obj,i){
  const entry={obj,group,size,targets,baseY:coords.y,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20};
  meshes.push(entry);scene.add(group);return entry;
 }
-function disposeWorld(m){
- scene.remove(m.group);
- m.group.traverse(child=>{
-  child.geometry?.dispose?.();
-  const materials=Array.isArray(child.material)?child.material:[child.material];
-  for(const material of materials)material?.dispose?.();
- });
-}
+function disposeWorld(m){disposeGroup(scene,m.group)}
 function clearPortalArt(){
  for(const gate of portalArt)disposeWorld({group:gate});
  portalArt=[];portalArtSignature='';

@@ -143,6 +143,7 @@
 .speaker-photo img{width:250px;height:250px;object-fit:cover;display:block}
 .speaker-photo:after{content:"";position:absolute;right:-23px;top:-23px;width:23px;height:23px;background:var(--av-green)}
 .speaker h2{font-size:28px;font-weight:800}
+.speaker-company{display:block;height:34px;width:auto;margin:10px 0 12px}
 .speaker p{font-size:18px;line-height:1.35;margin:6px 0 14px;font-weight:500}
 .speaker-handle{display:flex;align-items:stretch;height:42px}
 .speaker-handle i{width:42px;display:grid;place-items:center;background:var(--av-green);border-right:2px solid var(--av-lav)}

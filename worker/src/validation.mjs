@@ -11,6 +11,11 @@ export function validate(input){
  return data;
 }
 export const TRIAGE_MARKER='[academyverso-triage:ready:v1]';
+// gh-aw sanea los safe outputs escapando la sintaxis Markdown: el marcador y
+// los marcadores GTA llegan como \[...\] en el comentario del bot.
+const MARKER_RE=/\\?\[academyverso-triage:ready:v1\\?\]/;
+export const hasTriageMarker=text=>MARKER_RE.test(String(text||''));
+const unescapeMarkdown=text=>text.replace(/\\([\\`*_{}[\]()#+\-.!~|<>])/g,'$1');
 function issueFields(body){
  const fields={};
  const text=String(body||'');
@@ -23,9 +28,9 @@ function issueFields(body){
 export function parseIssue(body){return validate(issueFields(body))}
 export function parseTriageComment(commentBody){
  const text=String(commentBody||'');
- if(!text.includes(TRIAGE_MARKER))throw new Error('Texto de triage incompleto: falta el marcador visible');
- const match=text.match(/(?:^|\n)#{2,4} Descripción que aparecerá en el planeta\s*\n+([\s\S]*?)(?=\n#{1,6} |\[academyverso-triage:ready:v1\]|$)/);
- const description=match?match[1].replace(/\s+/g,' ').trim():'';
+ if(!hasTriageMarker(text))throw new Error('Texto de triage incompleto: falta el marcador visible');
+ const match=text.match(/(?:^|\n)#{2,4} Descripción que aparecerá en el planeta\s*\n+([\s\S]*?)(?=\n#{1,6} |\\?\[academyverso-triage:ready:v1\\?\]|$)/);
+ const description=match?unescapeMarkdown(match[1]).replace(/\s+/g,' ').trim():'';
  if(!description)throw new Error('Texto de triage incompleto: falta la descripción del planeta');
  return description;
 }

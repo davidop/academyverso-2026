@@ -8,11 +8,11 @@ GITHUB_REPO = "davidop/academyverso-2026"
 # Keep disabled until migration and live model are validated.
 WORLDGEN_ENABLED = "false"
 ALLOWED_ORIGIN = "https://davidop.github.io"
-# Login exacto de la GitHub App de triage (mismo valor que la variable de
-# Actions ACADEMYVERSO_TRIAGE_BOT, terminado en [bot]). Configúrala en
-# Cloudflare antes de aceptar payloads con triage_comment; sin este valor el
-# Worker rechaza esa vía y conserva la ruta legacy del cuerpo de la Issue.
-# TRIAGE_BOT = "nombre-de-la-app[bot]"
+# Login exacto de la GitHub App de triage: mismo valor que la variable de
+# Actions ACADEMYVERSO_TRIAGE_BOT, terminado en [bot]. Va aquí y no en el panel
+# de Cloudflare porque `wrangler deploy` sustituye las variables por las de este
+# bloque. Sin este valor el Worker rechaza la vía triage_comment (#67).
+TRIAGE_BOT = "academyverso-triage[bot]"
 
 [[d1_databases]]
 binding = "DB"
