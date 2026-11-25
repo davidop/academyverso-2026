@@ -34,44 +34,8 @@ test('S01 · portada de la plantilla con astronauta oficial y titular', async ({
   await screenshot(page, testInfo, 'S01-portada-1280x720.png')
 })
 
-test('S03 · QR de Issue decodificable y apertura reversible', async ({ page }, testInfo) => {
-  const portal = await slide(page, 3, '.portal-scene')
-  await expect(portal.getByText('Escribe nombre, alias y descripción')).toBeVisible()
-  const link = portal.getByRole('link', { name: /CREAR OBJETO EN GITHUB/i })
-  await expect(link).toHaveAttribute('href', issueUrl)
-  expect(await qrValue(link.locator('svg').first())).toBe(issueUrl)
-  await expect(portal).toHaveAttribute('data-open', 'false')
-  await screenshot(page, testInfo, 'S03-portal-inicial-1280x720.png')
-  await page.keyboard.press('ArrowRight')
-  await expect(portal).toHaveAttribute('data-open', 'true')
-  await screenshot(page, testInfo, 'S03-portal-abierto-1280x720.png')
-  await page.keyboard.press('ArrowLeft')
-  await expect(portal).toHaveAttribute('data-open', 'false')
-})
-
-test('S05 · elección de dos mundos con enlace real', async ({ page }, testInfo) => {
-  const vote = await slide(page, 5, '.gta-vote')
-  await expect(vote.getByText('VICE NEBULA')).toBeVisible()
-  await expect(vote.getByText('COLONIA CENTINELA')).toBeVisible()
-  const link = page.getByRole('link', { name: /ABRIR MISIÓN EN DIRECTO/i })
-  await expect(link).toHaveAttribute('href', galaxyUrl + '#grand-terraforming-agents')
-  await screenshot(page, testInfo, 'S05-eleccion-1280x720.png')
-})
-
-test('S06 · galaxia integrada, enlace alternativo y aviso de datos', async ({ page }, testInfo) => {
-  const frame = await slide(page, 6, '.live-frame')
-  // El iframe carga el modo embed; el enlace, siempre visible aunque GitHub Pages
-  // no haya cargado, abre el sitio completo con el control del portal.
-  await expect(frame.locator('iframe')).toHaveAttribute('src', embedUrl)
-  const link = frame.getByRole('link', { name: /ABRIR EN PANTALLA COMPLETA/i })
-  await expect(link).toBeVisible()
-  await expect(link).toHaveAttribute('href', galaxyUrl + '#universe')
-  await expect(page.getByText(/cola de GitHub Actions/i)).toBeVisible()
-  await screenshot(page, testInfo, 'S06-iframe-con-fallback-1280x720.png')
-})
-
-test('S09 · ambos ponentes con retratos locales y handle', async ({ page }, testInfo) => {
-  const speakers = await slide(page, 9, '.speaker-grid')
+test('S02 · ambos ponentes con retratos locales y handle', async ({ page }, testInfo) => {
+  const speakers = await slide(page, 2, '.speaker-grid')
   await expect(speakers.getByText('DAVID OLIVA')).toBeVisible()
   await expect(speakers.getByText('SERGIO VALVERDE')).toBeVisible()
   for (const name of ['David Oliva', 'Sergio Valverde']) {
@@ -83,7 +47,43 @@ test('S09 · ambos ponentes con retratos locales y handle', async ({ page }, tes
   }
   await expect(speakers.getByText('davidop')).toBeVisible()
   await expect(speakers.getByText('svg153')).toBeVisible()
-  await screenshot(page, testInfo, 'S09-dos-ponentes-1280x720.png')
+  await screenshot(page, testInfo, 'S02-dos-ponentes-1280x720.png')
+})
+
+test('S04 · QR de Issue decodificable y apertura reversible', async ({ page }, testInfo) => {
+  const portal = await slide(page, 4, '.portal-scene')
+  await expect(portal.getByText('Escribe nombre, alias y descripción')).toBeVisible()
+  const link = portal.getByRole('link', { name: /CREAR OBJETO EN GITHUB/i })
+  await expect(link).toHaveAttribute('href', issueUrl)
+  expect(await qrValue(link.locator('svg').first())).toBe(issueUrl)
+  await expect(portal).toHaveAttribute('data-open', 'false')
+  await screenshot(page, testInfo, 'S04-portal-inicial-1280x720.png')
+  await page.keyboard.press('ArrowRight')
+  await expect(portal).toHaveAttribute('data-open', 'true')
+  await screenshot(page, testInfo, 'S04-portal-abierto-1280x720.png')
+  await page.keyboard.press('ArrowLeft')
+  await expect(portal).toHaveAttribute('data-open', 'false')
+})
+
+test('S06 · elección de dos mundos con enlace real', async ({ page }, testInfo) => {
+  const vote = await slide(page, 6, '.gta-vote')
+  await expect(vote.getByText('VICE NEBULA')).toBeVisible()
+  await expect(vote.getByText('COLONIA CENTINELA')).toBeVisible()
+  const link = page.getByRole('link', { name: /ABRIR MISIÓN EN DIRECTO/i })
+  await expect(link).toHaveAttribute('href', galaxyUrl + '#grand-terraforming-agents')
+  await screenshot(page, testInfo, 'S06-eleccion-1280x720.png')
+})
+
+test('S07 · galaxia integrada, enlace alternativo y aviso de datos', async ({ page }, testInfo) => {
+  const frame = await slide(page, 7, '.live-frame')
+  // El iframe carga el modo embed; el enlace, siempre visible aunque GitHub Pages
+  // no haya cargado, abre el sitio completo con el control del portal.
+  await expect(frame.locator('iframe')).toHaveAttribute('src', embedUrl)
+  const link = frame.getByRole('link', { name: /ABRIR EN PANTALLA COMPLETA/i })
+  await expect(link).toBeVisible()
+  await expect(link).toHaveAttribute('href', galaxyUrl + '#universe')
+  await expect(page.getByText(/cola de GitHub Actions/i)).toBeVisible()
+  await screenshot(page, testInfo, 'S07-iframe-con-fallback-1280x720.png')
 })
 
 test('S13 · cinco pasos Issue → Actions → D1 → Three.js, avance reversible', async ({ page }, testInfo) => {
@@ -132,7 +132,7 @@ test('S22 · cierre con QR del hub y enlaces de contexto', async ({ page }, test
 })
 
 test('Capturas de escenas tras completar sus revelados por clic', async ({ page }, testInfo) => {
-  const clickCounts = { 3: 1, 5: 2, 7: 1, 10: 4, 11: 3, 12: 3, 13: 4, 14: 3, 19: 3 }
+  const clickCounts = { 4: 1, 6: 2, 8: 1, 10: 4, 11: 3, 12: 3, 13: 4, 14: 3, 19: 3 }
   for (const [no, clicks] of Object.entries(clickCounts)) {
     await page.goto('/#/' + no, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
@@ -157,7 +157,7 @@ test('Accesibilidad · movimiento reducido y pantalla móvil', async ({ page }, 
   const astronaut = cover.getByRole('img', { name: 'Astronauta AcademyVerso' })
   expect(await astronaut.evaluate(el => getComputedStyle(el).animationName)).toBe('none')
   await page.setViewportSize({ width: 390, height: 844 })
-  const portal = await slide(page, 3, '.portal-scene')
+  const portal = await slide(page, 4, '.portal-scene')
   await expect(portal.getByRole('link', { name: /CREAR OBJETO EN GITHUB/i })).toBeVisible()
-  await screenshot(page, testInfo, 'S03-movil-390x844.png')
+  await screenshot(page, testInfo, 'S04-movil-390x844.png')
 })
