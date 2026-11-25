@@ -1,0 +1,66 @@
+name: Planet Factory C (synthetic only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: planet-factory-c-preview
+  cancel-in-progress: false
+jobs:
+  design:
+    uses: ./.github/workflows/planet-c-design.lock.yml
+    secrets: inherit
+  gate-brief:
+    needs: design
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*planet-factory-brief"
+          path: handoff
+          merge-multiple: true
+      - run: node experiments/planet-factory-c/contract.mjs brief handoff/brief.json
+  construct:
+    needs: gate-brief
+    uses: ./.github/workflows/planet-c-build.lock.yml
+    secrets: inherit
+  gate-spec:
+    needs: construct
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*planet-factory-spec"
+          path: handoff
+          merge-multiple: true
+      - run: node experiments/planet-factory-c/contract.mjs spec handoff/spec.json
+  review:
+    needs: gate-spec
+    uses: ./.github/workflows/planet-c-review.lock.yml
+    secrets: inherit
+  gate-review:
+    needs: review
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*planet-factory-spec"
+          path: spec
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*planet-factory-review"
+          path: review
+          merge-multiple: true
+      - run: node experiments/planet-factory-c/contract.mjs review spec/spec.json review/review.json
+      - run: echo "Synthetic candidate approved; no publication" >> "$GITHUB_STEP_SUMMARY"
