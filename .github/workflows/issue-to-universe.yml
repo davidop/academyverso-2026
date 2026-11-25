@@ -8,9 +8,21 @@ permissions:
   issues: write
 jobs:
   ingest:
-    if: (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'planet:ready' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
+    if: (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'planet:ready' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa') && contains(github.event.issue.body, '[academyverso-triage:ready:v1]')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
     runs-on: ubuntu-latest
     steps:
+      - name: Confirm triage comment
+        if: ${{ github.event_name == 'issues' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          comments="$(gh api --paginate "repos/${GH_REPO}/issues/${ISSUE_NUMBER}/comments?per_page=100" --jq '.[] | select(.body | contains("[academyverso-triage:ready:v1]")) | .id')"
+          if [ -z "$comments" ]; then
+            echo 'Triage marker comment not found; refusing ingestion.'
+            exit 1
+          fi
       - name: Ingest signed issue event
         env:
           WORKER_URL: https://academyverso-api.david-oliva-paredes.workers.dev

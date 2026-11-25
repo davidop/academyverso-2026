@@ -12,7 +12,9 @@ Actions.
 2. Si la propuesta es publicable, comenta **lo que entendió** y la descripción
    que aparecerá en el planeta. Después actualiza solo `Descripción creativa`
    en el cuerpo y añade `planet:ready`. La etiqueta depende de que el comentario
-   y la actualización hayan terminado correctamente.
+   y la actualización hayan terminado correctamente. Ambos muestran el marcador
+   `[academyverso-triage:ready:v1]` para que la ingesta pueda verificar las dos
+   salidas.
 3. Si detecta spam, abuso, instrucciones maliciosas, enlaces/datos personales o
    contenido fuera de tema, comenta el rechazo y añade `planet:rejected`. No hay
    paso de aprobación humana y esta etiqueta no activa la ingesta.
@@ -40,6 +42,8 @@ La ingesta ignora `opened`, `edited`, `reopened` y etiquetas distintas de
   aplica validación/sanitización y la compilación genera el lock endurecido.
 - Si el modelo o la salida fallan, no se añade `planet:ready`, por lo que no se
   publica un objeto sin triage.
+- El marcador de cierre es texto visible: gh-aw elimina comentarios HTML de los
+  safe outputs, así que un marcador HTML oculto no serviría como evidencia.
 
 ## Activación y prueba
 

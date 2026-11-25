@@ -132,11 +132,14 @@ ingest_workflow = (ROOT / ".github/workflows/issue-to-universe.yml").read_text(e
 triage_workflow = (ROOT / ".github/workflows/cosmic-object-triage.md").read_text(encoding="utf-8")
 assert "types: [labeled]" in ingest_workflow, "la ingesta debe esperar al evento labeled"
 assert "github.event.label.name == 'planet:ready'" in ingest_workflow, "solo planet:ready debe abrir la compuerta"
+assert "[academyverso-triage:ready:v1]" in ingest_workflow, "el cuerpo debe incluir prueba de triage"
+assert "Confirm triage comment" in ingest_workflow, "la ingesta debe comprobar el comentario del agente"
 assert "types: [opened, edited, reopened]" not in ingest_workflow, "la Issue sin triage no debe ingerirse"
 assert "issue_comment:" in ingest_workflow, "se deben conservar los comandos de evolución/rollback"
 assert "add-labels:" in triage_workflow, "el agente debe emitir la etiqueta terminal"
 assert "allowed: [planet:ready, planet:rejected]" in triage_workflow
 assert "planet:ready" in triage_workflow and "planet:rejected" in triage_workflow
 assert "add-comment" in triage_workflow and "update_issue" in triage_workflow
+assert "[academyverso-triage:ready:v1]" in triage_workflow
 
 print("PASS: issue flow gates cosmic ingestion after triage and preserves project-issue routing and closure rules")
