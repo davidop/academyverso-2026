@@ -1,0 +1,57 @@
+name: Planet Factory B CLI preview
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'experiments/planet-factory-b/**'
+      - '.github/workflows/planet-b-cli.yml'
+permissions:
+  contents: read
+concurrency:
+  group: planet-factory-b-preview
+  cancel-in-progress: false
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check experiments/planet-factory-b/run.mjs
+  preview:
+    if: github.event_name == 'workflow_dispatch'
+    needs: syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g @github/copilot@1.0.103
+      - name: Check CLI flags before any inference
+        run: |
+          set -euo pipefail
+          copilot --version
+          copilot --help > "$RUNNER_TEMP/copilot-help"
+          for flag in --model --silent --deny-tool --disable-builtin-mcps; do
+            grep -q -- "$flag" "$RUNNER_TEMP/copilot-help"
+          done
+      - name: Generate synthetic candidate
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          test -n "$COPILOT_GITHUB_TOKEN"
+          node experiments/planet-factory-b/run.mjs "$RUNNER_TEMP/planet-output-b"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: planet-b-synthetic
+          path: ${{ runner.temp }}/planet-output-b/*.json
+          if-no-files-found: ignore
+          retention-days: 1
