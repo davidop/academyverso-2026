@@ -3,7 +3,6 @@ apm_version: 0.38.1
 manifest_targets:
 - agent-skills
 - claude
-- copilot
 dependencies: []
 deployments:
 - kind: project-relative
@@ -186,96 +185,6 @@ deployments:
   - .
   active_owner: .
   content_hash: sha256:ba01cf55e4564653141b7f436debe779d1ce16102af3596030d77857c80bace8
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-frontend
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-frontend/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:e649f1a1476665bd2013c731a3d1c3056b7c9262bfcd561f056789c1dedb23a9
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-motion
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-motion/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:6e0c65c717cc8a326897a5d48b04e3e22950266155915dd62625d4b857b447aa
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-presentation
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-presentation/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:18f7a00e02a0c64b10551009f954439370f2c162b3751c15955ff1f71d9def14
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-video
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-video/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:32d28d346d25eb7d7b68951d97adb7b68f89aae65032e44bdbd91bebd0c4ad94
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-worldgen
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: null
-- kind: project-relative
-  target: copilot
-  value: .github/skills/academyverso-worldgen/SKILL.md
-  runtime: null
-  scope: project
-  owners:
-  - .
-  active_owner: .
-  content_hash: sha256:ba01cf55e4564653141b7f436debe779d1ce16102af3596030d77857c80bace8
 local_deployed_files:
 - .agents/skills/academyverso-frontend
 - .agents/skills/academyverso-frontend/SKILL.md
@@ -297,16 +206,6 @@ local_deployed_files:
 - .claude/skills/academyverso-video/SKILL.md
 - .claude/skills/academyverso-worldgen
 - .claude/skills/academyverso-worldgen/SKILL.md
-- .github/skills/academyverso-frontend
-- .github/skills/academyverso-frontend/SKILL.md
-- .github/skills/academyverso-motion
-- .github/skills/academyverso-motion/SKILL.md
-- .github/skills/academyverso-presentation
-- .github/skills/academyverso-presentation/SKILL.md
-- .github/skills/academyverso-video
-- .github/skills/academyverso-video/SKILL.md
-- .github/skills/academyverso-worldgen
-- .github/skills/academyverso-worldgen/SKILL.md
 local_deployed_file_hashes:
   .agents/skills/academyverso-frontend/SKILL.md: sha256:e649f1a1476665bd2013c731a3d1c3056b7c9262bfcd561f056789c1dedb23a9
   .agents/skills/academyverso-motion/SKILL.md: sha256:6e0c65c717cc8a326897a5d48b04e3e22950266155915dd62625d4b857b447aa
@@ -318,8 +217,3 @@ local_deployed_file_hashes:
   .claude/skills/academyverso-presentation/SKILL.md: sha256:18f7a00e02a0c64b10551009f954439370f2c162b3751c15955ff1f71d9def14
   .claude/skills/academyverso-video/SKILL.md: sha256:32d28d346d25eb7d7b68951d97adb7b68f89aae65032e44bdbd91bebd0c4ad94
   .claude/skills/academyverso-worldgen/SKILL.md: sha256:ba01cf55e4564653141b7f436debe779d1ce16102af3596030d77857c80bace8
-  .github/skills/academyverso-frontend/SKILL.md: sha256:e649f1a1476665bd2013c731a3d1c3056b7c9262bfcd561f056789c1dedb23a9
-  .github/skills/academyverso-motion/SKILL.md: sha256:6e0c65c717cc8a326897a5d48b04e3e22950266155915dd62625d4b857b447aa
-  .github/skills/academyverso-presentation/SKILL.md: sha256:18f7a00e02a0c64b10551009f954439370f2c162b3751c15955ff1f71d9def14
-  .github/skills/academyverso-video/SKILL.md: sha256:32d28d346d25eb7d7b68951d97adb7b68f89aae65032e44bdbd91bebd0c4ad94
-  .github/skills/academyverso-worldgen/SKILL.md: sha256:ba01cf55e4564653141b7f436debe779d1ce16102af3596030d77857c80bace8

@@ -4,7 +4,7 @@ import {readFileSync, readdirSync, existsSync} from 'node:fs';
 import {join} from 'node:path';
 
 const SOURCE = '.apm/skills';
-const TARGETS = ['.agents/skills', '.claude/skills', '.github/skills'];
+const TARGETS = ['.agents/skills', '.claude/skills'];
 
 const skills = readdirSync(SOURCE).filter(name => existsSync(join(SOURCE, name, 'SKILL.md')));
 
@@ -19,15 +19,15 @@ test('cada skill local declara name y description', () => {
 
 test('las copias desplegadas coinciden con la fuente y no hay huerfanas', () => {
   for (const target of TARGETS) {
-    assert.ok(existsSync(target), target + ' must exist after apm install --legacy-skill-paths');
+    assert.ok(existsSync(target), target + ' must exist after apm install');
     const deployed = readdirSync(target).filter(name => existsSync(join(target, name, 'SKILL.md')));
     for (const skill of skills) {
       const path = join(target, skill, 'SKILL.md');
-      assert.ok(existsSync(path), 'missing ' + path + '; run apm install --legacy-skill-paths');
+      assert.ok(existsSync(path), 'missing ' + path + '; run apm install');
       assert.equal(
         readFileSync(path, 'utf8'),
         readFileSync(join(SOURCE, skill, 'SKILL.md'), 'utf8'),
-        'drift in ' + path + '; run apm install --legacy-skill-paths'
+        'drift in ' + path + '; run apm install'
       );
     }
     const orphans = deployed.filter(name => !skills.includes(name));
