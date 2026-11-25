@@ -43,14 +43,12 @@ transition: fade
 
 ---
 transition: slide-left
+clicks: 1
 ---
 
 <div class="kicker">PARTICIPA · ESCANEA EL QR</div>
 <div class="headline">Escanea. Imagina.<br><span class="gradient">Crea tu planeta.</span></div>
-<div class="qr-layout">
- <QrPortal url="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml" label="CREAR OBJETO EN GITHUB"/>
- <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta usa un Cloudflare Worker. Abrir el escenario deseado desde la portada rellena la misión y su marcador.</small></div>
-</div>
+<ContributionPortal :clicks="$clicks" />
 
 <!-- Sergio facilita el QR. David revisa las Issues reales. Una Issue sí se crea aunque aún no esté desplegado el Worker. -->
 
@@ -88,8 +86,7 @@ transition: fade
 
 <div class="kicker">PARTICIPA · ACADEMYVERSO 3D</div>
 <div class="headline compact">Un universo<br><span class="gradient">que conectaremos con un portal.</span></div>
-<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/#universe" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
-<div class="live-note">Datos desde Cloudflare D1. Las nuevas Issues pueden tardar por la cola de GitHub Actions; verificar la URL y el estado real durante la demo.</div>
+<LiveUniverse />
 
 <!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
 
@@ -128,8 +125,8 @@ transition: fade
 <div class="kicker">CÓMO FUNCIONA · TRIPULACIÓN</div>
 <div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
 <div class="speaker-grid">
- <div class="speaker"><div class="speaker-photo"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/></div><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
- <div class="speaker" v-click><div class="speaker-photo"><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="david" name="David Oliva"/></div><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="sergio" name="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
 </div>
 
 <!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->
@@ -183,17 +180,12 @@ transition: fade
 
 ---
 transition: slide-left
+clicks: 4
 ---
 
 <div class="kicker">CÓMO FUNCIONA · DE LA ISSUE A LA GALAXIA</div>
 <div class="headline compact">Cada objeto tiene<br><span class="mint">una historia en GitHub.</span></div>
-<div class="architecture">
- <div class="arch" v-click><span>📱</span><b>GitHub Mobile</b><small>Formulario</small></div><em v-after>→</em>
- <div class="arch" v-click><span>📋</span><b>GitHub Issues</b><small>Trazabilidad</small></div><em v-after>→</em>
- <div class="arch" v-click><span>⚙️</span><b>GitHub Actions</b><small>Validación</small></div><em v-after>→</em>
- <div class="arch amber" v-click><span>☁️</span><b>Worker + D1</b><small>Registro persistente</small></div><em v-after>→</em>
- <div class="arch" v-click><span>🌌</span><b>Three.js</b><small>Visualización</small></div>
-</div>
+<MissionTrace :clicks="$clicks" />
 <div class="footnote">GitHub Pages sirve la experiencia 3D; Worker y D1 sincronizan las aportaciones. Cada propuesta queda trazada en una Issue pública.</div>
 
 <!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
@@ -312,7 +304,14 @@ transition: fade
 <div class="final-title">Esto no<br><span class="lime">termina hoy.</span></div>
 <div class="final-layout">
  <QrPortal url="https://davidop.github.io/academyverso-2026/sesion.html" label="ENLACES Y CÓDIGO"/>
- <div><p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p><a class="action-link" href="https://davidop.github.io/academyverso-2026/sesion.html" target="_blank">ENLACES DE LA SESIÓN ↗</a></div>
+ <div>
+  <p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p>
+  <div class="final-links">
+   <a class="action-link" href="https://davidop.github.io/academyverso-2026/sesion.html" target="_blank" rel="noopener noreferrer">ENLACES DE LA SESIÓN ↗</a>
+   <a class="final-link" href="https://davidop.github.io/academyverso-2026/" target="_blank" rel="noopener noreferrer">Explorar el universo 3D ↗</a>
+   <a class="final-link" href="https://github.com/davidop/academyverso-2026" target="_blank" rel="noopener noreferrer">Código y documentación ↗</a>
+  </div>
+ </div>
 </div>
 <img class="final-astronaut" src="./assets/template/astronauta-capa.svg" alt="" />
 <div class="final-stamp">DAVID OLIVA × SERGIO VALVERDE · ACADEMYVERSO 2026</div>

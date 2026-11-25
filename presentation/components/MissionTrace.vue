@@ -1,63 +1,82 @@
 <script setup lang="ts">
-import { useIsSlideActive } from '@slidev/client'
-import MissionSky from './MissionSky.vue'
-
 const props = defineProps<{ clicks: number }>()
-const active = useIsSlideActive()
 
-const steps = ['GitHub Issues', 'GitHub Actions', 'Worker + D1', 'Three.js']
-const descriptions = ['Registro público', 'Validación y firma', 'Datos persistidos en D1', 'Universo 3D']
-const progress = () => `${Math.min(Math.max(props.clicks, 0), 3) / 3 * 100}%`
+const steps = [
+  { label: 'GitHub Mobile', detail: 'Formulario' },
+  { label: 'GitHub Issues', detail: 'Registro público' },
+  { label: 'GitHub Actions', detail: 'Validación y firma' },
+  { label: 'Worker + D1', detail: 'Datos persistidos en D1' },
+  { label: 'Three.js', detail: 'Universo 3D' },
+]
+
+const step = () => Math.min(Math.max(props.clicks, 0), steps.length - 1)
+const done = () => 10 + (step() / (steps.length - 1)) * 80 + '%'
 </script>
 
 <template>
-  <section class="mission-trace" :data-step="Math.min(Math.max(clicks, 0), 3)" :data-active="active" :style="{ '--trace-progress': progress() }">
-    <MissionSky />
-    <h1>Cada mundo tiene<br /><em>una historia en GitHub.</em></h1>
+  <section class="mission-trace" :data-step="step()">
+    <div class="trace-track" aria-hidden="true">
+      <span class="track-base"></span>
+      <span class="track-pending"></span>
+      <span class="track-done" :style="{ width: done() }"></span>
+    </div>
 
-    <svg class="route" viewBox="0 0 1280 713" preserveAspectRatio="none" aria-hidden="true">
-      <path class="route-base" d="M 55 516 Q 110 492 157 479 Q 325 440 493 440 T 870 420" />
-      <path class="route-pending" d="M 870 420 Q 1050 397 1165 402 L 1200 404" />
-      <circle class="trace-pulse" r="8" />
-    </svg>
-    <ol class="trace" aria-label="Recorrido: GitHub Issues, GitHub Actions que valida y firma, Worker con D1 y visualización Three.js">
-      <li v-for="(step, index) in steps" :key="step" :class="`step step-${index}`" :aria-current="clicks === index ? 'step' : undefined">
+    <ol class="trace" :aria-label="`Recorrido: ${steps.map(s => s.label).join(', ')}`">
+      <li
+        v-for="(item, index) in steps"
+        :key="item.label"
+        :class="['step', { pending: index === steps.length - 1 }]"
+        :aria-current="step() === index ? 'step' : undefined"
+      >
         <span class="marker" aria-hidden="true">{{ index + 1 }}</span>
-        <span class="label">{{ step }}</span>
-        <span class="detail">{{ descriptions[index] }}</span>
-        <span v-if="index === 2" class="integration">Conexión requerida<br />antes de la sesión</span>
+        <span class="label">{{ item.label }}</span>
+        <span class="detail">{{ item.detail }}</span>
+        <span v-if="index === steps.length - 2" class="integration">Conexión requerida antes de la sesión</span>
       </li>
     </ol>
-    <p class="hint">{{ steps[Math.min(Math.max(clicks, 0), 3)] }} <span>·</span> recorrido conceptual, no estado en vivo</p>
+
+    <p class="hint">{{ steps[step()].label }} <span>·</span> recorrido conceptual, no estado en vivo</p>
   </section>
 </template>
 
 <style scoped>
-.mission-trace { position:absolute!important; inset:0 0 7px; overflow:hidden; isolation:isolate; background:#121b30; color:#f5f7ff; }
-h1 { position:relative; margin:74px 58px 0; font-size:66px; line-height:1.03; letter-spacing:-3px; font-weight:900; }
-h1 em { color:var(--mint); font-style:normal; }
-.trace { position:absolute; inset:0; margin:0; padding:0; list-style:none; }
-.route { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
-.route path { fill:none; stroke:var(--mint); stroke-width:4; stroke-linecap:round; }
-.route-pending { stroke-dasharray:11 14; opacity:.72; }
-.trace-pulse { fill:var(--orange); stroke:#121b30; stroke-width:3; offset-path:path("M 55 516 Q 110 492 157 479 Q 325 440 493 440 T 870 420 Q 1050 397 1165 402 L 1200 404"); offset-distance:var(--trace-progress); transition:offset-distance 420ms cubic-bezier(.22, 1, .36, 1); }
-.step { position:absolute; width:225px; text-align:center; transform:translateX(-50%); }
-.step-0 { left:12.3%; top:465px; }
-.step-1 { left:38.5%; top:426px; }
-.step-2 { left:68%; top:406px; }
-.step-3 { left:91%; top:388px; }
-.marker { display:grid; place-items:center; margin:0 auto 13px; width:28px; height:28px; border-radius:50%; background:var(--lav); color:#182039; font:700 15px Consolas,monospace; }
-.label { display:block; font-size:25px; line-height:1.1; font-weight:800; white-space:nowrap; }
-.detail { display:block; margin-top:8px; font-size:16px; line-height:1.2; color:var(--lav); }
-.integration { position:absolute; width:260px; left:50%; top:-68px; transform:translateX(-50%); color:var(--orange); font-size:19px; line-height:1.2; font-weight:700; }
-.step-3 .label { color:var(--lav); }
-.hint { position:absolute; left:58px; bottom:35px; margin:0; color:var(--lav); font:700 17px Consolas,monospace; letter-spacing:1px; }
-.hint span { color:var(--orange); }
-.step .marker, .step .label { transition:transform 220ms ease, color 220ms ease, background-color 220ms ease; }
-.step[aria-current="step"] .marker { background:var(--mint); transform:scale(1.2); }
-.step[aria-current="step"] .label { color:var(--mint); transform:translateY(-2px); }
-[data-active="true"] :deep(.mission-horizon) { animation: trace-planet-roll 680ms cubic-bezier(.22, 1, .36, 1) both; }
-@keyframes trace-planet-roll { from { opacity:.72; transform:translateX(44px) rotate(-18deg); } to { opacity:1; transform:rotate(-13deg); } }
-@media (prefers-reduced-motion:reduce), print { .step .marker,.step .label,.trace-pulse { transition:none; } [data-active="true"] :deep(.mission-horizon) { animation:none; } }
-@media print { .mission-trace { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }
+.mission-trace { position: relative; margin-top: 62px; }
+
+.trace-track { position: absolute; left: 0; right: 0; top: 15px; height: 0; }
+.track-base, .track-pending, .track-done {
+  position: absolute; top: 0; height: 4px; border-radius: 2px;
+}
+.track-base { left: 0; right: 0; background: var(--av-green); opacity: .28; }
+.track-pending { left: 10%; right: 10%; border-top: 4px dashed var(--av-green); height: 0; opacity: .55; }
+.track-done { left: 0; background: var(--av-lime); box-shadow: 0 0 0 1px var(--av-green) inset; transition: width 440ms cubic-bezier(.22, 1, .36, 1); }
+
+
+.trace {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+  margin: 0; padding: 0; list-style: none; position: relative; z-index: 1;
+}
+.step { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.marker {
+  display: grid; place-items: center;
+  width: 38px; height: 38px; margin-bottom: 16px;
+  background: var(--av-green); color: var(--av-lime);
+  font: 800 15px var(--av-sans);
+  transition: transform 220ms ease, background-color 220ms ease, color 220ms ease;
+}
+.label { font-size: 22px; line-height: 1.15; font-weight: 800; color: var(--av-green); }
+.detail { margin-top: 6px; font-size: 16px; line-height: 1.2; color: var(--av-green-2); max-width: 190px; }
+.pending .label { color: var(--av-green-2); }
+
+.integration { margin-top: 10px; max-width: 190px; font-size: 13px; line-height: 1.25; font-weight: 800; color: var(--av-orange); }
+
+.step[aria-current="step"] .marker { background: var(--av-lime); color: var(--av-green); transform: scale(1.16); }
+.step[aria-current="step"] .label { color: var(--av-teal-ink); }
+
+.hint { margin-top: 26px; font: 800 15px var(--av-mono); letter-spacing: 1px; color: var(--av-green-2); }
+.hint span { color: var(--av-orange); }
+
+@media (prefers-reduced-motion: reduce) {
+  .track-done, .marker { transition: none; }
+}
+@media print { .mission-trace { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
 </style>

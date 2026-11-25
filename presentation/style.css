@@ -266,3 +266,7 @@
 .live-frame .live-loading .live-backup:focus-visible{outline:3px solid var(--av-orange);outline-offset:4px}
 .live-frame .live-flag{z-index:2}
 @media(prefers-reduced-motion:reduce){.live-frame .live-loading .loading-orbit{animation:none;}}
+/* ---------- Cierre: enlaces de contexto (kit PR 1 sobre la plantilla) ---------- */
+.final-links{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:6px}
+.final-link{font-size:16px;font-weight:800;color:var(--av-lime);border-bottom:2px solid currentColor;padding-bottom:2px}
+.final-layout .action-link:focus-visible,.final-link:focus-visible{outline:3px solid var(--av-orange);outline-offset:4px}

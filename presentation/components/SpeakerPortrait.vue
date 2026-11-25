@@ -5,5 +5,5 @@ defineProps<{ person: 'david' | 'sergio'; name: string }>()
 const photos = { david, sergio }
 </script>
 <template>
-  <img :src="photos[person]" :alt="name" loading="eager" decoding="sync" width="155" height="155" />
+  <img :src="photos[person]" :alt="name" loading="eager" decoding="sync" width="250" height="250" />
 </template>
