@@ -28,8 +28,9 @@ jobs:
           test -s .github/workflows/planet-d-sdk.lock.yml
       - name: Reject unexpected write permissions in generated workflows
         run: |
-          ruby -ryaml -e 'ARGV.each { |p| d=YAML.safe_load_file(p, aliases: true); ([d]+d.fetch("jobs",{}).values).each { |j| perms=j["permissions"]; abort("Unexpected write permission in #{p}: #{perms}") if perms=="write-all" || (perms.is_a?(Hash) && perms.values.include?("write")) } }' .github/workflows/planet-d-*.lock.yml
+          ruby -ryaml -e 'ARGV.each { |p| d=YAML.safe_load_file(p, aliases: true); d.fetch("jobs",{}).merge("workflow"=>d).each { |name,j| perms=j["permissions"]; abort("Unexpected write permission in #{p} job #{name}: #{perms}") if perms=="write-all" || (perms.is_a?(Hash) && perms.values.include?("write")) } }' .github/workflows/planet-d-*.lock.yml
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: planet-d-compiled-preview
           path: .github/workflows/planet-d-*.lock.yml
