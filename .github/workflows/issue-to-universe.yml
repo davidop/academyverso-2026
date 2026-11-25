@@ -8,7 +8,7 @@ permissions:
   issues: write
 jobs:
   ingest:
-    if: (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.sender.login == vars.ACADEMYVERSO_TRIAGE_BOT && endsWith(vars.ACADEMYVERSO_TRIAGE_BOT, '[bot]') && github.event.label.name == 'planet:ready' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa') && contains(github.event.issue.body, '[academyverso-triage:ready:v1]')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
+    if: (github.event_name == 'issues' && github.event.action == 'labeled' && github.event.sender.login == vars.ACADEMYVERSO_TRIAGE_BOT && endsWith(vars.ACADEMYVERSO_TRIAGE_BOT, '[bot]') && github.event.label.name == 'planet:ready' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa') && contains(github.event.issue.body, 'academyverso-triage:ready:v1')) || (github.event_name == 'issue_comment' && vars.ACADEMYVERSO_WORLDGEN_ENABLED == 'true' && !github.event.issue.pull_request && (startsWith(github.event.comment.body, '/academyverso-evolve ') || startsWith(github.event.comment.body, '/academyverso-rollback ')))
     runs-on: ubuntu-latest
     steps:
       - name: Confirm triage comment
@@ -20,7 +20,7 @@ jobs:
           TRIAGE_BOT: ${{ vars.ACADEMYVERSO_TRIAGE_BOT }}
         run: |
           gh api --paginate "repos/${GH_REPO}/issues/${ISSUE_NUMBER}/comments?per_page=100" \
-            | jq --arg bot "$TRIAGE_BOT" -s '[.[][] | select(.user.login == $bot and (.body | contains("[academyverso-triage:ready:v1]"))) | {id, body, created_at, user: {login: .user.login}}] | last // empty' > triage-comment.json
+            | jq --arg bot "$TRIAGE_BOT" -s '[.[][] | select(.user.login == $bot and (.body | contains("academyverso-triage:ready:v1"))) | {id, body, created_at, user: {login: .user.login}}] | last // empty' > triage-comment.json
           if [ ! -s triage-comment.json ]; then
             echo 'Trusted triage comment not found; refusing ingestion.'
             exit 1

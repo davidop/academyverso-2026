@@ -1,6 +1,6 @@
 import {parseWorldCommand,authorizedWorldComment,evolveWorld,rollbackWorld} from './worldgen/history.mjs';
 import {generateWorldForIssue,worldgenEnabled} from './worldgen/service.mjs';
-import {validate,parseIssue,parseTriagedIssue,issueBody,TRIAGE_MARKER} from './validation.mjs';
+import {validate,parseIssue,parseTriagedIssue,issueBody,hasTriageMarker} from './validation.mjs';
 const HEAD={'content-type':'application/json;charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'};
 const json=(value,status=200,headers={})=>new Response(JSON.stringify(value),{status,headers:{...HEAD,...headers}});
 
@@ -117,7 +117,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   if(incoming.triage_comment){
    const bot=String(env.TRIAGE_BOT||'');
    const login=String(incoming.triage_comment.user?.login||'');
-   if(!bot.endsWith('[bot]')||login!==bot||!String(incoming.triage_comment.body||'').includes(TRIAGE_MARKER))return respond({error:'Texto de triage no verificado'},400);
+   if(!bot.endsWith('[bot]')||login!==bot||!hasTriageMarker(incoming.triage_comment.body))return respond({error:'Texto de triage no verificado'},400);
    data=parseTriagedIssue(incoming.issue.body,incoming.triage_comment.body);
   }else{
    data=parseIssue(incoming.issue.body);

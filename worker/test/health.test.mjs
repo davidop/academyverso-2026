@@ -82,6 +82,16 @@ test('ingest publishes the description from the trusted triage comment, not the 
  assert.equal(captured[0][4],'Un planeta verde de tres lunas');
  assert.equal(captured[0][2],'Pythonia');
 });
+test('ingest accepts the escaped marker that gh-aw safe outputs actually post',async()=>{
+ const captured=[];
+ const env=ingestEnv('integration-test-secret','academyverso-triage[bot]',captured);
+ const incoming=triageIncoming('academyverso-triage[bot]','\\[GTA:VICE-NEBULA\\] Un planeta verde de tres lunas','Un planeta azul sin lunas');
+ incoming.issue.body=incoming.issue.body.replace('[academyverso-triage:ready:v1]','\\[academyverso-triage:ready:v1\\]');
+ incoming.triage_comment.body=incoming.triage_comment.body.replace('[academyverso-triage:ready:v1]','\\[academyverso-triage:ready:v1\\]');
+ const res=await worker.fetch(await signIngest(incoming,'integration-test-secret'),env,{waitUntil(){}});
+ assert.equal(res.status,200);
+ assert.equal(captured[0][4],'[GTA:VICE-NEBULA] Un planeta verde de tres lunas');
+});
 test('ingest rejects a triage comment from an unconfigured or mismatched bot',async()=>{
  for(const [bot,login] of [['academyverso-triage[bot]','impostor[bot]'],[undefined,'academyverso-triage[bot]']]){
   const captured=[];
