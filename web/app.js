@@ -5,10 +5,11 @@ import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs
 import {resolvedWorldSpec} from './worlds/spec.mjs';
 import {buildWorld} from './worlds/builder.mjs';
 import {birthProgress,birthScale,createBirthParticles} from './worlds/birth.mjs';
+import {listPois,cameraPoseForPoi} from './worlds/poi.mjs';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import { issueDraftUrl } from './issue-prefill.mjs';
 import {TERRAFORMING_MISSIONS,terraformMissionFor,terraformCounts,terraformProposal,terraformGitHubUrl} from './terraforming.mjs';
-import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,zoomDistance,HOME_ORBIT} from './travel.mjs';
+import {numberHash,orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,flightPose,zoomDistance,fitHomeDistance,HOME_ORBIT} from './travel.mjs';
 
 const config = window.ACADEMYVERSO_CONFIG || {};
 const API = String(config.API_BASE || '').replace(/\/$/, '');
@@ -41,13 +42,28 @@ let quality=initialQuality(navigator.hardwareConcurrency||4,devicePixelRatio||1)
 
 const viewport=$('viewport');
 const scene=new THREE.Scene();
-scene.fog=new THREE.FogExp2(0x11182d,0.004);
+const BASE_FOG=0.004;
+scene.fog=new THREE.FogExp2(0x11182d,BASE_FOG);
 const camera=new THREE.PerspectiveCamera(58,1,.1,2000);
 camera.position.set(0,65,185);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+// Some phones, kiosk browsers and battery-saver modes have no WebGL. The constructor then throws, and
+// without this guard the whole module stopped: no cards, forms or missions. Keep the page working
+// with a no-op renderer and turn off only what needs the 3D view (travel and the portal).
+function createRenderer(){
+ try{return new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});}
+ catch(error){console.warn('AcademyVerso: WebGL no disponible; se desactiva la vista 3D.',error);return null;}
+}
+const glRenderer=createRenderer();
+const webgl=glRenderer!==null;
+const renderer=glRenderer||{domElement:document.createElement('canvas'),setPixelRatio(){},setSize(){},render(){}};
 renderer.setPixelRatio(pixelRatioFor(quality,devicePixelRatio));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
-viewport.innerHTML='';viewport.appendChild(renderer.domElement);
+if(webgl){viewport.innerHTML='';viewport.appendChild(renderer.domElement);}
+else{
+ viewport.classList.add('no-webgl');
+ viewport.setAttribute('aria-label','Vista 3D no disponible en este dispositivo');
+ $('fallback-text').textContent='Tu dispositivo o navegador no puede mostrar la galaxia 3D. Puedes seguir creando tu mundo y ver todas las creaciones más abajo.';
+}
 scene.add(new THREE.AmbientLight(0x859aff,2));
 const light=new THREE.PointLight(0x9cfff7,13000,800);light.position.set(-40,30,80);scene.add(light);
 const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshStandardMaterial({color:0x71d8d5,emissive:0x3c7e95,emissiveIntensity:.5,roughness:.7}));scene.add(center);
@@ -107,7 +123,7 @@ function updatePortalControls(){
    for(const sel of [sourceSelect,targetSelect]){const option=document.createElement('option');option.value=String(world.issue_number);option.textContent=safe(world.name)+' · #'+world.issue_number;sel.appendChild(option);}
  }
  const ready=!!pair;
- sourceSelect.disabled=!ready;targetSelect.disabled=!ready;$('portal-launch').disabled=!ready;
+ sourceSelect.disabled=!ready;targetSelect.disabled=!ready;$('portal-launch').disabled=!ready||!webgl;
  $('portal-mode').textContent=!firstLiveSync?'Modo demostración o conexión pendiente': 'Objetos obtenidos de Cloudflare D1';
  if(!pair){
    portalSelection={source:null,target:null};clearPortalArt();
@@ -116,7 +132,9 @@ function updatePortalControls(){
  }
  portalSelection={source:String(pair.source.issue_number),target:String(pair.target.issue_number)};
  sourceSelect.value=portalSelection.source;targetSelect.value=portalSelection.target;
- $('portal-feedback').textContent='Conecta '+safe(pair.source.name)+' con '+safe(pair.target.name)+'. Los destinos se eligen entre mundos disponibles, no se crean objetos ficticios.';
+ $('portal-feedback').textContent=webgl
+  ?'Conecta '+safe(pair.source.name)+' con '+safe(pair.target.name)+'. Los destinos se eligen entre mundos disponibles, no se crean objetos ficticios.'
+  :'El portal necesita la vista 3D, que este dispositivo no puede mostrar. Síguelo en la pantalla de la sala.';
  const source=meshes.find(m=>String(m.obj.issue_number)===portalSelection.source);
  const target=meshes.find(m=>String(m.obj.issue_number)===portalSelection.target);
  const signature=[portalSelection.source,portalSelection.target,quality,source?.signature,target?.signature].join('|');
@@ -131,6 +149,7 @@ function beginPortalTrip(){
  const source=meshes.find(m=>String(m.obj.issue_number)===portalSelection.source);
  const target=meshes.find(m=>String(m.obj.issue_number)===portalSelection.target);
  if(!source||!target){$('portal-feedback').textContent='Los mundos aún no se han representado. Reinténtalo.';return;}
+ hidePois();
  const from=currentPose(),a=source.group.position,b=target.group.position;
  const entry=cameraPoseForWorld({x:a.x,y:a.y,z:a.z},from.eye,source.size);
  const exit=cameraPoseForWorld({x:b.x,y:b.y,z:b.z},entry.eye,target.size);
@@ -165,6 +184,8 @@ function paint(items){
   }else{
    if(previous)disposeWorld(previous);
    const created=makeBody(obj,i);created.signature=signature;
+   // Keep the spin angle so a quality rebuild does not move a POI away from the camera.
+   if(previous)created.group.rotation.y=previous.group.rotation.y;
    if(!initialWorldPaint&&!suppressBirth&&!reduced&&!previous){
     created.birthStartedAt=performance.now();
     created.group.scale.setScalar(.08);
@@ -177,16 +198,35 @@ function paint(items){
  for(const old of oldById.values())disposeWorld(old);
  initialWorldPaint=false;
  updatePortalControls();
+ refitHome();
  if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
   returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
  }
 }
-function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
-new ResizeObserver(resize).observe(viewport);resize();
+function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false);refitHome()}
 // Orbiting remains available both in the galaxy and after reaching a destination.
 const focus=new THREE.Vector3(0,0,0);
 let pointerDown=null,dragging=false,yaw=HOME_ORBIT.yaw,pitch=HOME_ORBIT.pitch,dist=HOME_ORBIT.distance;
 let flight=null,travelMode='galaxy',activeWorldId=null;
+// While a POI is focused its world stops spinning, so the camera keeps looking at it.
+let poiFocusWorldId=null,activePoiId=null;
+// The home view is framed for the viewport's shape and the galaxy's size (see fitHomeDistance).
+// Once the visitor drags or zooms, a resize or a new world no longer moves their camera.
+let homeDistance=HOME_ORBIT.distance,homeUntouched=true;
+function galaxyExtent(){
+ let r=0;
+ for(const m of meshes){const p=m.group.position;r=Math.max(r,Math.hypot(p.x,p.z)+m.size*2);}
+ return r;
+}
+function refitHome(){
+ const next=fitHomeDistance(galaxyExtent(),camera.aspect);
+ if(Math.abs(next-homeDistance)<0.5)return;
+ homeDistance=next;
+ // Keep the home view as deep as before: thinner fog when the camera has to pull back.
+ scene.fog.density=BASE_FOG*HOME_ORBIT.distance/homeDistance;
+ if(travelMode==='galaxy'&&!flight&&homeUntouched){dist=homeDistance;updateCamera();}
+}
+new ResizeObserver(resize).observe(viewport);resize();
 
 let missionState=emptyMissionState();
 function updateMissionUI(){
@@ -228,17 +268,82 @@ function finishFlight(){
   viewport.classList.remove('travelling','portal-crossing');
   deriveOrbit();
   if(completed.kind==='home'){
-    travelMode='galaxy';activeWorldId=null;
+    travelMode='galaxy';activeWorldId=null;homeUntouched=true;
     $('travel-panel').hidden=true;
     statusMessage('Has regresado a la galaxia. Selecciona otro planeta para viajar.');
     $('reset-camera').focus({preventScroll:true});
+  }else if(completed.kind==='poi'){
+    travelMode='world';
+    const poi=completed.poi;
+    if(poi){
+      if(completed.missionId)recordMission({kind:'poi-discovered',mission:completed.missionId,poi:poi.kind});
+      $('travel-phase').textContent='Sobrevolando '+poi.label+' · arrastra para explorar';
+      $('poi-detail').textContent=poi.label+': '+poi.description;
+      statusMessage('Has llegado a '+poi.label+' en '+completed.worldName+'. '+poi.description);
+    }else{
+      $('travel-phase').textContent='Destino alcanzado · arrastra para explorar';
+      $('poi-detail').textContent='';
+      statusMessage('Vista general de '+completed.worldName+'.');
+    }
   }else{
     travelMode='world';
     if(completed.missionId)recordMission({kind:'world-reached',mission:completed.missionId});
     $('travel-phase').textContent=completed.kind==='portal'?'Portal atravesado · explora el mundo':'Destino alcanzado · arrastra para explorar';
     statusMessage('Destino alcanzado: '+completed.worldName+'. Puedes explorar alrededor del planeta o regresar.');
+    activePoiId=null;poiFocusWorldId=null;renderPoiList();
     $('return-home').focus({preventScroll:true});
   }
+}
+function activeWorld(){return meshes.find(m=>String(m.obj.issue_number)===activeWorldId)||null;}
+function worldPois(world){
+  world.group.updateMatrixWorld(true);
+  const v=new THREE.Vector3();
+  return listPois(world.targets.filter(m=>m.userData.poi).map(m=>{m.getWorldPosition(v);return {poi:m.userData.poi,position:{x:v.x,y:v.y,z:v.z}};}));
+}
+function hidePois(){
+  poiFocusWorldId=null;activePoiId=null;
+  $('poi-panel').hidden=true;$('poi-list').replaceChildren();$('poi-detail').textContent='';
+}
+function markActivePoi(){
+  for(const b of $('poi-list').children)b.setAttribute('aria-pressed',String((b.dataset.poi||null)===activePoiId));
+}
+// Keyboard/touch alternative to raycast picking: native buttons, one per POI of the visited world.
+function renderPoiList(){
+  const world=activeWorld();
+  const pois=world?worldPois(world):[];
+  if(!pois.length){hidePois();return;}
+  const list=$('poi-list');list.replaceChildren();
+  const add=(id,label)=>{
+    const b=document.createElement('button');b.type='button';b.dataset.poi=id||'';b.textContent=label;
+    b.setAttribute('aria-controls','viewport');b.addEventListener('click',()=>visitPoi(id));list.appendChild(b);
+  };
+  add(null,'🪐 Vista del planeta');
+  for(const poi of pois)add(poi.id,poi.label);
+  markActivePoi();
+  $('poi-panel').hidden=false;
+}
+function visitPoi(id){
+  if(flight||travelMode!=='world')return;
+  const world=activeWorld();
+  if(!world){returnHome('El destino ya no está disponible. Regresamos a la galaxia.');return;}
+  const c=world.group.position,center={x:c.x,y:c.y,z:c.z},from=currentPose();
+  let poi=null,to;
+  if(id){
+    poi=worldPois(world).find(p=>p.id===id)||null;
+    if(!poi){statusMessage('Este punto de interés ya no está disponible.');renderPoiList();return;}
+    poiFocusWorldId=activeWorldId;
+    to=cameraPoseForPoi(center,poi.position,world.size);
+  }else{
+    poiFocusWorldId=null;
+    to=cameraPoseForWorld(center,from.eye,world.size);
+  }
+  activePoiId=id||null;markActivePoi();
+  travelMode='travelling';
+  flight={from,to,startedAt:performance.now(),duration:reduced?0:1200,kind:'poi',poi,worldName:safe(world.obj.name),missionId:terraformMissionFor(world.obj.description)?.id};
+  $('travel-phase').textContent=poi?'Sobrevolando · '+poi.label:'Volviendo a la vista del planeta';
+  viewport.classList.toggle('travelling',!reduced);
+  statusMessage(poi?'Sobrevolando '+poi.label+'.':'Volviendo a la vista general de '+safe(world.obj.name)+'.');
+  if(reduced)advanceFlight(flight.startedAt);
 }
 function advanceFlight(now){
   if(!flight)return;
@@ -255,6 +360,7 @@ function startTravel(obj){
   if(!terraformMissionFor(obj?.description))return false;
   const world=meshes.find(m=>String(m.obj.issue_number)===String(obj.issue_number));
   if(!world){statusMessage('Este mundo todavía no se ha cargado. Vuelve a intentarlo.');return false;}
+  hidePois();
   const from=currentPose();
   const target=world.group.position;
   const to=cameraPoseForWorld({x:target.x,y:target.y,z:target.z},from.eye,world.size);
@@ -273,14 +379,15 @@ function startTravel(obj){
 }
 function returnHome(message){
   if(travelMode==='galaxy'&&!flight){
-    yaw=HOME_ORBIT.yaw;pitch=HOME_ORBIT.pitch;dist=HOME_ORBIT.distance;
+    yaw=HOME_ORBIT.yaw;pitch=HOME_ORBIT.pitch;dist=homeDistance;homeUntouched=true;
     focus.set(0,0,0);updateCamera();
     return;
   }
+  hidePois();
   const from=currentPose();
   activeWorldId=null;
   travelMode='returning';
-  flight={from,to:homeCameraPose(),startedAt:performance.now(),duration:reduced?0:1100,kind:'home'};
+  flight={from,to:homeCameraPose(homeDistance),startedAt:performance.now(),duration:reduced?0:1100,kind:'home'};
   $('travel-panel').hidden=false;
   $('travel-phase').textContent='Regresando a la galaxia';
   viewport.classList.toggle('travelling',!reduced);
@@ -310,7 +417,7 @@ renderer.domElement.addEventListener('pointermove',e=>{
    const gap=pinchGap();
    if(gap>0&&previousPinchGap>0){
      dist=zoomDistance(dist,previousPinchGap/gap,travelMode==='world');
-     updateCamera();
+     homeUntouched=false;updateCamera();
    }
    previousPinchGap=gap;pointerDown=null;dragging=true;
    return;
@@ -319,7 +426,7 @@ renderer.domElement.addEventListener('pointermove',e=>{
  const dx=e.clientX-prior.x,dy=e.clientY-prior.y;
  if(Math.abs(e.clientX-pointerDown.x)+Math.abs(e.clientY-pointerDown.y)>4)dragging=true;
  yaw-=dx*.004;pitch=Math.max(-1.1,Math.min(1.1,pitch+dy*.003));
- updateCamera();
+ homeUntouched=false;updateCamera();
 });
 renderer.domElement.addEventListener('pointerup',e=>{
  const tap=activePointers.size===1&&pointerDown!==null&&!dragging&&!flight;
@@ -343,7 +450,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  e.preventDefault();
  if(flight)return;
  dist=zoomDistance(dist,(dist+Math.sign(e.deltaY)*10)/dist,travelMode==='world');
- updateCamera();
+ homeUntouched=false;updateCamera();
 },{passive:false});
 $('return-home').addEventListener('click',()=>returnHome());
 $('reset-camera').addEventListener('click',()=>returnHome());
@@ -371,7 +478,7 @@ function animate(){
     const now=performance.now();
     portalArt.forEach((gate,i)=>{gate.rotation.z+=i%2===0?.004:-.004;});
     meshes.forEach(m=>{
-      m.group.rotation.y+=.0025;
+      if(String(m.obj.issue_number)!==poiFocusWorldId)m.group.rotation.y+=.0025;
       m.group.position.y=m.baseY+Math.sin(now/1100+m.phase)*.14;
       if(m.birthStartedAt!==undefined){
        const elapsed=now-m.birthStartedAt,t=birthProgress(elapsed);
@@ -389,10 +496,11 @@ function animate(){
     });
   }
   renderer.render(scene,camera);
-}animate();
+}
+if(webgl)animate();
 let renderedSignature=null;
 function refreshUI(){const signature=JSON.stringify(objects);if(signature===renderedSignature)return;renderedSignature=signature;paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
-openDetails=(obj,poi=null)=>{selectedWorld=obj;const evolvePanel=$('world-evolve-panel');evolvePanel.hidden=!worldgenLive||!API||!obj.issue_number;if(!evolvePanel.hidden){$('world-edit-token').value=savedWorldToken(obj.issue_number);$('world-evolve-status').textContent='';$('world-history-list').replaceChildren();}const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+openDetails=(obj,poi=null)=>{selectedWorld=obj;const evolvePanel=$('world-evolve-panel');evolvePanel.hidden=!worldgenLive||!API||!obj.issue_number;if(!evolvePanel.hidden){$('world-edit-token').value=savedWorldToken(obj.issue_number);$('world-evolve-status').textContent='';$('world-history-list').replaceChildren();}const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission||!webgl;travelButton.onclick=mission&&webgl?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
 
 $('copy-evolve-command').addEventListener('click',async()=>{
  if(!selectedWorld)return;

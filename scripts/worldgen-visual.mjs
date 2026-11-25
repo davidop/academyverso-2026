@@ -43,6 +43,25 @@ try{
     await page.locator('#travel-to-world').click();
     await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Destino alcanzado'),{timeout:10000});
     await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('1/5'));
+    // POIs reachable without a pointer: focus a native button and activate it with the keyboard.
+    await page.waitForFunction(()=>!document.querySelector('#poi-panel').hidden&&document.querySelectorAll('#poi-list button').length>1,{timeout:5000});
+    const poiButton=page.locator('#poi-list button').nth(1);
+    await poiButton.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.startsWith('Sobrevolando ')&&document.querySelector('#poi-detail')?.textContent.length>0,{timeout:10000});
+    if(await poiButton.getAttribute('aria-pressed')!=='true')throw Error('Focused POI should be marked as pressed');
+    await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('2/5'));
+    await page.screenshot({path:'artifacts/worldgen/desktop-poi.png',animations:'disabled'});
+    await page.locator('#poi-list button').first().focus();
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.startsWith('Destino alcanzado'),{timeout:10000});
+    await page.locator('#poi-list button').nth(1).click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.startsWith('Sobrevolando '),{timeout:10000});
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(()=>document.querySelector('#travel-panel')?.hidden===true&&document.querySelector('#poi-panel')?.hidden===true,{timeout:10000});
+    await page.locator('#cards .body-card').filter({hasText:'Oceania Neon'}).click();
+    await page.locator('#travel-to-world').click();
+    await page.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Destino alcanzado'),{timeout:10000});
     await page.locator('#mission-reset').click();
     await page.waitForFunction(()=>document.querySelector('#mission-progress')?.textContent.startsWith('0/5'));
     await page.screenshot({path:'artifacts/worldgen/desktop-travel.png',animations:'disabled'});
@@ -62,7 +81,7 @@ try{
     await page.screenshot({path:'artifacts/worldgen/mobile-portal.png',animations:'disabled'});
     await page.locator('#return-home').click();
   }
-  results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested'});
+  results.push({viewport:viewport.name,canvas,objects:4,mission:mission.trim(),history:'ok',travel:viewport.name==='desktop'?'ok':'not-tested',poiKeyboard:viewport.name==='desktop'?'ok':'not-tested'});
   await page.close();
  }
  // Load a synthetic 50-object crowd to catch WebGL crashes and gross layout failures.
@@ -106,6 +125,8 @@ try{
  await accessible.locator('#portal-launch').click();
  await accessible.waitForFunction(()=>document.querySelector('#travel-phase')?.textContent.includes('Portal atravesado'),{timeout:5000});
  if(await accessible.locator('#viewport').evaluate(el=>el.classList.contains('travelling')))throw Error('Reduced motion should never animate the portal');
+ // Nexo Orbital is a station: no surface POIs, so the POI panel must stay hidden.
+ if(!await accessible.locator('#poi-panel').evaluate(el=>el.hidden))throw Error('POI panel should be hidden for worlds without POIs');
  await accessible.locator('#return-home').click();
  await accessible.waitForFunction(()=>document.querySelector('#travel-panel')?.hidden===true,{timeout:5000});
  results.push({case:'reduced-motion',instantArrivalAndReturn:true});

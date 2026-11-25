@@ -55,6 +55,45 @@ test('ingest updates D1 for a previously closed Issue after an edit',async()=>{
 });
 
 
+const signIngest=async(incoming,secret)=>{
+ const raw=JSON.stringify(incoming);
+ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+ const sig=Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(raw)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+ return new Request('https://academyverso-api.example.workers.dev/api/ingest',{method:'POST',headers:{'content-type':'application/json','x-academyverso-signature':'sha256='+sig},body:raw});
+};
+const triageIncoming=(login,commentDescription,bodyDescription)=>({
+ action:'labeled',
+ issue:{number:9,state:'open',html_url:'https://github.com/davidop/academyverso-2026/issues/9',body:'### Tipo de objeto\n\nplaneta\n\n### Alias del explorador\n\nComandante Python\n\n### Nombre del objeto\n\nPythonia\n\n### Descripción creativa\n\n'+bodyDescription+'\n\n---\nCreado desde el formulario AcademyVerso.\n\n[academyverso-triage:ready:v1]'},
+ triage_comment:{id:1,created_at:'2026-11-25T00:00:00Z',user:{login},body:'### Lo que hemos entendido\n\nUn planeta verde.\n\n### Descripción que aparecerá en el planeta\n\n'+commentDescription+'\n\n[academyverso-triage:ready:v1]'}
+});
+const ingestEnv=(secret,bot, captured)=>({GITHUB_REPO:'davidop/academyverso-2026',INGEST_SECRET:secret,...(bot?{TRIAGE_BOT:bot}:{}),DB:{prepare(sql){
+ assert.match(sql,/INSERT INTO objects/);
+ return {bind(...values){captured.push(values);return {async run(){return {success:true}}}}};
+}}});
+
+test('ingest publishes the description from the trusted triage comment, not the issue body',async()=>{
+ const captured=[];
+ const env=ingestEnv('integration-test-secret','academyverso-triage[bot]',captured);
+ const req=await signIngest(triageIncoming('academyverso-triage[bot]','Un planeta verde de tres lunas','Un planeta azul sin lunas que no debe publicarse'),'integration-test-secret');
+ const res=await worker.fetch(req,env,{waitUntil(){}});
+ assert.equal(res.status,200);
+ assert.equal((await res.json()).issue_number,9);
+ assert.equal(captured.length,1);
+ assert.equal(captured[0][4],'Un planeta verde de tres lunas');
+ assert.equal(captured[0][2],'Pythonia');
+});
+test('ingest rejects a triage comment from an unconfigured or mismatched bot',async()=>{
+ for(const [bot,login] of [['academyverso-triage[bot]','impostor[bot]'],[undefined,'academyverso-triage[bot]']]){
+  const captured=[];
+  const env=ingestEnv('integration-test-secret',bot,captured);
+  const req=await signIngest(triageIncoming(login,'Un planeta verde de tres lunas','Un planeta azul sin lunas'),'integration-test-secret');
+  const res=await worker.fetch(req,env,{waitUntil(){}});
+  assert.equal(res.status,400);
+  assert.equal((await res.json()).error,'Texto de triage no verificado');
+  assert.equal(captured.length,0);
+ }
+});
+
 test('WorldGen health only announces enabled when schema migration is present',async()=>{
  const env={WORLDGEN_ENABLED:'true',DB:{prepare(sql){
   if(sql.includes("name IN ('objects','rates')"))return {async first(){return {total:2}}};
