@@ -19,8 +19,9 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           TRIAGE_BOT: ${{ vars.ACADEMYVERSO_TRIAGE_BOT }}
         run: |
-          comments="$(gh api --paginate "repos/${GH_REPO}/issues/${ISSUE_NUMBER}/comments?per_page=100" | jq --arg bot "$TRIAGE_BOT" -r '.[] | select(.user.login == $bot and (.body | contains("[academyverso-triage:ready:v1]"))) | .id')"
-          if [ -z "$comments" ]; then
+          gh api --paginate "repos/${GH_REPO}/issues/${ISSUE_NUMBER}/comments?per_page=100" \
+            | jq --arg bot "$TRIAGE_BOT" -s '[.[][] | select(.user.login == $bot and (.body | contains("[academyverso-triage:ready:v1]"))) | {id, body, created_at, user: {login: .user.login}}] | last // empty' > triage-comment.json
+          if [ ! -s triage-comment.json ]; then
             echo 'Trusted triage comment not found; refusing ingestion.'
             exit 1
           fi
@@ -36,7 +37,13 @@ jobs:
           secret=os.getenv('INGEST_SECRET','')
           if not (url and secret):
               raise SystemExit('Falta ACADEMYVERSO_INGEST_SECRET (GitHub Actions) o la URL del Worker')
-          payload=os.environ['GH_EVENT'].encode()
+          event=json.loads(os.environ['GH_EVENT'])
+          if os.path.exists('triage-comment.json'):
+              with open('triage-comment.json',encoding='utf-8') as fh:
+                  event['triage_comment']=json.load(fh)
+          # Sign and send the exact same bytes: the Worker verifies HMAC over
+          # the raw body, including the attached triage comment.
+          payload=json.dumps(event,ensure_ascii=False,separators=(',',':')).encode('utf-8')
           sig=hmac.new(secret.encode(),payload,hashlib.sha256).hexdigest()
           req=urllib.request.Request(url+'/api/ingest',data=payload,method='POST',headers={
             'content-type':'application/json',
@@ -46,7 +53,7 @@ jobs:
           try:
               with urllib.request.urlopen(req,timeout=25) as r:
                   reply=json.loads(r.read(500).decode('utf-8'))
-                  expected=json.loads(os.environ['GH_EVENT'])['issue']['number']
+                  expected=event['issue']['number']
                   if not reply.get('ok') or reply.get('issue_number')!=expected:
                       raise SystemExit('Respuesta de ingesta no confirmada; no se cerrará la Issue')
                   print('ingest status',r.status,'issue_number',expected,'confirmed',True)

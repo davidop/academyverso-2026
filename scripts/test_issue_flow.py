@@ -146,4 +146,20 @@ assert "add-comment" in triage_workflow and "update_issue" in triage_workflow
 assert "[academyverso-triage:ready:v1]" in triage_workflow
 assert "github-app:" in triage_workflow and "ACADEMYVERSO_TRIAGE_APP_PRIVATE_KEY" in triage_workflow, "safe outputs debe usar GitHub App para disparar el workflow siguiente con identidad de bot"
 
+# --- La descripción publicada sale del comentario del AW; el resto, del cuerpo.
+assert "triage-comment.json" in ingest_workflow, "la ingesta debe capturar el comentario confiable completo"
+assert "{id, body, created_at, user: {login: .user.login}}" in ingest_workflow, "el comentario capturado debe incluir autor y cuerpo"
+assert "[ ! -s triage-comment.json ]" in ingest_workflow, "sin comentario confiable no hay ingesta"
+assert "event['triage_comment']=json.load(fh)" in ingest_workflow, "el payload firmado debe adjuntar triage_comment"
+assert "json.dumps(event,ensure_ascii=False,separators=(',',':')).encode('utf-8')" in ingest_workflow, "firma y body deben ser los mismos bytes re-serializados"
+assert "hmac.new(secret.encode(),payload,hashlib.sha256)" in ingest_workflow, "el HMAC debe cubrir el payload con triage_comment"
+assert "### Descripción que aparecerá en el planeta" in triage_workflow, "el AW debe publicar la descripción del planeta como sección del comentario"
+worker_index = (ROOT / "worker/src/index.mjs").read_text(encoding="utf-8")
+worker_validation = (ROOT / "worker/src/validation.mjs").read_text(encoding="utf-8")
+assert "triage_comment" in worker_index and "parseTriagedIssue" in worker_index, "el Worker debe consumir el comentario de triage adjunto"
+assert "bot.endsWith('[bot]')" in worker_index and "login!==bot" in worker_index, "la vía triage_comment exige el login exacto de la App configurada"
+assert "TRIAGE_MARKER" in worker_index and "TRIAGE_MARKER" in worker_validation, "el Worker debe verificar el marcador visible del comentario"
+assert "parseTriageComment" in worker_validation and "Descripción que aparecerá en el planeta" in worker_validation, "la descripción debe parsearse de la sección del comentario"
+assert "parseIssue(incoming.issue.body)" in worker_index, "la ruta legacy sin triage_comment debe conservarse"
+
 print("PASS: issue flow gates cosmic ingestion after triage and preserves project-issue routing and closure rules")

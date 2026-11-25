@@ -9,19 +9,23 @@ Actions.
 1. Al abrirse una Issue con el formulario de objeto cósmico, el agente lee sus
    cuatro campos como datos públicos no confiables; no sigue instrucciones que
    aparezcan dentro del texto.
-2. Si la propuesta es publicable, comenta **lo que entendió** y la descripción
-   que aparecerá en el planeta. Después actualiza solo `Descripción creativa`
-   en el cuerpo y añade `planet:ready`. La etiqueta depende de que el comentario
-   y la actualización hayan terminado correctamente. Ambos muestran el marcador
-   `[academyverso-triage:ready:v1]` para que la ingesta pueda verificar las dos
-   salidas.
+2. Si la propuesta es publicable, comenta **lo que entendió** y la sección
+   «Descripción que aparecerá en el planeta», que es el texto que se publicará
+   en el planeta. Después actualiza solo `Descripción creativa` en el cuerpo
+   (manteniendo tipo, alias y nombre) y añade `planet:ready`. La etiqueta
+   depende de que el comentario y la actualización hayan terminado
+   correctamente. Ambos muestran el marcador `[academyverso-triage:ready:v1]`
+   para que la ingesta pueda verificar las dos salidas.
 3. Si detecta spam, abuso, instrucciones maliciosas, enlaces/datos personales o
    contenido fuera de tema, comenta el rechazo y añade `planet:rejected`. No hay
    paso de aprobación humana y esta etiqueta no activa la ingesta.
 4. `.github/workflows/issue-to-universe.yml` solo ingiere el evento de etiqueta
-   `planet:ready`, firma el payload y lo envía al Worker. El Worker valida el
-   formulario, actualiza D1 y el workflow cierra la Issue solo tras confirmar
-   la escritura.
+   `planet:ready`, captura el comentario confiable del bot y lo adjunta al
+   payload firmado como `triage_comment`. El Worker toma tipo, alias y nombre
+   del cuerpo de la Issue y la descripción de la sección «Descripción que
+   aparecerá en el planeta» del comentario; valida, actualiza D1 y el workflow
+   cierra la Issue solo tras confirmar la escritura. Sin `triage_comment` se
+   conserva la ruta legacy que lee todos los campos del cuerpo.
 5. La web lee D1 y muestra el objeto. El flag WorldGen/Foundry se configura por
    separado; este triage no activa proveedores ni modelos de generación.
 
@@ -49,6 +53,12 @@ La ingesta ignora `opened`, `edited`, `reopened` y etiquetas distintas de
   (`ACADEMYVERSO_TRIAGE_BOT`, con sufijo `[bot]`). Copiar el marcador o
   volver a etiquetar manualmente una Issue no basta. Se necesita una App porque
   el `GITHUB_TOKEN` no volvería a disparar el workflow `issues.labeled`.
+- La vía `triage_comment` solo se acepta si la variable del Worker `TRIAGE_BOT`
+  está configurada con el login exacto de la App (sufijo `[bot]`), el comentario
+  procede de ese login y contiene el marcador; en caso contrario el Worker
+  responde 400. Los markers GTA `[GTA:VICE-NEBULA]` y `[GTA:COLONIA-CENTINELA]`
+  se conservan al inicio de la descripción para el conteo por escenario de la
+  web.
 
 ## Activación y prueba
 
@@ -73,12 +83,18 @@ La ingesta ignora `opened`, `edited`, `reopened` y etiquetas distintas de
    `ACADEMYVERSO_TRIAGE_BOT` con el login exacto de la App terminado en `[bot]`.
    No uses una identidad personal. La App permite que la etiqueta despierte el
    workflow siguiente y que la ingesta autentique el autor del evento y comentario.
-4. Mantén juntos en `main` el archivo fuente `.md` y el lock compilado; GitHub
+4. Configura en Cloudflare la variable del Worker `TRIAGE_BOT` con el mismo
+   login de la App que `ACADEMYVERSO_TRIAGE_BOT`. Sin ella, el Worker rechaza
+   los payloads con `triage_comment`; la activación externa sigue en demo-mode
+   hasta completarse.
+5. Mantén juntos en `main` el archivo fuente `.md` y el lock compilado; GitHub
    Actions registra el trigger de Issues desde la rama por defecto.
-5. Crea una Issue de prueba con una propuesta normal y comprueba en Actions que
+6. Crea una Issue de prueba con una propuesta normal y comprueba en Actions que
    el comentario y el cuerpo se actualizan antes de `planet:ready`; verifica
    después la ejecución de `issue-to-universe`, respuesta Worker/D1 y cierre.
-6. Prueba una propuesta con prompt injection o spam: debe aparecer el comentario
+   Confirma que la descripción publicada en el planeta coincide con la sección
+   «Descripción que aparecerá en el planeta» del comentario del bot.
+7. Prueba una propuesta con prompt injection o spam: debe aparecer el comentario
    de rechazo y la etiqueta `planet:rejected`, sin POST a Worker ni cierre por
    ingestión.
 

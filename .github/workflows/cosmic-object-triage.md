@@ -112,23 +112,33 @@ emojis ni encabezados nuevos dentro del valor creativo.
 
 Para una aportación segura:
 
-1. Publica un comentario con los apartados **Lo que hemos entendido** y
-   **Descripción que aparecerá en el planeta**. El resumen debe ser fiel y
-   breve; la descripción debe coincidir exactamente con el texto que vas a
-   guardar. Termina el comentario con la línea exacta
-   `[academyverso-triage:ready:v1]`. No incluyas enlaces ni menciones.
-2. Conserva las cuatro cabeceras, su orden, tipo, alias y nombre, y actualiza el
-   cuerpo de la Issue con el valor mejorado de `Descripción creativa` mediante
-   una operación `update_issue` con `operation: replace`. Conserva el pie del
-   formulario y añade al final del pie la línea exacta
-   `[academyverso-triage:ready:v1]`.
+1. Publica un comentario con los apartados `### Lo que hemos entendido` y
+   `### Descripción que aparecerá en el planeta`. El resumen debe ser fiel y
+   breve. La sección «Descripción que aparecerá en el planeta» ES el texto que
+   se publicará en el planeta: la ingesta la lee de este comentario, no del
+   cuerpo de la Issue. Escríbela como un único párrafo de 280 caracteres como
+   máximo, sin enlaces, menciones, HTML ni datos personales, y conserva al
+   inicio el marcador `[GTA:VICE-NEBULA]` o `[GTA:COLONIA-CENTINELA]` si venía
+   en la descripción original. Debe coincidir exactamente con el valor que
+   guardes en `Descripción creativa`. Termina el comentario con la línea exacta
+   `[academyverso-triage:ready:v1]` como texto visible. No incluyas enlaces ni
+   menciones.
+2. Conserva las cuatro cabeceras, su orden, tipo, alias y nombre, y mantén el
+   cuerpo de la Issue sincronizado con esas cuatro secciones: actualiza el
+   valor mejorado de `Descripción creativa` mediante una operación `update_issue`
+   con `operation: replace`, de modo que coincida con la descripción del
+   comentario. Conserva el pie del formulario y añade al final del pie la línea
+   exacta `[academyverso-triage:ready:v1]`.
 3. Haz que `update_issue` dependa del `output_id` del comentario y que
    `add_labels` dependa del `output_id` de la actualización. Añade solo
    `planet:ready` al final.
 
 El workflow de ingesta verifica de forma determinista tanto el marcador visible
-en el cuerpo recibido como el del comentario antes de llamar al Worker; una
-etiqueta o una salida parcial no bastan. Se usa texto visible porque GitHub
+en el cuerpo recibido como el del comentario antes de llamar al Worker, y
+adjunta el comentario completo del bot al payload firmado para que el Worker
+publique exactamente la descripción de la sección «Descripción que aparecerá
+en el planeta»; tipo, alias y nombre se siguen leyendo del cuerpo de la Issue.
+Una etiqueta o una salida parcial no bastan. Se usa texto visible porque GitHub
 Agentic Workflows elimina comentarios HTML de los safe outputs. Así, una
 etiqueta aplicada manualmente o antes de completar el triage no permite
 publicar el objeto.
