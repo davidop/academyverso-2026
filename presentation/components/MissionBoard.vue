@@ -2,8 +2,8 @@
 import {ref} from 'vue'
 // This is an operator-updated cue board. No GitHub data is fetched or simulated.
 const phases=[
- {name:'COPILOT',role:'CONSTRUIR',description:'Portal entre dos mundos',url:'https://github.com/davidop/academyverso-2026/issues'},
- {name:'CLAUDE',role:'DISEÑAR',description:'Energía y movimiento',url:'https://github.com/davidop/academyverso-2026/pulls'},
+ {name:'COPILOT',role:'CONSTRUIR',description:'Portal entre dos mundos',url:'https://github.com/davidop/academyverso-2026/issues/37'},
+ {name:'CLAUDE',role:'MEJORAR',description:'Energía y movimiento',url:'https://github.com/davidop/academyverso-2026/pulls'},
  {name:'CODEX',role:'VERIFICAR',description:'Pruebas y accesibilidad',url:'https://github.com/davidop/academyverso-2026/actions'}
 ]
 const labels=['PREPARADA','EN CURSO','REVISAR PR','RESPALDO','VERIFICADA']
