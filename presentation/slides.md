@@ -88,7 +88,7 @@ transition: fade
 
 <div class="kicker">PARTICIPA · ACADEMYVERSO 3D</div>
 <div class="headline compact">Un universo<br><span class="gradient">que conectaremos con un portal.</span></div>
-<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/#universe" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
+<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/?embed=1#universe" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
 <div class="live-note">Datos desde Cloudflare D1. Las nuevas Issues pueden tardar por la cola de GitHub Actions; verificar la URL y el estado real durante la demo.</div>
 
 <!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->

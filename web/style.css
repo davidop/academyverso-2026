@@ -117,3 +117,11 @@ body{background:linear-gradient(#20243766,#20243766) 0 0/100% 100% no-repeat,#20
 .tiny{min-height:44px;background:#232a40}
 /* Foco de teclado visible también en el proyector: el anillo por defecto era de 1px. */
 :where(a,button,select,input,textarea,summary,[tabindex]):focus-visible{outline:3px solid #a9fff0;outline-offset:3px}
+/* Modo embed (?embed=1): solo el universo 3D, para incrustarlo en la presentación. */
+body.embed{overflow:hidden;background:#0c1024}
+body.embed .skip,body.embed .nav,body.embed .intro,body.embed .terraform,body.embed .gallery,body.embed .credits,body.embed dialog,body.embed .space-toolbar,body.embed #portal-control,body.embed .mission-score,body.embed .scene-bottom{display:none!important}
+body.embed main{display:block;height:100dvh;overflow:hidden}
+body.embed .space-section{max-width:none;margin:0;padding:0;height:100dvh}
+body.embed #viewport{height:100dvh;border:0;border-radius:0;box-shadow:none}
+body.embed #fallback-text{top:auto;bottom:20px}
+body.embed .travel-panel{position:fixed;left:20px;right:20px;bottom:20px;margin:0;z-index:20}
