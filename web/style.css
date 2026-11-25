@@ -85,3 +85,14 @@
 @keyframes portal-iris{from{opacity:.12;transform:scale(1)}to{opacity:.78;transform:scale(1.3)}}
 @media(max-width:700px){.portal-control{padding:18px 14px}.portal-heading{display:block}.portal-mode{display:inline-block;margin-bottom:13px}.portal-fields{align-items:stretch}.portal-fields label{flex:1 1 100%}.portal-direction{display:none}.portal-fields button{flex:1 1 auto}.portal-fields .primary{width:100%}}
 @media(prefers-reduced-motion:reduce){#viewport.portal-crossing:after{animation:none;display:none}.portal-control *{scroll-behavior:auto}}
+
+/* Sin WebGL: el visor muestra un aviso compacto y se ocultan las ayudas que solo sirven con la vista 3D. */
+#viewport.no-webgl{height:auto;min-height:170px;display:grid;place-items:center;padding:28px}
+#viewport.no-webgl #fallback-text{position:static;max-width:560px;font-size:16px;line-height:1.55;color:#e2eafa}
+#viewport.no-webgl~.scene-bottom,#viewport.no-webgl~.mission-score{display:none}
+
+/* Foco visible en todos los campos de los diálogos (el desplegable «Tipo de objeto» no lo tenía). */
+dialog input:focus-visible,dialog textarea:focus-visible,dialog select:focus-visible{outline:3px solid var(--mint);outline-offset:2px;border-color:var(--mint)}
+
+/* Cabecera móvil: zona táctil de 44px en los enlaces. */
+@media(max-width:700px){.nav-actions a{min-height:44px;display:inline-flex;align-items:center}}

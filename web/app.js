@@ -41,10 +41,24 @@ const scene=new THREE.Scene();
 scene.fog=new THREE.FogExp2(0x11182d,0.004);
 const camera=new THREE.PerspectiveCamera(58,1,.1,2000);
 camera.position.set(0,65,185);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+// Some phones, kiosk browsers and battery-saver modes have no WebGL. The constructor then throws, and
+// without this guard the whole module stopped: no cards, forms or missions. Keep the page working
+// with a no-op renderer and turn off only what needs the 3D view (travel and the portal).
+function createRenderer(){
+ try{return new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});}
+ catch(error){console.warn('AcademyVerso: WebGL no disponible; se desactiva la vista 3D.',error);return null;}
+}
+const glRenderer=createRenderer();
+const webgl=glRenderer!==null;
+const renderer=glRenderer||{domElement:document.createElement('canvas'),setPixelRatio(){},setSize(){},render(){}};
 renderer.setPixelRatio(pixelRatioFor(quality,devicePixelRatio));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
-viewport.innerHTML='';viewport.appendChild(renderer.domElement);
+if(webgl){viewport.innerHTML='';viewport.appendChild(renderer.domElement);}
+else{
+ viewport.classList.add('no-webgl');
+ viewport.setAttribute('aria-label','Vista 3D no disponible en este dispositivo');
+ $('fallback-text').textContent='Tu dispositivo o navegador no puede mostrar la galaxia 3D. Puedes seguir creando tu mundo y ver todas las creaciones más abajo.';
+}
 scene.add(new THREE.AmbientLight(0x859aff,2));
 const light=new THREE.PointLight(0x9cfff7,13000,800);light.position.set(-40,30,80);scene.add(light);
 const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshStandardMaterial({color:0x71d8d5,emissive:0x3c7e95,emissiveIntensity:.5,roughness:.7}));scene.add(center);
@@ -104,7 +118,7 @@ function updatePortalControls(){
    for(const sel of [sourceSelect,targetSelect]){const option=document.createElement('option');option.value=String(world.issue_number);option.textContent=safe(world.name)+' · #'+world.issue_number;sel.appendChild(option);}
  }
  const ready=!!pair;
- sourceSelect.disabled=!ready;targetSelect.disabled=!ready;$('portal-launch').disabled=!ready;
+ sourceSelect.disabled=!ready;targetSelect.disabled=!ready;$('portal-launch').disabled=!ready||!webgl;
  $('portal-mode').textContent=!firstLiveSync?'Modo demostración o conexión pendiente': 'Objetos obtenidos de Cloudflare D1';
  if(!pair){
    portalSelection={source:null,target:null};clearPortalArt();
@@ -113,7 +127,9 @@ function updatePortalControls(){
  }
  portalSelection={source:String(pair.source.issue_number),target:String(pair.target.issue_number)};
  sourceSelect.value=portalSelection.source;targetSelect.value=portalSelection.target;
- $('portal-feedback').textContent='Conecta '+safe(pair.source.name)+' con '+safe(pair.target.name)+'. Los destinos se eligen entre mundos disponibles, no se crean objetos ficticios.';
+ $('portal-feedback').textContent=webgl
+  ?'Conecta '+safe(pair.source.name)+' con '+safe(pair.target.name)+'. Los destinos se eligen entre mundos disponibles, no se crean objetos ficticios.'
+  :'El portal necesita la vista 3D, que este dispositivo no puede mostrar. Síguelo en la pantalla de la sala.';
  const source=meshes.find(m=>String(m.obj.issue_number)===portalSelection.source);
  const target=meshes.find(m=>String(m.obj.issue_number)===portalSelection.target);
  const signature=[portalSelection.source,portalSelection.target,quality,source?.signature,target?.signature].join('|');
@@ -386,10 +402,11 @@ function animate(){
     });
   }
   renderer.render(scene,camera);
-}animate();
+}
+if(webgl)animate();
 let renderedSignature=null;
 function refreshUI(){const signature=JSON.stringify(objects);if(signature===renderedSignature)return;renderedSignature=signature;paint(objects);$('count').textContent=objects.length;$('explorers').textContent=new Set(objects.map(o=>o.alias)).size;const totals=terraformCounts(API?objects:[]);for(const mission of TERRAFORMING_MISSIONS){$(mission.id+'-count').textContent=totals[mission.id];}const cards=$('cards');cards.replaceChildren();for(const x of objects.slice(-12).reverse()){const c=document.createElement('article');c.className='body-card';c.tabIndex=0;c.setAttribute('role','button');c.setAttribute('aria-label',`Ver ${x.name}`);const symbol=document.createElement('div');symbol.className='emoji';symbol.textContent=emoji[x.type]||'✨';const h=document.createElement('h3');h.textContent=safe(x.name);const a=document.createElement('div');a.className='alias';a.textContent=`Por ${safe(x.alias)}`;const p=document.createElement('p');p.textContent=safe(x.description);c.append(symbol,h,a,p);const mission=terraformMissionFor(x.description);if(mission){const badge=document.createElement('span');badge.className='mission-label';badge.textContent='🎮 GTA VII · '+mission.label;c.appendChild(badge);}c.addEventListener('click',()=>openDetails(x));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetails(x)}});cards.appendChild(c)}}
-openDetails=(obj,poi=null)=>{selectedWorld=obj;const evolvePanel=$('world-evolve-panel');evolvePanel.hidden=!worldgenLive||!API||!obj.issue_number;if(!evolvePanel.hidden){$('world-edit-token').value=savedWorldToken(obj.issue_number);$('world-evolve-status').textContent='';$('world-history-list').replaceChildren();}const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission;travelButton.onclick=mission?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
+openDetails=(obj,poi=null)=>{selectedWorld=obj;const evolvePanel=$('world-evolve-panel');evolvePanel.hidden=!worldgenLive||!API||!obj.issue_number;if(!evolvePanel.hidden){$('world-edit-token').value=savedWorldToken(obj.issue_number);$('world-evolve-status').textContent='';$('world-history-list').replaceChildren();}const travelButton=$('travel-to-world');const mission=terraformMissionFor(obj.description);travelButton.hidden=!mission||!webgl;travelButton.onclick=mission&&webgl?()=>{$('detail-dialog').close();startTravel(obj)}:null;$('detail-type').textContent=poi?'📍 Punto de interés':`${emoji[obj.type]||'✨'} ${obj.type}`;$('detail-title').textContent=poi?safe(poi.title):safe(obj.name);$('detail-description').textContent=poi?safe(poi.description):safe(obj.description);$('detail-alias').textContent=`Descubierto por ${safe(obj.alias)}`;const a=$('detail-issue');a.href=obj.issue_url||`https://github.com/${REPO}/issues`;a.textContent=obj.issue_number?`Ver GitHub Issue #${obj.issue_number} ↗`:'Ver repositorio ↗';$('detail-dialog').showModal()};
 
 $('copy-evolve-command').addEventListener('click',async()=>{
  if(!selectedWorld)return;
