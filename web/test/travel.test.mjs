@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {orderWorlds,worldPosition,homeCameraPose,cameraPoseForWorld,easedProgress,flightPose,zoomDistance} from '../travel.mjs';
+import {listPois,cameraPoseForPoi} from '../worlds/poi.mjs';
 
 const point=(x=0,y=0,z=0)=>({x,y,z});
 test('stable world order preserves earlier objects when new Issues arrive',()=>{
@@ -56,6 +57,41 @@ test('smooth interpolation clamps negative, excessive or NaN progress',()=>{
  assert.equal(easedProgress(99),1);
  assert.equal(easedProgress(NaN),0);
  assert.ok(easedProgress(.5)===.5);
+});
+
+// POI flyover (#15) lives here so the existing CI step `node --test web/test/travel.test.mjs` runs it.
+const poiEntry=(kind,title,position=point())=>({poi:{kind,title,description:'Contexto de '+title},position});
+test('POI list is ordered by kind, numbered only when repeated and ignores unknown kinds',()=>{
+ const list=listPois([poiEntry('dome','Cúpula'),poiEntry('volcano','Volcán'),poiEntry('fake-star','Inventado'),poiEntry('volcano','Volcán'),null,{position:point()}]);
+ assert.deepEqual(list.map(x=>x.id),['volcano:1','volcano:2','dome:1']);
+ assert.deepEqual(list.map(x=>x.label),['Volcán 1','Volcán 2','Cúpula']);
+ assert.equal(list[2].description,'Contexto de Cúpula');
+});
+test('POI ids are stable when the same world is rebuilt',()=>{
+ const build=()=>[poiEntry('floating_city','Ciudad'),poiEntry('volcano','Volcán'),poiEntry('floating_city','Ciudad')];
+ assert.deepEqual(listPois(build()).map(x=>x.id),listPois(build()).map(x=>x.id));
+ assert.deepEqual(listPois([]),[]);
+ assert.deepEqual(listPois(),[]);
+});
+test('POI camera looks at the POI from outside the world and respects destination zoom bounds',()=>{
+ const center=point(30,2,-10),poi=point(36,2,-10);
+ const pose=cameraPoseForPoi(center,poi,6);
+ assert.deepEqual(pose.focus,poi);
+ assert.ok(Math.hypot(pose.eye.x-center.x,pose.eye.y-center.y,pose.eye.z-center.z)>9,'camera must stay outside the planet');
+ const eyeToPoi=Math.hypot(pose.eye.x-poi.x,pose.eye.y-poi.y,pose.eye.z-poi.z);
+ assert.ok(eyeToPoi>=14,'distance must not be below the world zoom minimum');
+ assert.equal(zoomDistance(eyeToPoi,1,true),eyeToPoi);
+});
+test('POI camera handles a POI at the world centre and invalid radius without NaN',()=>{
+ for(const pose of [cameraPoseForPoi(point(1,1,1),point(1,1,1),6),cameraPoseForPoi(point(),point(0,5,0),Number.NaN)]){
+  assert.ok([...Object.values(pose.eye),...Object.values(pose.focus)].every(Number.isFinite));
+ }
+});
+test('reduced motion reaches the POI instantly',()=>{
+ const to=cameraPoseForPoi(point(30,0,0),point(36,0,0),6);
+ const pose=flightPose({from:homeCameraPose(),to,startedAt:50,duration:0},50);
+ assert.equal(pose.done,true);
+ assert.deepEqual(pose.eye,to.eye);
 });
 
 test('pinch zoom keeps independent galaxy and destination bounds',()=>{
