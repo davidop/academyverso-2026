@@ -128,8 +128,8 @@ transition: fade
 <div class="kicker">CÓMO FUNCIONA · TRIPULACIÓN</div>
 <div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
 <div class="speaker-grid">
- <div class="speaker"><div class="speaker-photo"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/></div><div><h2>DAVID OLIVA</h2><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
- <div class="speaker" v-click><div class="speaker-photo"><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><p>Platform Engineer · Lunik · GitHub Star</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/></div><div><h2>DAVID OLIVA</h2><img class="speaker-company" src="./assets/logos/knowmad-mood.svg" alt="Knowmad mood"/><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
+ <div class="speaker" v-click><div class="speaker-photo"><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><img class="speaker-company" src="./assets/logos/accenture.svg" alt="Accenture"/><p>Platform Engineer · GitHub Star</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
 </div>
 
 <!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->

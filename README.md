@@ -116,7 +116,7 @@ Para ver la web, sirve `web/` mediante un servidor local (`python -m http.server
 ## 🧑‍🚀 Quiénes presentan
 
 - **David Oliva** — Microsoft MVP · Microsoft Specialist.
-- **Sergio Valverde** — GitHub Star · Platform Engineer en Lunik · Organizador de GitHub Community Spain. [Perfil de ponente](https://sessionize.com/svg153) · [LinkedIn](https://es.linkedin.com/in/svg153)
+- **Sergio Valverde** — GitHub Star · Platform Engineer en Accenture · Organizador de GitHub Community Spain. [Perfil de ponente](https://sessionize.com/svg153) · [LinkedIn](https://es.linkedin.com/in/svg153)
 
 ## 📝 Reglas
 
