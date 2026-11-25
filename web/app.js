@@ -1,4 +1,5 @@
 import {advanceMission,emptyMissionState,missionProgress} from './missions.mjs';
+import {webMcpEnabled,registerWebMcp} from './webmcp.mjs';
 import {portalChoices,selectPortalPair,portalFlightPose,portalColor} from './portal.mjs';
 import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
 import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
@@ -31,6 +32,7 @@ const DEMO = [
   {issue_number:6,type:'asteroide',name:'Meteorito 404',alias:'Error Hunter',description:'Roca espacial naranja que nunca encuentra su camino.'}
 ].map(x=>({...x,issue_url:`https://github.com/${REPO}/issues/${x.issue_number}`}));
 let objects = [...DEMO];
+let liveSyncCurrent = false;
 let openDetails = () => {};
 const emoji={planeta:'🪐',estrella:'⭐',luna:'🌙','agujero-negro':'🕳️',estacion:'🛸',asteroide:'☄️'};
 const $=id=>document.getElementById(id);
@@ -562,7 +564,7 @@ document.querySelectorAll('[data-mission]').forEach(button=>button.addEventListe
   $('create-dialog').showModal();
   form.elements.namedItem('alias').focus();
 }));
-async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];if(!firstLiveSync)suppressBirth=true;firstLiveSync=true;refreshUI();suppressBirth=false;$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
+async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];if(!firstLiveSync)suppressBirth=true;firstLiveSync=true;refreshUI();liveSyncCurrent=true;suppressBirth=false;$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){liveSyncCurrent=false;$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
 function draftIssue(status,body,message,redirect=false){
  const url=issueDraftUrl(body,REPO);
  const link=document.createElement('a');
@@ -649,5 +651,42 @@ $('create-form').addEventListener('submit',async e=>{
  }finally{btn.disabled=false}
 });
 refreshUI();checkCreateCapability();
+
+// WebMCP is opt-in, top-level only, and cannot publish or mutate server data.
+// Reuse the same UI/navigation functions as the visible controls.
+const webMcpUiBusy=()=>$('create-dialog').open||
+  ($('detail-dialog').open&&!$('world-evolve-panel').hidden&&$('world-evolve-panel').open);
+const webMcpCanTravel=obj=>webgl&&Boolean(terraformMissionFor(obj.description))&&
+  meshes.some(m=>String(m.obj.issue_number)===String(obj.issue_number));
+const webMcpAdapter={
+  snapshot:()=>({objects,source:firstLiveSync?(liveSyncCurrent?'live':'cached'):'demo'}),
+  canTravel:webMcpCanTravel,
+  navigation:()=>({phase:travelMode,active_issue_number:activeWorldId===null?null:Number(activeWorldId),webgl}),
+  explore(obj){
+    if(webMcpUiBusy())return 'UI_BUSY';
+    openDetails(obj);
+    return null;
+  },
+  travel(obj){
+    if(webMcpUiBusy())return 'UI_BUSY';
+    if(flight)return 'NAVIGATION_BUSY';
+    if(!webMcpCanTravel(obj))return 'TRAVEL_UNAVAILABLE';
+    if($('detail-dialog').open)$('detail-dialog').close();
+    return startTravel(obj)?null:'ACTION_FAILED';
+  },
+  returnHome(){
+    if(webMcpUiBusy())return 'UI_BUSY';
+    if(!webgl)return 'TRAVEL_UNAVAILABLE';
+    if($('detail-dialog').open)$('detail-dialog').close();
+    returnHome();
+    return null;
+  }
+};
+void registerWebMcp({
+  enabled:webMcpEnabled(location.search,EMBED||window.top!==window),
+  document,adapter:webMcpAdapter
+}).then(status=>{
+  if(status==='failed')console.warn('AcademyVerso: registro WebMCP no disponible; la interfaz normal sigue activa.');
+});
 if(API){$('connection').textContent='Conectando…';sync();setInterval(sync,Math.max(3000,Number(config.POLL_MS)||5000));}
 else{$('connection').textContent='Modo demostración';$('last-sync').textContent='6 objetos de ejemplo · Backend pendiente';}
