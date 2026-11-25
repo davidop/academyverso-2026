@@ -25,11 +25,19 @@ tools:
   github:
     toolsets: [issues]
 safe-outputs:
+  # GITHUB_TOKEN cannot trigger another issues workflow; use a dedicated App
+  # identity so the label event can wake ingestion and its author is verifiable.
+  github-app:
+    client-id: ${{ vars.ACADEMYVERSO_TRIAGE_APP_CLIENT_ID }}
+    private-key: ${{ secrets.ACADEMYVERSO_TRIAGE_APP_PRIVATE_KEY }}
+    owner: davidop
+    repositories: [academyverso-2026]
   add-comment:
     target: triggering
     max: 1
     max-links: 1
     footer: false
+    pull-requests: false
   update-issue:
     body:
     target: triggering
@@ -40,6 +48,7 @@ safe-outputs:
     max: 1
     max-labels: 1
     create-if-missing: true
+    pull-requests: false
 timeout-minutes: 5
 ---
 

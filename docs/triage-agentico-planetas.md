@@ -43,7 +43,12 @@ La ingesta ignora `opened`, `edited`, `reopened` y etiquetas distintas de
 - Si el modelo o la salida fallan, no se añade `planet:ready`, por lo que no se
   publica un objeto sin triage.
 - El marcador de cierre es texto visible: gh-aw elimina comentarios HTML de los
-  safe outputs, así que un marcador HTML oculto no serviría como evidencia.
+  safe outputs, así que un marcador HTML oculto no serviría como evidencia. El
+  marcador por sí solo no autentica: los safe outputs usan una GitHub App y la
+  ingesta solo acepta evento y comentario atribuidos al bot configurado
+  (`ACADEMYVERSO_TRIAGE_BOT`, con sufijo `[bot]`). Copiar el marcador o
+  volver a etiquetar manualmente una Issue no basta. Se necesita una App porque
+  el `GITHUB_TOKEN` no volvería a disparar el workflow `issues.labeled`.
 
 ## Activación y prueba
 
@@ -60,12 +65,20 @@ La ingesta ignora `opened`, `edited`, `reopened` y etiquetas distintas de
    `COPILOT_GITHUB_TOKEN` con los permisos documentados por gh-aw. No guardes
    tokens en el repositorio. Si se usa facturación Copilot de organización,
    revisa los permisos de `copilot-requests` antes de habilitarlos.
-3. Mantén juntos en `main` el archivo fuente `.md` y el lock compilado; GitHub
+3. Configura una GitHub App dedicada, instalada en `davidop/academyverso-2026`,
+   con `Issues: write` y estos permisos de lectura que gh-aw necesita en su
+   job de conclusión: `Actions: read`, `Checks: read` y `Pull requests: read`.
+   Añade la variable `ACADEMYVERSO_TRIAGE_APP_CLIENT_ID`,
+   el secreto `ACADEMYVERSO_TRIAGE_APP_PRIVATE_KEY` y la variable
+   `ACADEMYVERSO_TRIAGE_BOT` con el login exacto de la App terminado en `[bot]`.
+   No uses una identidad personal. La App permite que la etiqueta despierte el
+   workflow siguiente y que la ingesta autentique el autor del evento y comentario.
+4. Mantén juntos en `main` el archivo fuente `.md` y el lock compilado; GitHub
    Actions registra el trigger de Issues desde la rama por defecto.
-4. Crea una Issue de prueba con una propuesta normal y comprueba en Actions que
+5. Crea una Issue de prueba con una propuesta normal y comprueba en Actions que
    el comentario y el cuerpo se actualizan antes de `planet:ready`; verifica
    después la ejecución de `issue-to-universe`, respuesta Worker/D1 y cierre.
-5. Prueba una propuesta con prompt injection o spam: debe aparecer el comentario
+6. Prueba una propuesta con prompt injection o spam: debe aparecer el comentario
    de rechazo y la etiqueta `planet:rejected`, sin POST a Worker ni cierre por
    ingestión.
 
