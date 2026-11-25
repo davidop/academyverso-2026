@@ -34,12 +34,16 @@ const issueUrl = 'https://github.com/davidop/academyverso-2026/issues/new?templa
 </template>
 
 <style scoped>
+/* La escena ocupa solo el alto que dejan el kicker y el titular, y reserva los
+   104 px del footer (DESIGN.md). Con height:100% se desbordaba unos 135 px. */
+:global(.av-content:has(> .portal-scene)) { display: flex; flex-direction: column; }
 .portal-scene {
   display: grid;
   grid-template-columns: 1fr 430px;
   gap: 30px;
   align-items: center;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding-bottom: 104px;
 }
 
@@ -57,7 +61,8 @@ const issueUrl = 'https://github.com/davidop/academyverso-2026/issues/new?templa
 }
 .portal-steps small { font-size: 14px; line-height: 1.45; color: var(--av-lav); opacity: .8; }
 
-.portal-art { position: relative; height: 480px; }
+/* 430 px caben en el hueco libre (~448 px); el arte visible termina en +406 px. */
+.portal-art { position: relative; height: 430px; }
 .portal-glow {
   position: absolute; left: 40px; top: 46px;
   width: 380px; height: 380px; border-radius: 50%;

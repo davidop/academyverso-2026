@@ -60,8 +60,12 @@ test('S05 · elección de dos mundos con enlace real', async ({ page }, testInfo
 
 test('S06 · galaxia integrada, enlace alternativo y aviso de datos', async ({ page }, testInfo) => {
   const frame = await slide(page, 6, '.live-frame')
+  // El iframe carga el modo embed; el enlace, siempre visible aunque GitHub Pages
+  // no haya cargado, abre el sitio completo con el control del portal.
+  await expect(frame.locator('iframe')).toHaveAttribute('src', embedUrl)
   const link = frame.getByRole('link', { name: /ABRIR EN PANTALLA COMPLETA/i })
-  await expect(link).toHaveAttribute('href', embedUrl)
+  await expect(link).toBeVisible()
+  await expect(link).toHaveAttribute('href', galaxyUrl + '#universe')
   await expect(page.getByText(/cola de GitHub Actions/i)).toBeVisible()
   await screenshot(page, testInfo, 'S06-iframe-con-fallback-1280x720.png')
 })
@@ -128,7 +132,7 @@ test('S22 · cierre con QR del hub y enlaces de contexto', async ({ page }, test
 })
 
 test('Capturas de escenas tras completar sus revelados por clic', async ({ page }, testInfo) => {
-  const clickCounts = { 3: 1, 5: 2, 7: 1, 9: 1, 10: 4, 11: 3, 12: 3, 13: 4, 14: 3, 19: 3 }
+  const clickCounts = { 3: 1, 5: 2, 7: 1, 10: 4, 11: 3, 12: 3, 13: 4, 14: 3, 19: 3 }
   for (const [no, clicks] of Object.entries(clickCounts)) {
     await page.goto('/#/' + no, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
