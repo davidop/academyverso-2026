@@ -1,5 +1,6 @@
 # Prueba de agentes · 25/11
 
-| Fase | Agente | Acción | PR |
-|---|---|---|---|
-| 1 · Construir | GitHub Copilot | Crea el fichero de relevo | |
+| Fase | Agente | Acción | PR | Hora |
+|---|---|---|---|---|
+| 1 · Construir | GitHub Copilot | Crea el fichero de relevo | | 13:20 |
+| 2 · Mejorar | Claude | Añade una columna Hora y la rellena para las dos filas | | 14:22 |
