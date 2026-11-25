@@ -18,12 +18,12 @@
 | Escena | Comprobación | Resultado |
 | --- | --- | --- |
 | S01 | Portada de la plantilla: astronauta, titular, plataformas y sello de fecha legibles | [ ] |
-| S01–S05 | Mando avanza y retrocede sin saltarse los pasos de animación | [ ] |
-| S03 | Escanear QR con dos móviles distintos, comprobar login y URL Issue | [ ] |
-| S03 | Portal se abre en un clic, cierra con retroceso y QR permanece quieto | [ ] |
-| S05 | Enlace «Abrir misión en directo» y los dos mundos de ejemplo | [ ] |
-| S06 | Galaxia real abre fuera del iframe; distinguir modo demo y datos reales | [ ] |
-| S09 | Ambos ponentes visibles sin clic, con retratos locales y handle | [ ] |
+| S02 | Ambos ponentes visibles sin clic, con retratos locales y handle | [ ] |
+| S01–S06 | Mando avanza y retrocede sin saltarse los pasos de animación | [ ] |
+| S04 | Escanear QR con dos móviles distintos, comprobar login y URL Issue | [ ] |
+| S04 | Portal se abre en un clic, cierra con retroceso y QR permanece quieto | [ ] |
+| S06 | Enlace «Abrir misión en directo» y los dos mundos de ejemplo | [ ] |
+| S07 | Galaxia real abre fuera del iframe; distinguir modo demo y datos reales | [ ] |
 | S13 | GitHub Mobile → Issues → Actions → Worker+D1 → Three.js bien encadenados | [ ] |
 | S15 | Panel de control manual; «VERIFICADA» solo con evidencia real | [ ] |
 | S16–S19 | Cambiar entre demo y diapositivas sin perder proyección; mostrar PR/CI reales | [ ] |

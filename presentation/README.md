@@ -43,10 +43,10 @@ Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas.
 ### Kit reutilizable sobre la plantilla
 
 - [Archivo de maquetas](../docs/design/academyverso-mockups/README.md): referencias para revisión, nunca se importan al bundle.
-- `ContributionPortal.vue` (S03): QR de Issue inmóvil con apertura reversible de ~950 ms y tres destellos SVG. Usa `clicks` de Slidev y respeta `prefers-reduced-motion`.
-- `LiveUniverse.vue` (S06): iframe con estado de carga, `aria-live` y enlace de respaldo permanente. Apunta a `/?embed=1#universe`, que en la web oculta cabecera, portada, panel del portal y galería: solo queda el lienzo 3D.
+- `ContributionPortal.vue` (S04): QR de Issue inmóvil con apertura reversible de ~950 ms y tres destellos SVG. Usa `clicks` de Slidev y respeta `prefers-reduced-motion`.
+- `LiveUniverse.vue` (S07): iframe con estado de carga, `aria-live` y enlace de respaldo permanente. Apunta a `/?embed=1#universe`, que en la web oculta cabecera, portada, panel del portal y galería: solo queda el lienzo 3D.
 - `MissionTrace.vue` (S13): recorrido de cinco pasos —GitHub Mobile, Issues, Actions, Worker + D1, Three.js— con progreso por clic y aviso de integración pendiente.
-- `SpeakerPortrait.vue` (S09): retratos WebP locales dentro del marco `.speaker-photo` de la plantilla; el handle `@davidop` / `@svg153` se mantiene.
+- `SpeakerPortrait.vue` (S02): retratos WebP locales dentro del marco `.speaker-photo` de la plantilla; el handle `@davidop` / `@svg153` se mantiene.
 - El resto de escenas usa el HTML y las clases de la plantilla (`style.css`), no componentes propios.
 
 Reglas al añadir una escena: reservar los 100 px del `AvFooter`, no tapar los logos de patrocinadores, no usar `position: absolute` a sangre sobre `.slidev-layout`, y no introducir colores fuera de los tokens `--av-*`.
@@ -64,7 +64,7 @@ Branding original: materiales de Academyverso, fuera de la licencia MIT del repo
 
 ## Pruebas visuales reproducibles
 
-En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S03, S05, S06, S09, S13, S15, S20 y S22 con Playwright y capturando además las 22 escenas. Comprueba los pasos del formulario, navegación reversible por teclado, enlaces, decodificación real de ambos QR (Issue y hub de sesión), retratos locales de los ponentes, el panel manual de la sesión, los logos de patrocinadores, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
+En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S02, S04, S06, S07, S13, S15, S20 y S22 con Playwright y capturando además las 22 escenas. Comprueba los pasos del formulario, navegación reversible por teclado, enlaces, decodificación real de ambos QR (Issue y hub de sesión), retratos locales de los ponentes, el panel manual de la sesión, los logos de patrocinadores, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
 
 Para ejecutarlo localmente:
 
@@ -81,9 +81,9 @@ La configuración usa `channel: 'chrome'` (Google Chrome, igual que en CI), así
 
 [Checklist del ensayo con proyector y mando](ensayo-sala.md)
 
-La diapositiva S06 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
+La diapositiva S07 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
 
-Las fotografías de S09 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
+Las fotografías de S02 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
 
 ## GTA VII: Grand Terraforming Agents
 
