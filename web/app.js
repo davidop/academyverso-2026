@@ -1,4 +1,5 @@
 import {advanceMission,emptyMissionState,missionProgress} from './missions.mjs';
+import {portalChoices,selectPortalPair,portalFlightPose,portalColor} from './portal.mjs';
 import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
 import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
 import {resolvedWorldSpec} from './worlds/spec.mjs';
@@ -49,7 +50,9 @@ const light=new THREE.PointLight(0x9cfff7,13000,800);light.position.set(-40,30,8
 const center=new THREE.Mesh(new THREE.SphereGeometry(14,32,24),new THREE.MeshStandardMaterial({color:0x71d8d5,emissive:0x3c7e95,emissiveIntensity:.5,roughness:.7}));scene.add(center);
 const centerHalo=new THREE.Mesh(new THREE.TorusGeometry(21,0.32,8,90),new THREE.MeshBasicMaterial({color:0xbac3ff,transparent:true,opacity:.55}));centerHalo.rotation.x=Math.PI/2.8;scene.add(centerHalo);
 const starsGeo=new THREE.BufferGeometry();const points=[];for(let i=0;i<1300;i++){points.push((Math.random()-.5)*800,(Math.random()-.5)*550,(Math.random()-.5)*900)}starsGeo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xd9e8ff,size:1.25,sizeAttenuation:true,transparent:true,opacity:.75})));
-let meshes=[],clickables=[];const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+let meshes=[],clickables=[];
+let portalSelection={source:null,target:null},portalArt=[],portalArtSignature='';
+const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
 let initialWorldPaint=true,firstLiveSync=false,suppressBirth=false;
 function makeBody(obj,i){
  const coords=worldPosition(obj,i);
@@ -69,6 +72,81 @@ function disposeWorld(m){
   for(const material of materials)material?.dispose?.();
  });
 }
+function clearPortalArt(){
+ for(const gate of portalArt)disposeWorld({group:gate});
+ portalArt=[];portalArtSignature='';
+}
+// GPU-light, procedural, original interdimensional ring. No external assets or shaders.
+function makePortalGate(world,color){
+ const gate=new THREE.Group();
+ const radius=Math.max(5,Math.min(12,world.size*1.05));
+ const material=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.85,side:THREE.DoubleSide,depthWrite:false});
+ gate.add(new THREE.Mesh(new THREE.TorusGeometry(radius,.4,10,64),material));
+ const inner=new THREE.Mesh(new THREE.TorusGeometry(radius*.79,.17,8,64),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.52,depthWrite:false}));
+ inner.rotation.y=.24;gate.add(inner);
+ const veil=new THREE.Mesh(new THREE.CircleGeometry(radius*.79,48),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.13,side:THREE.DoubleSide,depthWrite:false}));
+ gate.add(veil);
+ if(quality!=='low'&&!reduced){
+  const sparkles=[];for(let i=0;i<40;i++){const angle=i*Math.PI*2/40,r=radius*(.86+(i%5)*.07);sparkles.push(Math.cos(angle)*r,Math.sin(angle)*r,Math.sin(i*17)*.4);}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(sparkles,3));
+  gate.add(new THREE.Points(geometry,new THREE.PointsMaterial({color,size:.38,transparent:true,opacity:.88,depthWrite:false})));
+ }
+ gate.position.copy(world.group.position);
+ gate.position.x+=world.size*.75;
+ gate.position.y+=world.size*.25;
+ scene.add(gate);portalArt.push(gate);
+}
+function updatePortalControls(){
+ const choices=portalChoices(objects),sourceSelect=$('portal-source'),targetSelect=$('portal-target');
+ const pair=selectPortalPair(choices,portalSelection);
+ sourceSelect.replaceChildren();targetSelect.replaceChildren();
+ for(const world of choices){
+   for(const sel of [sourceSelect,targetSelect]){const option=document.createElement('option');option.value=String(world.issue_number);option.textContent=safe(world.name)+' · #'+world.issue_number;sel.appendChild(option);}
+ }
+ const ready=!!pair;
+ sourceSelect.disabled=!ready;targetSelect.disabled=!ready;$('portal-launch').disabled=!ready;
+ $('portal-mode').textContent=!firstLiveSync?'Modo demostración o conexión pendiente': 'Objetos obtenidos de Cloudflare D1';
+ if(!pair){
+   portalSelection={source:null,target:null};clearPortalArt();
+   $('portal-feedback').textContent='Se necesitan al menos dos mundos distintos para abrir un portal.';
+   return;
+ }
+ portalSelection={source:String(pair.source.issue_number),target:String(pair.target.issue_number)};
+ sourceSelect.value=portalSelection.source;targetSelect.value=portalSelection.target;
+ $('portal-feedback').textContent='Conecta '+safe(pair.source.name)+' con '+safe(pair.target.name)+'. Los destinos se eligen entre mundos disponibles, no se crean objetos ficticios.';
+ const source=meshes.find(m=>String(m.obj.issue_number)===portalSelection.source);
+ const target=meshes.find(m=>String(m.obj.issue_number)===portalSelection.target);
+ const signature=[portalSelection.source,portalSelection.target,quality,source?.signature,target?.signature].join('|');
+ if(signature!==portalArtSignature){clearPortalArt();if(source&&target){makePortalGate(source,portalColor(pair.source.issue_number));makePortalGate(target,portalColor(pair.target.issue_number));portalArtSignature=signature;}}
+}
+function beginPortalTrip(){
+ const pair=selectPortalPair(objects,portalSelection);
+ if(!pair||String(pair.source.issue_number)!==portalSelection.source||String(pair.target.issue_number)!==portalSelection.target){
+  $('portal-feedback').textContent='Los destinos han cambiado. Elige dos mundos disponibles.';return;
+ }
+ if(flight){$('portal-feedback').textContent='Ya hay un viaje en curso.';return;}
+ const source=meshes.find(m=>String(m.obj.issue_number)===portalSelection.source);
+ const target=meshes.find(m=>String(m.obj.issue_number)===portalSelection.target);
+ if(!source||!target){$('portal-feedback').textContent='Los mundos aún no se han representado. Reinténtalo.';return;}
+ const from=currentPose(),a=source.group.position,b=target.group.position;
+ const entry=cameraPoseForWorld({x:a.x,y:a.y,z:a.z},from.eye,source.size);
+ const exit=cameraPoseForWorld({x:b.x,y:b.y,z:b.z},entry.eye,target.size);
+ const to=cameraPoseForWorld({x:b.x,y:b.y,z:b.z},from.eye,target.size);
+ activeWorldId=portalSelection.target;travelMode='travelling';
+ flight={from,entry,exit,to,startedAt:performance.now(),duration:reduced?0:3100,kind:'portal',worldName:safe(pair.target.name),sourceName:safe(pair.source.name)};
+ $('travel-panel').hidden=false;
+ $('travel-world').textContent=safe(pair.source.name)+' → '+safe(pair.target.name);
+ $('travel-phase').textContent=reduced?'Salto accesible inmediato':'Portal activado · aproximándonos al origen';
+ viewport.classList.toggle('travelling',!reduced);
+ $('universe').scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+ statusMessage('Portal interdimensional de '+safe(pair.source.name)+' a '+safe(pair.target.name)+'.');
+ if(reduced)advanceFlight(flight.startedAt);
+ else $('return-home').focus({preventScroll:true});
+}
+$('portal-source').addEventListener('change',e=>{portalSelection.source=e.target.value;updatePortalControls()});
+$('portal-target').addEventListener('change',e=>{portalSelection.target=e.target.value;updatePortalControls()});
+$('portal-swap').addEventListener('click',()=>{portalSelection={source:portalSelection.target,target:portalSelection.source};updatePortalControls()});
+$('portal-launch').addEventListener('click',beginPortalTrip);
 function paint(items){
  const oldById=new Map(meshes.map(m=>[String(m.obj.issue_number),m]));
  const next=orderWorlds(items).slice(0,200);
@@ -95,6 +173,7 @@ function paint(items){
  }
  for(const old of oldById.values())disposeWorld(old);
  initialWorldPaint=false;
+ updatePortalControls();
  if(activeWorldId!==null&&travelMode!=='returning'&&!meshes.some(m=>String(m.obj.issue_number)===activeWorldId)){
   returnHome('El destino ya no está disponible. Regresamos a la galaxia.');
  }
@@ -143,7 +222,7 @@ function deriveOrbit(){
 function finishFlight(){
   const completed=flight;
   flight=null;
-  viewport.classList.remove('travelling');
+  viewport.classList.remove('travelling','portal-crossing');
   deriveOrbit();
   if(completed.kind==='home'){
     travelMode='galaxy';activeWorldId=null;
@@ -153,15 +232,20 @@ function finishFlight(){
   }else{
     travelMode='world';
     if(completed.missionId)recordMission({kind:'world-reached',mission:completed.missionId});
-    $('travel-phase').textContent='Destino alcanzado · arrastra para explorar';
+    $('travel-phase').textContent=completed.kind==='portal'?'Portal atravesado · explora el mundo':'Destino alcanzado · arrastra para explorar';
     statusMessage('Destino alcanzado: '+completed.worldName+'. Puedes explorar alrededor del planeta o regresar.');
     $('return-home').focus({preventScroll:true});
   }
 }
 function advanceFlight(now){
   if(!flight)return;
-  const state=flightPose(flight,now);
+  const state=flight.kind==='portal'?portalFlightPose(flight,now):flightPose(flight,now);
   setPose(state);
+  if(flight.kind==='portal'){
+    viewport.classList.toggle('portal-crossing',state.stage==='crossing'&&!reduced);
+    if(state.stage==='crossing')$('travel-phase').textContent='Atravesando el portal interdimensional';
+    else if(state.stage==='arriving')$('travel-phase').textContent='Emergiendo en el mundo de destino';
+  }
   if(state.done)finishFlight();
 }
 function startTravel(obj){
@@ -197,6 +281,7 @@ function returnHome(message){
   $('travel-panel').hidden=false;
   $('travel-phase').textContent='Regresando a la galaxia';
   viewport.classList.toggle('travelling',!reduced);
+  viewport.classList.remove('portal-crossing');
   statusMessage(message||'Regresando a la galaxia.');
   if(reduced)advanceFlight(flight.startedAt);
 }
@@ -281,6 +366,7 @@ function animate(){
   if(!reduced){
     center.rotation.y+=.001;
     const now=performance.now();
+    portalArt.forEach((gate,i)=>{gate.rotation.z+=i%2===0?.004:-.004;});
     meshes.forEach(m=>{
       m.group.rotation.y+=.0025;
       m.group.position.y=m.baseY+Math.sin(now/1100+m.phase)*.14;
@@ -371,7 +457,7 @@ document.querySelectorAll('[data-mission]').forEach(button=>button.addEventListe
   $('create-dialog').showModal();
   form.elements.namedItem('alias').focus();
 }));
-async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];if(!firstLiveSync)suppressBirth=true;refreshUI();firstLiveSync=true;suppressBirth=false;$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
+async function sync(){if(!API)return;try{const r=await fetch(`${API}/api/objects`,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const data=await r.json();objects=Array.isArray(data.objects)?data.objects:[];if(!firstLiveSync)suppressBirth=true;firstLiveSync=true;refreshUI();suppressBirth=false;$('connection').textContent='En directo · GitHub Issues';$('last-sync').textContent=`Actualizado ${new Date().toLocaleTimeString('es-ES')}`;}catch(e){$('connection').textContent='Sincronización no disponible';$('last-sync').textContent='Reintentando conexión…'}}
 function draftIssue(status,body,message,redirect=false){
  const url=issueDraftUrl(body,REPO);
  const link=document.createElement('a');
