@@ -134,7 +134,8 @@ assert "types: [labeled]" in ingest_workflow, "la ingesta debe esperar al evento
 assert "github.event.label.name == 'planet:ready'" in ingest_workflow, "solo planet:ready debe abrir la compuerta"
 assert "github.event.sender.login == vars.ACADEMYVERSO_TRIAGE_BOT" in ingest_workflow, "solo la App de triage configurada debe abrir la compuerta"
 assert "endsWith(vars.ACADEMYVERSO_TRIAGE_BOT, '[bot]')" in ingest_workflow, "la identidad de triage debe ser una cuenta de App, no una persona"
-assert "[academyverso-triage:ready:v1]" in ingest_workflow, "el cuerpo debe incluir prueba de triage"
+assert "contains(github.event.issue.body, 'academyverso-triage:ready:v1')" in ingest_workflow, "el cuerpo debe incluir prueba de triage (sin corchetes: gh-aw los escapa)"
+assert '.body | contains("academyverso-triage:ready:v1")' in ingest_workflow, "el comentario del bot debe incluir el marcador, escapado o no"
 assert "Confirm triage comment" in ingest_workflow, "la ingesta debe comprobar el comentario del agente"
 assert "jq --arg bot \"$TRIAGE_BOT\"" in ingest_workflow and '.user.login == $bot' in ingest_workflow and 'TRIAGE_BOT: ${{ vars.ACADEMYVERSO_TRIAGE_BOT }}' in ingest_workflow, "un marcador escrito por una persona no demuestra triage"
 assert "types: [opened, edited, reopened]" not in ingest_workflow, "la Issue sin triage no debe ingerirse"
@@ -158,7 +159,7 @@ worker_index = (ROOT / "worker/src/index.mjs").read_text(encoding="utf-8")
 worker_validation = (ROOT / "worker/src/validation.mjs").read_text(encoding="utf-8")
 assert "triage_comment" in worker_index and "parseTriagedIssue" in worker_index, "el Worker debe consumir el comentario de triage adjunto"
 assert "bot.endsWith('[bot]')" in worker_index and "login!==bot" in worker_index, "la vía triage_comment exige el login exacto de la App configurada"
-assert "TRIAGE_MARKER" in worker_index and "TRIAGE_MARKER" in worker_validation, "el Worker debe verificar el marcador visible del comentario"
+assert "hasTriageMarker(incoming.triage_comment.body)" in worker_index and "TRIAGE_MARKER" in worker_validation, "el Worker debe verificar el marcador visible del comentario"
 assert "parseTriageComment" in worker_validation and "Descripción que aparecerá en el planeta" in worker_validation, "la descripción debe parsearse de la sección del comentario"
 assert "parseIssue(incoming.issue.body)" in worker_index, "la ruta legacy sin triage_comment debe conservarse"
 
