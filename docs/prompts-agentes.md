@@ -32,6 +32,7 @@ accesibilidad, y prefers-reduced-motion (salto inmediato).
 No cambies Worker, D1, Foundry, claves ni configuración de despliegue.
 Añade tests deterministas para selección y ruta; documenta lo ejecutado.
 Abre PR para revisión humana, sin fusionar automáticamente.
+En la descripción de la PR escribe "Refs #37". No uses Closes ni Fixes.
 ```
 
 **Qué enseñar al público:** Issue real, agente real trabajando, diff propuesto, revisión humana. Si no termina, anunciar explícitamente «Vamos a utilizar nuestra referencia preparada con ChatGPT» y pasar a #23.
@@ -53,6 +54,7 @@ modelos remotos, efectos de alto consumo y cambios en Worker/D1.
 Entrega antes/después con capturas auténticas y PR revisable que compare
 contra la misma rama de ensayo. No atribuyas una referencia preparada
 a una sesión Claude que no haya ocurrido.
+En la descripción de la PR escribe "Refs #37". No uses Closes ni Fixes.
 ```
 
 **Qué enseñar:** antes/después del código de la fase 1 en la misma rama. Si no hay acceso a Claude partner agent, explicarlo sin confundirlo con un modelo de Copilot, y enseñar #24 como respaldo.
@@ -74,6 +76,7 @@ ejecutarlo. Con 50 objetos sintéticos no confundas stress con participación
 real ni inventes FPS de dispositivos físicos. En la PR enlaza los logs reales
 de GitHub Actions y registra lo que NO se ha validado.
 No toques Worker, secretos ni rama main. Revisión antes de merge.
+En la descripción de la PR escribe "Refs #37". No uses Closes ni Fixes.
 ```
 
 **Qué enseñar:** test añadido, ejecución real en Actions, diff/observaciones y un fallo corregido si aparece.
