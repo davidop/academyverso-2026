@@ -1,0 +1,36 @@
+name: Planet Factory A compile preview
+on:
+  pull_request:
+    paths:
+      - 'experiments/planet-factory-a/**'
+      - '.github/workflows/planet-a-*.md'
+      - '.github/workflows/planet-a-validate.yml'
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install gh-aw compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw --pin v1.2.3
+      - name: Compile isolated workflow sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh aw compile .github/workflows/planet-a-auto.md
+          test -s .github/workflows/planet-a-auto.lock.yml
+          gh aw compile .github/workflows/planet-a-economy.md
+          test -s .github/workflows/planet-a-economy.lock.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: planet-a-compiled-preview
+          path: .github/workflows/planet-a-*.lock.yml
+          if-no-files-found: error
+          retention-days: 3

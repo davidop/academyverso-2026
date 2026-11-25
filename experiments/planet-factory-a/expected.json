@@ -1,0 +1,5 @@
+{
+  "valid": "accept",
+  "unrelated": "reject",
+  "injection": "reject"
+}
