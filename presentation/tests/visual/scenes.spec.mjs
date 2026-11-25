@@ -25,16 +25,17 @@ async function qrValue(qrSvg) {
   return jsQR(rgba, png.width, png.height, { inversionAttempts: 'dontInvert' })?.data ?? null
 }
 
-test('S01 · portada visible, logo oficial y titular legible', async ({ page }, testInfo) => {
-  const cover = await slide(page, 1, '.mission-cover')
-  await expect(cover.getByRole('heading', { level: 1 })).toContainText('desde el móvil')
-  await expect(cover.getByRole('img', { name: 'AcademyVerso' })).toBeVisible()
+test('S01 · portada de la plantilla con astronauta oficial y titular', async ({ page }, testInfo) => {
+  const cover = await slide(page, 1, '.av-cover')
+  await expect(cover.getByRole('heading', { level: 1 })).toContainText('móvil')
+  await expect(cover.getByRole('img', { name: 'Astronauta AcademyVerso' })).toBeVisible()
+  await expect(cover.getByText('DAVID OLIVA + SERGIO VALVERDE · 26 NOVIEMBRE · 15:00')).toBeVisible()
   await screenshot(page, testInfo, 'S01-portada-1280x720.png')
 })
 
 test('S03 · QR de Issue decodificable y apertura reversible', async ({ page }, testInfo) => {
   const portal = await slide(page, 3, '.portal-scene')
-  await expect(portal.getByText('nombre, alias y descripción')).toBeVisible()
+  await expect(portal.getByText('Escribe nombre, alias y descripción')).toBeVisible()
   const link = portal.getByRole('link', { name: /CREAR OBJETO EN GITHUB/i })
   await expect(link).toHaveAttribute('href', issueUrl)
   expect(await qrValue(link.locator('svg').first())).toBe(issueUrl)
@@ -56,14 +57,15 @@ test('S05 · elección de dos mundos con enlace real', async ({ page }, testInfo
   await screenshot(page, testInfo, 'S05-eleccion-1280x720.png')
 })
 
-test('S06 · galaxia integrada y enlace alternativo siempre disponible', async ({ page }, testInfo) => {
+test('S06 · galaxia integrada, enlace alternativo y aviso de datos', async ({ page }, testInfo) => {
   const frame = await slide(page, 6, '.live-frame')
   const link = frame.getByRole('link', { name: /ABRIR EN PANTALLA COMPLETA/i })
-  await expect(link).toHaveAttribute('href', galaxyUrl)
+  await expect(link).toHaveAttribute('href', galaxyUrl + '#universe')
+  await expect(page.getByText(/cola de GitHub Actions/i)).toBeVisible()
   await screenshot(page, testInfo, 'S06-iframe-con-fallback-1280x720.png')
 })
 
-test('S09 · ambos ponentes visibles con retratos locales', async ({ page }, testInfo) => {
+test('S09 · ambos ponentes con retratos locales y handle', async ({ page }, testInfo) => {
   const speakers = await slide(page, 9, '.speaker-grid')
   await expect(speakers.getByText('DAVID OLIVA')).toBeVisible()
   await expect(speakers.getByText('SERGIO VALVERDE')).toBeVisible()
@@ -72,24 +74,27 @@ test('S09 · ambos ponentes visibles con retratos locales', async ({ page }, tes
     await expect(portrait).toBeVisible()
     await expect.poll(() => portrait.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true)
     expect(await portrait.getAttribute('src')).not.toContain('github.com')
+    expect(await portrait.getAttribute('src')).not.toContain('avatars.githubusercontent.com')
   }
+  await expect(speakers.getByText('davidop')).toBeVisible()
+  await expect(speakers.getByText('svg153')).toBeVisible()
   await screenshot(page, testInfo, 'S09-dos-ponentes-1280x720.png')
 })
 
-test('S13 · Issues → Actions → Worker/D1 → Three.js, avance reversible', async ({ page }, testInfo) => {
+test('S13 · cinco pasos Issue → Actions → D1 → Three.js, avance reversible', async ({ page }, testInfo) => {
   const trace = await slide(page, 13, '.mission-trace')
-  for (const name of ['GitHub Issues', 'GitHub Actions', 'Worker + D1', 'Three.js']) {
+  for (const name of ['GitHub Mobile', 'GitHub Issues', 'GitHub Actions', 'Worker + D1', 'Three.js']) {
     await expect(trace.getByText(name, { exact: true }).first()).toBeVisible()
   }
   await expect(trace.getByText('Validación y firma')).toBeVisible()
   await expect(trace.getByText('recorrido conceptual, no estado en vivo')).toBeVisible()
   await expect(trace).toHaveAttribute('data-step', '0')
-  await page.keyboard.press('ArrowRight')
-  await expect(trace).toHaveAttribute('data-step', '1')
-  await page.keyboard.press('ArrowRight')
-  await expect(trace).toHaveAttribute('data-step', '2')
+  for (const expected of ['1', '2', '3', '4']) {
+    await page.keyboard.press('ArrowRight')
+    await expect(trace).toHaveAttribute('data-step', expected)
+  }
   await page.keyboard.press('ArrowLeft')
-  await expect(trace).toHaveAttribute('data-step', '1')
+  await expect(trace).toHaveAttribute('data-step', '3')
   await screenshot(page, testInfo, 'S13-trazabilidad-1280x720.png')
 })
 
@@ -101,21 +106,28 @@ test('S15 · centro de control manual, nunca telemetría simulada', async ({ pag
   await screenshot(page, testInfo, 'S15-centro-de-control-1280x720.png')
 })
 
-test('S20 · cierre con enlaces de sesión y QR decodificable', async ({ page }, testInfo) => {
-  const closing = await slide(page, 20, '.mission-closing')
-  const galaxyLink = closing.getByRole('link', { name: /Explorar el universo 3D/i })
-  await expect(galaxyLink).toHaveAttribute('href', galaxyUrl)
-  const hubLink = closing.getByRole('link', { name: /Enlaces de la sesión/i })
+test('S20 · patrocinadores con logos locales visibles', async ({ page }, testInfo) => {
+  const sponsors = await slide(page, 20, '.sponsors')
+  for (const name of ['V-Valley', 'Tajamar', 'Tech Riders']) {
+    const logo = sponsors.getByRole('img', { name })
+    await expect.poll(() => logo.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true)
+  }
+  await screenshot(page, testInfo, 'S20-patrocinadores-1280x720.png')
+})
+
+test('S22 · cierre con QR del hub y enlaces de contexto', async ({ page }, testInfo) => {
+  const closing = await slide(page, 22, '.final-layout')
+  const hubLink = closing.getByRole('link', { name: /ENLACES DE LA SESIÓN/i })
   await expect(hubLink).toHaveAttribute('href', sessionHub)
-  const repoLink = closing.getByRole('link', { name: /Código y documentación/i })
-  await expect(repoLink).toHaveAttribute('href', repo)
-  const qrLink = closing.getByRole('link', { name: /Enlaces y código/i })
+  await expect(closing.getByRole('link', { name: /universo 3D/i })).toHaveAttribute('href', galaxyUrl)
+  await expect(closing.getByRole('link', { name: /Código y documentación/i })).toHaveAttribute('href', repo)
+  const qrLink = closing.getByRole('link', { name: /ENLACES Y CÓDIGO/i })
   expect(await qrValue(qrLink.locator('svg').first())).toBe(sessionHub)
-  await screenshot(page, testInfo, 'S20-cierre-1280x720.png')
+  await screenshot(page, testInfo, 'S22-cierre-1280x720.png')
 })
 
 test('Capturas de escenas tras completar sus revelados por clic', async ({ page }, testInfo) => {
-  const clickCounts = { 3: 1, 5: 2, 7: 1, 10: 4, 11: 3, 12: 3, 13: 3, 14: 3, 19: 3 }
+  const clickCounts = { 3: 1, 5: 2, 7: 1, 9: 1, 10: 4, 11: 3, 12: 3, 13: 4, 14: 3, 19: 3 }
   for (const [no, clicks] of Object.entries(clickCounts)) {
     await page.goto('/#/' + no, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
@@ -125,8 +137,8 @@ test('Capturas de escenas tras completar sus revelados por clic', async ({ page 
   }
 })
 
-test('Recorrido completo · 20 escenas 16:9 renderizadas en Chrome', async ({ page }, testInfo) => {
-  for (let number = 1; number <= 20; number++) {
+test('Recorrido completo · 22 escenas 16:9 renderizadas en Chrome', async ({ page }, testInfo) => {
+  for (let number = 1; number <= 22; number++) {
     await page.goto('/#/' + number, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('.slidev-layout:visible').first()).toBeVisible()
     await page.waitForTimeout(180)
@@ -136,9 +148,9 @@ test('Recorrido completo · 20 escenas 16:9 renderizadas en Chrome', async ({ pa
 
 test('Accesibilidad · movimiento reducido y pantalla móvil', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  const cover = await slide(page, 1, '.mission-cover')
-  const headline = cover.getByRole('heading', { level: 1 })
-  expect(await headline.evaluate(el => getComputedStyle(el).animationName)).toBe('none')
+  const cover = await slide(page, 1, '.av-cover')
+  const astronaut = cover.getByRole('img', { name: 'Astronauta AcademyVerso' })
+  expect(await astronaut.evaluate(el => getComputedStyle(el).animationName)).toBe('none')
   await page.setViewportSize({ width: 390, height: 844 })
   const portal = await slide(page, 3, '.portal-scene')
   await expect(portal.getByRole('link', { name: /CREAR OBJETO EN GITHUB/i })).toBeVisible()
