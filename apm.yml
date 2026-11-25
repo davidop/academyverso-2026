@@ -1,8 +1,0 @@
-name: academyverso-2026
-version: 1.0.0
-description: Guía local para revisar y mantener las escenas de AcademyVerso.
-targets:
-  - agent-skills
-dependencies:
-  apm: []
-  mcp: []

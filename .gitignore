@@ -5,12 +5,3 @@ node_modules/
 .DS_Store
 *.log
 .impeccable/hook.cache.json
-
-# APM — dependencias y skill desplegada
-apm_modules/
-/.agents/skills/academyverso-presentation/
-
-# Salidas locales de Slidev y Playwright
-presentation/dist/
-presentation/test-results/
-presentation/playwright-report/

@@ -33,7 +33,7 @@ let objects = [...DEMO];
 let openDetails = () => {};
 const emoji={planeta:'🪐',estrella:'⭐',luna:'🌙','agujero-negro':'🕳️',estacion:'🛸',asteroide:'☄️'};
 const $=id=>document.getElementById(id);
-// Modo embed: incrusta solo el universo 3D (presentacion). Activa con ?embed=1
+// Modo embed: incrusta solo el universo 3D (presentación). Activa con ?embed=1
 const EMBED = new URLSearchParams(location.search).has('embed');
 if (EMBED) document.body.classList.add('embed');
 const safe=s=>String(s??'').trim().slice(0,280);
