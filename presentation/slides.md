@@ -112,58 +112,11 @@ transition: slide-left
 <div class="headline">No vamos a hablar de IA.<br><span class="gradient">Vamos a ponerla a trabajar.</span></div>
 <div class="two-up">
  <div class="glass dim"><div class="eyebrow">ANTES</div><div class="emoji">💬</div><h2>«Escríbeme código»</h2><p>Copiar. Pegar. Repetir.</p></div>
- <div class="glass highlight" v-click><div class="eyebrow">AHORA</div><div class="emoji">🚀</div><h2>«Hazte cargo de esta tarea»</h2><p>Repositorio · agente · PR · revisión.</p></div>
-</div>
-<div class="footnote">La ventaja que demostramos es el flujo de desarrollo integrado, no la superioridad universal de un modelo.</div>
-
-<!-- Sergio explica la diferencia entre preguntar a un chatbot y delegar un cambio real sobre GitHub. -->
-
----
-layout: space
-transition: fade
----
-
-<div class="kicker">CÓMO FUNCIONA · LA MISIÓN</div>
-<div class="headline">Un universo.<br><span class="mint">50 exploradores.</span></div>
-<div class="mission-layout">
- <GalaxyOrbit />
- <div class="stats"><div><b>25–50</b><span>personas en la sala</span></div><div><b>∞</b><span>ideas espaciales</span></div><div><b>3</b><span>agentes trabajando juntos</span></div></div>
-</div>
-<div class="footnote">Planetas, estrellas, lunas y estaciones espaciales: cada asistente imagina su propia creación.</div>
-
-<!-- David introduce AcademyVerso. El universo 3D está creado; la integración en directo requiere su backend. -->
-
----
-transition: slide-left
----
-
-<div class="kicker">CÓMO FUNCIONA · EL MÓVIL COMO CONSOLA</div>
-<div class="headline">Diriges trabajo.<br><span class="mint">No escribes cientos de líneas.</span></div>
-<div class="flow">
- <div class="node" v-click><div>📱</div><b>GitHub Mobile</b><small>Instrucciones</small></div><span class="arrow" v-after>→</span>
- <div class="node" v-click><div>🤖</div><b>Agente IA</b><small>Modifica el repo</small></div><span class="arrow" v-after>→</span>
- <div class="node" v-click><div>🔀</div><b>Pull request</b><small>Revisión humana</small></div><span class="arrow" v-after>→</span>
- <div class="node" v-click><div>✨</div><b>App mejorada</b><small>Validación</small></div>
+ <div class="glass highlight" v-click><div class="eyebrow">AHORA</div><div class="emoji">🚀</div><h2>«Hazte cargo de esta tarea»</h2><p>Desde el móvil: agente → PR → revisión humana.</p></div>
 </div>
 <div class="footnote">La IA propone cambios; las personas revisan permisos, pruebas y resultado.</div>
 
-<!-- David y Sergio avanzan las cuatro etapas con clics. -->
-
----
-layout: space
-transition: fade
----
-
-<div class="kicker">CÓMO FUNCIONA · TRES AGENTES / UN REPO</div>
-<div class="headline">Cada uno aporta<br><span class="gradient">algo diferente.</span></div>
-<div class="agent-grid">
- <div class="agent" v-click><h2>COPILOT</h2><b>CONSTRUIR</b><p>Construir un portal entre dos mundos del público.</p></div>
- <div class="agent" v-click><h2>CLAUDE</h2><b>MEJORAR</b><p>Dar energía y personalidad visual al portal.</p></div>
- <div class="agent" v-click><h2>CODEX</h2><b>VERIFICAR</b><p>Verificar cruce, accesibilidad y móvil.</p></div>
-</div>
-<div class="footnote warning">Un modelo Claude dentro del chat Copilot no es el agente independiente Claude Code.</div>
-
-<!-- Explicar que los agentes pueden requerir planes, políticas y habilitación específicos. -->
+<!-- Sergio explica la diferencia entre preguntar a un chatbot y delegar un cambio real sobre GitHub: desde GitHub Mobile se encarga la tarea, el agente modifica el repo y abre una PR, y una persona la revisa. La ventaja que demostramos es el flujo de desarrollo integrado, no la superioridad universal de un modelo. -->
 
 ---
 transition: fade
@@ -174,11 +127,11 @@ transition: fade
 <div class="stack">
  <div class="stack-row" v-click><b>01</b><div><strong>GitHub Mobile + repositorio</strong><p>Abre tu cuenta y selecciona academyverso-2026.</p></div><span>📱</span></div>
  <div class="stack-row" v-click><b>02</b><div><strong>Nueva sesión en la nube</strong><p>Selecciona rama, agente disponible y tarea.</p></div><span>☁️</span></div>
- <div class="stack-row" v-click><b>03</b><div><strong>Permisos y políticas</strong><p>Claude y Codex requieren acceso habilitado en GitHub.</p></div><span>🔐</span></div>
+ <div class="stack-row" v-click><b>03</b><div><strong>Permisos y políticas</strong><p>Claude y Codex requieren acceso habilitado. El modelo Claude del chat de Copilot no es el agente Claude Code.</p></div><span>🔐</span></div>
 </div>
 <div class="footnote"><a href="https://github.com/davidop/academyverso-2026/blob/main/docs/activar-agentes.md" target="_blank">Guía de activación y comprobación de agentes ↗</a></div>
 
-<!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. -->
+<!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. Los agentes pueden requerir planes, políticas y habilitación específicos. -->
 
 
 ---

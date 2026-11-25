@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 const loaded = ref(false)
 // El iframe usa el modo embed (solo el lienzo 3D); los enlaces abren el sitio
-// completo, que conserva el control del portal y la navegación (paso de S19).
+// completo, que conserva el control del portal y la navegación (paso de S16).
 const url = 'https://davidop.github.io/academyverso-2026/?embed=1#universe'
 const fullUrl = 'https://davidop.github.io/academyverso-2026/#universe'
 </script>
