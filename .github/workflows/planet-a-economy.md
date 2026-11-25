@@ -12,6 +12,14 @@ safe-outputs:
   create-issue: false
   report-failure-as-issue: false
   report-failed-jobs: false
+  noop:
+    report-as-issue: false
+  report-incomplete:
+    create-issue: false
+  report-missing-data:
+    create-issue: false
+  report-missing-tool:
+    create-issue: false
   threat-detection:
     report-as-issue: false
   upload-artifact:
