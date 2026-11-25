@@ -16,7 +16,7 @@
 
 **Claude y Codex se lanzan desde la web, con el entorno Actions:**
 
-1. Abrir la pestaña **Agents** del repo: https://github.com/davidop/academyverso-2026/agents
+1. Abrir la pestaña **Agents** del repo: <https://github.com/davidop/academyverso-2026/agents>
 2. En el desplegable de entorno elegir **Actions**. Con **Cloud** solo aparece Copilot; Claude y Codex solo salen en el selector con **Actions**.
 3. **Selector de agente:** Claude o Codex. No el desplegable de «Modelos».
 4. **Rama:** la de demo (por ejemplo, `demo/portal-seed-26nov`), no `main`.
