@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 const loaded = ref(false)
-const url = 'https://davidop.github.io/academyverso-2026/#universe'
+const url = 'https://davidop.github.io/academyverso-2026/?embed=1#universe'
 </script>
 
 <template>

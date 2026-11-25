@@ -6,6 +6,7 @@ const repo = 'https://github.com/davidop/academyverso-2026'
 const issueUrl = repo + '/issues/new?template=crear-objeto.yml'
 const galaxyUrl = 'https://davidop.github.io/academyverso-2026/'
 const sessionHub = 'https://davidop.github.io/academyverso-2026/sesion.html'
+const embedUrl = galaxyUrl + '?embed=1#universe'
 
 async function slide(page, number, selector) {
   await page.goto('/#/' + number, { waitUntil: 'domcontentloaded' })
@@ -60,7 +61,7 @@ test('S05 · elección de dos mundos con enlace real', async ({ page }, testInfo
 test('S06 · galaxia integrada, enlace alternativo y aviso de datos', async ({ page }, testInfo) => {
   const frame = await slide(page, 6, '.live-frame')
   const link = frame.getByRole('link', { name: /ABRIR EN PANTALLA COMPLETA/i })
-  await expect(link).toHaveAttribute('href', galaxyUrl + '#universe')
+  await expect(link).toHaveAttribute('href', embedUrl)
   await expect(page.getByText(/cola de GitHub Actions/i)).toBeVisible()
   await screenshot(page, testInfo, 'S06-iframe-con-fallback-1280x720.png')
 })
