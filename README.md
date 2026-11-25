@@ -91,6 +91,7 @@ El nuevo motor procedural interpreta descripciones en un catálogo seguro de est
 | Galaxy Three.js, navegación, fichas accesibles | Implementado | Acceso a CDN de Three.js |
 | Formulario GitHub Issue | Implementado | Habilitar Issues (la etiqueta `cosmic-object` la crea el triage) |
 | Flujo de Issues (triage + cierre en ramas de ensayo) | `issue-triage.yml` y `close-linked-issues.yml`; reglas en `scripts/issue_flow.py` | Opcional: `ACADEMYVERSO_TRIAGE_ASSIGNEE`, `ACADEMYVERSO_PROJECT_URL` y secreto `ACADEMYVERSO_PROJECT_TOKEN`; copiar ambos a `demo/portal-seed-26nov` |
+| Triage agéntico de planetas | `cosmic-object-triage.md` + lock generado; comenta lo entendido, mejora la descripción sin inventar hechos y solo `planet:ready` activa la ingesta | `COPILOT_GITHUB_TOKEN` con permiso `Copilot Requests: Read` o facturación Copilot de organización; ver [guía](docs/triage-agentico-planetas.md) |
 | Formulario web alternativo | Implementado | Desplegar Worker y configurar `API_BASE` |
 | Sincronización multiusuario | Implementado (polling) | Worker + Cloudflare D1 + secreto de Actions |
 | Filtros, rate limit y ocultación | Implementado | Desplegar Worker y credenciales |
