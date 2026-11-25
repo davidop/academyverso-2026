@@ -28,7 +28,7 @@ Eso es lo que antes se mantenía a mano como tres copias idénticas. Ahora APM l
 
 ## Cómo se regeneran
 
-Desde la raíz, con APM 0.33 o superior:
+Desde la raíz, con **APM 0.38.1 o superior** (con 0.33, `apm audit` marca falsos huérfanos en `.github/skills`):
 
 ```bash
 apm install --legacy-skill-paths
@@ -37,7 +37,7 @@ apm audit
 
 - `--legacy-skill-paths` despliega por cliente (`.claude/skills`, `.github/skills`) además de la ruta compartida `.agents/skills`.
 - `targets` está declarado en `apm.yml`; si añades una skill, créala en `.apm/skills/<nombre>/SKILL.md` y vuelve a ejecutar el comando.
-- El lock (`apm.lock.yaml`) registra los archivos desplegados y sus hashes.
+- El lock (`apm.lock.yaml`, formato v4) registra los archivos desplegados y sus hashes, y la versión de APM que los generó. Si cambias de versión mayor de APM, vuelve a ejecutar el comando y haz commit del lock.
 
 ## Control de deriva en CI
 
@@ -48,6 +48,12 @@ apm audit
 3. No hay skills huérfanas en las carpetas desplegadas.
 
 Si editas solo la copia desplegada, CI falla con el mensaje `run apm install --legacy-skill-paths`.
+
+## Copias, no symlinks
+
+APM **copia** los archivos; no crea enlaces simbólicos. Es deliberado: los symlinks no viajan bien en Windows, git los guarda con modo 120000 y muchos agentes no los resuelven al cargar skills. La contrapartida (tres copias) la cubre el guard de CI, así que ninguna edición puede quedarse solo en la copia.
+
+Si algún día se quiere una sola carpeta, la alternativa es dejar de versionar .agents/, .claude/ y .github/skills/, añadirlas al .gitignore y exigir pm install --legacy-skill-paths en cada checkout. Hoy no se hace para que cualquier agente encuentre las skills sin ejecutar nada.
 
 ## Qué no hace APM aquí
 
