@@ -6,6 +6,5 @@ node_modules/
 *.log
 .impeccable/hook.cache.json
 
-# APM — dependencias y skill desplegada
+# APM — dependencias instaladas
 apm_modules/
-/.agents/skills/academyverso-presentation/
