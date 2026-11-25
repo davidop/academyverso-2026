@@ -93,7 +93,9 @@ Una pulsación cambia un hecho o el foco, nunca solo añade ornamento. CSS/SVG p
 
 ## Voice & Content Strategy
 
-Español claro y técnico. No inventar cifras, trazas, logos ni estados de CI. Identificar explícitamente muestra, ejecución real o respaldo. La Issue de la misión es una sola (#37) con relevo de agentes; cada fase abre su PR con `Refs #37`.
+Español claro y técnico. No inventar cifras, trazas, logos ni estados de CI. Identificar explícitamente muestra, ejecución real o respaldo.
+
+**Nunca escribir en una diapositiva números de Issue o de PR de trabajo** (por ejemplo #37 o PR 1): son datos operativos que cambian y confunden al público. Se habla siempre de «la Issue de la misión» y de «el PR de la fase». **No usar logotipos de agente que no existan**: Codex no tiene marca oficial, así que se escribe su nombre, sin glifo ni icono inventado. Copilot y Anthropic solo con sus logos reales, y nunca desde una CDN.
 
 ## Components
 
