@@ -10,7 +10,8 @@ concurrency:
 jobs:
   design:
     uses: ./.github/workflows/planet-c-design.lock.yml
-    secrets: inherit
+    secrets:
+      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-brief:
     needs: design
     runs-on: ubuntu-latest
@@ -27,7 +28,8 @@ jobs:
   construct:
     needs: gate-brief
     uses: ./.github/workflows/planet-c-build.lock.yml
-    secrets: inherit
+    secrets:
+      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-spec:
     needs: construct
     runs-on: ubuntu-latest
@@ -44,7 +46,8 @@ jobs:
   review:
     needs: gate-spec
     uses: ./.github/workflows/planet-c-review.lock.yml
-    secrets: inherit
+    secrets:
+      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-review:
     needs: review
     runs-on: ubuntu-latest
