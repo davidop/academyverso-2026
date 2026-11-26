@@ -25,6 +25,11 @@ jobs:
             echo 'Trusted triage comment not found; refusing ingestion.'
             exit 1
           fi
+          # Refuse a stale factory label event if the issue was edited or closed.
+          if jq -e '.body | contains("academyverso-factory:ready:v1")' triage-comment.json >/dev/null; then
+            gh api "repos/${GH_REPO}/issues/${ISSUE_NUMBER}" > current-issue.json
+            jq -e --slurpfile original "$GITHUB_EVENT_PATH" '.state == "open" and .body == $original[0].issue.body and any(.labels[]; .name == "planet:ready")' current-issue.json >/dev/null || { echo 'Factory issue changed; refusing stale ingestion'; exit 1; }
+          fi
       - name: Ingest signed issue event
         env:
           WORKER_URL: https://academyverso-api.david-oliva-paredes.workers.dev
@@ -32,7 +37,7 @@ jobs:
           GH_EVENT: ${{ toJSON(github.event) }}
         run: |
           python - <<'PY'
-          import os,json,hashlib,hmac,urllib.request,urllib.error
+          import os,json,hashlib,hmac,re,urllib.request,urllib.error
           url=os.getenv('WORKER_URL','').rstrip('/')
           secret=os.getenv('INGEST_SECRET','')
           if not (url and secret):
@@ -56,6 +61,11 @@ jobs:
                   expected=event['issue']['number']
                   if not reply.get('ok') or reply.get('issue_number')!=expected:
                       raise SystemExit('Respuesta de ingesta no confirmada; no se cerrará la Issue')
+                  comment=event.get('triage_comment',{}).get('body','')
+                  if 'academyverso-factory:ready:v1' in comment:
+                      hashes=re.findall(r'^factory-spec-sha256: ([0-9a-f]{64})$',comment,re.M)
+                      if len(hashes)!=1 or reply.get('spec_sha256')!=hashes[0]:
+                          raise SystemExit('WorldSpec no confirmado; no se cerrará la Issue')
                   print('ingest status',r.status,'issue_number',expected,'confirmed',True)
           except urllib.error.HTTPError as e:
               # Only print the public HTTP status and a short, bounded error body.
