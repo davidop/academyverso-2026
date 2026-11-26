@@ -2,6 +2,12 @@
 description: Planet Factory C - brief (isolated candidate stage)
 on:
   workflow_call:
+    inputs:
+      stage:
+        description: Distingue artefactos entre llamadas del mismo run (prefijo gh-aw)
+        type: string
+        required: false
+        default: design
     secrets:
       COPILOT_GITHUB_TOKEN:
         required: true
@@ -9,9 +15,9 @@ permissions:
   contents: read
   actions: read
 engine: copilot
-model: gemini-3.8-flash
+model: claude-sonnet-5.5
 timeout-minutes: 5
-max-ai-credits: 1
+max-ai-credits: 30
 safe-outputs:
   create-issue: false
   report-failure-as-issue: false

@@ -57,6 +57,8 @@ jobs:
     needs: prepare
     if: needs.prepare.outputs.admission == 'accept'
     uses: ./.github/workflows/planet-c-design.lock.yml
+    with:
+      stage: design
     secrets:
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-brief:
@@ -93,6 +95,8 @@ jobs:
     needs: gate-brief
     if: needs.gate-brief.outputs.decision == 'accept'
     uses: ./.github/workflows/planet-c-build.lock.yml
+    with:
+      stage: build
     secrets:
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-spec:
@@ -124,6 +128,8 @@ jobs:
   review:
     needs: gate-spec
     uses: ./.github/workflows/planet-c-review.lock.yml
+    with:
+      stage: review
     secrets:
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-review:

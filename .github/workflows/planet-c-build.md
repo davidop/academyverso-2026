@@ -2,6 +2,12 @@
 description: Planet Factory C - spec (isolated candidate stage)
 on:
   workflow_call:
+    inputs:
+      stage:
+        description: Distingue artefactos entre llamadas del mismo run (prefijo gh-aw)
+        type: string
+        required: false
+        default: build
     secrets:
       COPILOT_GITHUB_TOKEN:
         required: true
@@ -11,7 +17,7 @@ permissions:
 engine: claude
 model: copilot/claude-haiku-5.5
 timeout-minutes: 5
-max-ai-credits: 1
+max-ai-credits: 20
 safe-outputs:
   create-issue: false
   report-failure-as-issue: false

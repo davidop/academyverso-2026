@@ -2,6 +2,12 @@
 description: Planet Factory C - review (isolated candidate stage)
 on:
   workflow_call:
+    inputs:
+      stage:
+        description: Distingue artefactos entre llamadas del mismo run (prefijo gh-aw)
+        type: string
+        required: false
+        default: review
     secrets:
       COPILOT_GITHUB_TOKEN:
         required: true
@@ -11,7 +17,7 @@ permissions:
 engine: codex
 model: copilot/gpt-6-luna
 timeout-minutes: 5
-max-ai-credits: 1
+max-ai-credits: 20
 safe-outputs:
   create-issue: false
   report-failure-as-issue: false
