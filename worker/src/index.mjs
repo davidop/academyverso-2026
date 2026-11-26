@@ -51,11 +51,12 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
    }catch(err){console.warn('D1 health check failed',err?.message);return respond({ok:false,database_connected:false,error:'D1 no disponible'},503)}
  }
  if(url.pathname==='/api/objects'&&request.method==='GET'){
+    if(factoryEnabled(env)&&!worldgenEnabled(env))return respond({error:'Factoría sin WorldGen'},503);
    const legacy='issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at';
    let result;
    if(worldgenEnabled(env)){
      try{result=await env.DB.prepare('SELECT '+legacy+',world_spec,world_status,world_version FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all()}
-     catch(error){console.warn('WorldGen columns unavailable; serving legacy objects')}
+     catch(error){if(factoryEnabled(env))return respond({error:'Esquema WorldGen no disponible'},503);console.warn('WorldGen columns unavailable; serving legacy objects')}
    }
    if(!result)result=await env.DB.prepare('SELECT '+legacy+' FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();
    return respond({objects:result.results||[]});
@@ -88,7 +89,8 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   if(factoryEnabled(env)){
    if(!worldgenEnabled(env))return respond({error:'Factoría pendiente de activar'},503);
    const columns=(await env.DB.prepare('PRAGMA table_info(objects)').all()).results||[];
-   if(!columns.some(c=>c.name==='factory_state')||!columns.some(c=>c.name==='factory_hash'))return respond({error:'Factoría pendiente de migrar'},503);
+   const names=new Set(columns.map(c=>c.name));
+    if(!['factory_state','factory_hash','world_spec','world_status','world_version','world_input_hash','world_owner_token_hash'].every(c=>names.has(c)))return respond({error:'Factoría pendiente de migrar'},503);
   }
   if(!env.GITHUB_TOKEN)return respond({error:'Creación web pendiente de activar en Cloudflare',code:'CREATE_NOT_READY'},503);
   const raw=await request.text();if(raw.length>2400)return respond({error:'Solicitud demasiado grande'},413);

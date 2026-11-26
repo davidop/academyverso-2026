@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {buildWorld} from '../worlds/builder.mjs';
-import {fallbackWorldSpec} from '../worlds/spec.mjs';
+import {fallbackWorldSpec,resolvedWorldSpec} from '../worlds/spec.mjs';
 
 const cases=[
  ['planeta','Planeta océano con tres lunas, dos ciudades flotantes, volcanes y cúpulas'],
@@ -53,4 +53,15 @@ test('low quality cuts triangle budget without hiding essential POIs',()=>{
  const high=buildWorld(THREE,o,spec,null,'high');
  assert.ok(stats(low.group).triangles<stats(high.group).triangles);
  assert.deepEqual(new Set(low.clickables.map(x=>x.userData.poi?.kind).filter(Boolean)),new Set(high.clickables.map(x=>x.userData.poi?.kind).filter(Boolean)));
+});
+
+test('persisted factory WorldSpec drives actual geometry instead of description heuristics',()=>{
+ const o=object('planeta','Un planeta tranquilo sin detalles',81);
+ const stored={...fallbackWorldSpec(o),features:[{kind:'floating_city',count:1},{kind:'moon',count:3}],palette:{primary:'#123456',secondary:'#FABC12',emissive:'#654321'}};
+ const persisted={...o,world_spec:JSON.stringify(stored),world_status:'ready',world_version:1};
+ const resolved=resolvedWorldSpec(persisted);assert.equal(resolved.source,'persisted');assert.deepEqual(resolved.spec,stored);
+ const actual=buildWorld(THREE,persisted,resolved.spec),legacy=buildWorld(THREE,o,fallbackWorldSpec(o));
+ assert.ok(actual.clickables.some(x=>x.userData.poi?.kind==='floating_city'));
+ assert.ok(!legacy.clickables.some(x=>x.userData.poi?.kind==='floating_city'));
+ assert.ok(stats(actual.group).meshes>stats(legacy.group).meshes);
 });

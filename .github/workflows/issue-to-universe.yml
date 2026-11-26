@@ -25,6 +25,11 @@ jobs:
             echo 'Trusted triage comment not found; refusing ingestion.'
             exit 1
           fi
+          # Refuse a stale factory label event if the issue was edited or closed.
+          if jq -e '.body | contains("academyverso-factory:ready:v1")' triage-comment.json >/dev/null; then
+            gh api "repos/${GH_REPO}/issues/${ISSUE_NUMBER}" > current-issue.json
+            jq -e --slurpfile original "$GITHUB_EVENT_PATH" '.state == "open" and .body == $original[0].issue.body and any(.labels[]; .name == "planet:ready")' current-issue.json >/dev/null || { echo 'Factory issue changed; refusing stale ingestion'; exit 1; }
+          fi
       - name: Ingest signed issue event
         env:
           WORKER_URL: https://academyverso-api.david-oliva-paredes.workers.dev

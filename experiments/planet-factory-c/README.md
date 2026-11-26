@@ -22,3 +22,5 @@ CI compila los tres locks, el lock legacy con selector y copia coordinador a .gi
 4. Verificar D1 exacto, GET, Three.js y cierre. Proteger contra ediciones concurrentes entre lectura/patch/label (GitHub API no ofrece transacción multioperación), comprobar reconciliación de fallos; limitar a una propuesta de ensayo antes de exposición pública. Si falta modelo o revisión, no publicar ni usar fallback automático. El fallback sigue para objetos legacy.
 
 #101 E1-E3 (WorldSpecV2, código aislado, GLB, R2) no se implementan aquí.
+
+La ingesta vuelve a consultar el cuerpo/estado/label actual antes de firmar el evento: si cambió desde ready, se detiene. Sigue siendo necesaria reconciliación de escrituras concurrentes entre llamadas GitHub. En modo factoría, GET falla si no puede acceder al esquema WorldGen (no degrada silenciosamente a legacy por un fallo de schema). La suite de Three.js incluye una comprobación de que world_spec persistido determina geometría/POIs aunque el texto no incluya las palabras clave.

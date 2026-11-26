@@ -52,3 +52,9 @@ test('publication binds exact candidate, issue snapshot, curated text and review
  assert.throws(()=>publication(p,design,candidate,verdict,body+'edit'));
  assert.throws(()=>publication(p,design,candidate,{...verdict,spec_sha256:hash('other')},body));
 });
+
+test('raw HTML and links fail deterministic admission rather than being cleaned away',()=>{
+ const body=issueBody({type:'planeta',alias:'QA',name:'Nexus',description:'Planeta oceánico con tres lunas'});
+ const event={action:'opened',issue:{number:42,state:'open',body:body.replace('tres lunas','tres lunas <span>oculto</span>')}};
+ assert.throws(()=>prepareProposal(event));
+});

@@ -10,6 +10,8 @@ export function prepareProposal(event,kind='valid'){
    if(i.body.split(/\r?\n/).filter(l=>l.trim()==='### '+heading).length!==1)throw Error('Missing or repeated cosmic field');
   }
   if(/academyverso-(?:triage|factory):ready:/i.test(i.body))throw Error('Unexpected publication marker');
+  // Reject hostile markup before normalization can hide it from moderation.
+  if(/[<>\x60\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/.test(i.body)||/https?:\/\/|www\.|@\w+\.\w+/i.test(i.body))throw Error('Unsafe raw proposal');
   const fields=parseIssue(i.body);
   return {source:'issue',issue_number:i.number,body_sha256:digest(i.body),...fields};
  }
