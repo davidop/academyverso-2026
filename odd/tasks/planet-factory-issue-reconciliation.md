@@ -11,8 +11,8 @@ Checks: structural readback, `git diff --check`, Node contract/Worker tests and 
 
 ## Tasks
 
-- [x] **T1** (S1-S3): reconcile the C runbook and verify the documentation delta; route: inline after completed delegated read-only mapping (>5 lookups); status: complete; commit: this work unit (SHA recorded by T2).
-- [ ] **T2** (S1-S4): update issue/PR bodies, verify readback and publish the bounded documentation work unit to #102; route: inline, understood metadata reconciliation; status: active; commit: pending.
+- [x] **T1** (S1-S3): reconcile the C runbook and verify the documentation delta; route: inline after completed delegated read-only mapping (>5 lookups); status: complete; commit: `1e2c195ce7a9f04e6aab23e5b4399e56404a4b9a`.
+- [x] **T2** (S1-S4): update issue/PR bodies, verify readback and publish the bounded documentation work unit to #102; route: inline, understood metadata reconciliation; status: complete; commit: `1e2c195ce7a9f04e6aab23e5b4399e56404a4b9a` plus this closing log commit.
 
 ## Log
 
@@ -46,3 +46,13 @@ Accepted proposal: connected GitHub session, issue/PR updates only; no merge, de
 - `git diff --check`: passed. Structural readback confirmed the documented coordinator, source paths and flags against the branch.
 - Full browser/Slidev builds, native WebMCP clients, cloud schema, live inference and deployed E2E were not run: no executable bytes changed. Existing CI evidence belongs to head `ed80caf`, not this documentation commit.
 - Current authored delta forecast remains below 150 lines. T2 will update seven issue bodies and five PR descriptions without changing state, labels, reviewers or base branches.
+
+### L5 — T2 delivery and readback (2026-11-26)
+
+- Updated issues #85, #97, #98, #99, #100, #101 and #107, and PR descriptions #86 and #102-105. Separate readback matched all twelve bodies; issue states, labels and assignees were preserved, as were PR open/draft states and base branches.
+- Corrected historical form-publication wording, already-versioned locks/coordinator, E0 branch versus production claims, and the outdated claim that #102 was draft. Preserved pending live checks instead of marking the features complete.
+- Published T1 through the connected GitHub integration with an expected-head lease. The commit changed only this logbook and `experiments/planet-factory-c/README.md`.
+- T1 remote [compile preview](https://github.com/davidop/academyverso-2026/actions/runs/45737228829) and [general CI](https://github.com/davidop/academyverso-2026/actions/runs/45737228902) both completed successfully. These are not evidence of live model inference.
+- The closing documentation commit normalizes the two API-uploaded text files to LF to avoid whole-file CRLF churn; no executable bytes change. Final commit identity and any later CI are reported in the delivery reply/memory rather than self-referenced in this file.
+- S1-S4 are satisfied for this reconciliation. No implementation blocker was reproduced that justified a new engine, dependency, visual pipeline or production mutation. Risk: none for the actual delta. RDD: disabled/unmanaged.
+- Next operational work remains in #107: David's D1/flags/staging checks, real model and E2E evidence, then WebMCP native-client validation. This review did not execute those operations, merge anything or change infrastructure.
