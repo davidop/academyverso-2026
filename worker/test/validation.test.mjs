@@ -63,3 +63,8 @@ test('aplica longitudes y saneamiento a la descripción del comentario',()=>{
  const result=parseTriagedIssue(triagedBody(),triageComment('Un planeta verde\ncon tres lunas visibles'));
  assert.equal(result.description,'Un planeta verde con tres lunas visibles');
 });
+test('desescapa el Markdown que gh-aw añade al cuerpo de la Issue',()=>{
+ const body='### Tipo de objeto\n\nagujero\\-negro\n\n### Alias del explorador\n\nana\n\n### Nombre del objeto\n\nbee\\_station\n\n### Descripción creativa\n\nUna colmena con luz propia en órbita.\n\n---\nCreado';
+ const d=parseIssue(body);
+ assert.equal(d.type,'agujero-negro');assert.equal(d.name,'bee_station');
+});
