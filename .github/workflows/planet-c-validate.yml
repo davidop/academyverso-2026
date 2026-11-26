@@ -5,6 +5,8 @@ on:
       - 'experiments/planet-factory-c/**'
       - '.github/workflows/planet-c-*.md'
       - '.github/workflows/planet-c-validate.yml'
+      - '.github/workflows/cosmic-object-triage.md'
+      - 'worker/**'
 permissions:
   contents: read
 jobs:
@@ -32,6 +34,8 @@ jobs:
             gh aw compile "$file"
             test -s "${file%.md}.lock.yml"
           done
+          gh aw compile .github/workflows/cosmic-object-triage.md
+          test -s .github/workflows/cosmic-object-triage.lock.yml
           cp experiments/planet-factory-c/coordinator.yml .github/workflows/planet-factory-c.yml
       - name: Reject unexpected write permissions in generated workflows
         run: |
@@ -43,5 +47,6 @@ jobs:
           path: |
             .github/workflows/planet-c-*.lock.yml
             .github/workflows/planet-factory-c.yml
+            .github/workflows/cosmic-object-triage.lock.yml
           if-no-files-found: error
           retention-days: 3

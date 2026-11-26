@@ -1,6 +1,14 @@
-name: Planet Factory C (synthetic only)
+name: Planet Factory C
 on:
   workflow_dispatch:
+    inputs:
+      fixture:
+        description: Synthetic proposal
+        type: choice
+        options: [valid, unsupported, reject]
+        default: valid
+  issues:
+    types: [opened]
 permissions:
   contents: read
   actions: read
@@ -8,44 +16,100 @@ permissions:
   pull-requests: read
   issues: read
 concurrency:
-  group: planet-factory-c-preview
+  group: planet-factory-${{ github.event.issue.number || github.run_id }}
   cancel-in-progress: false
 jobs:
+  prepare:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa'))
+    permissions:
+      contents: read
+      issues: write
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Stage admission
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node experiments/planet-factory-c/stages.mjs stage planet:admission
+      - name: Prepare bounded proposal
+        env:
+          FIXTURE: ${{ inputs.fixture || 'valid' }}
+        run: node experiments/planet-factory-c/prepare.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: planet-factory-proposal-${{ github.run_attempt }}
+          path: planet-input/proposal/proposal.json
+          if-no-files-found: error
+          retention-days: 1
+      - name: Stage design
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node experiments/planet-factory-c/stages.mjs stage planet:design
   design:
+    needs: prepare
     uses: ./.github/workflows/planet-c-design.lock.yml
     secrets:
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-brief:
     needs: design
+    outputs:
+      decision: ${{ steps.gate.outputs.decision }}
+    permissions:
+      contents: read
+      issues: write
+      actions: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - name: Download proposal for this attempt
+        uses: actions/download-artifact@v4
         with:
-          pattern: "*planet-factory-brief"
-          path: handoff
-          merge-multiple: true
-      - run: node experiments/planet-factory-c/contract.mjs brief handoff/brief.json
+          name: planet-factory-proposal-${{ github.run_attempt }}
+          path: handoff/proposal
+      - name: Download brief for this attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: planet-factory-brief-${{ github.run_attempt }}
+          path: handoff/brief
+      - id: gate
+        run: node experiments/planet-factory-c/contract.mjs brief handoff/brief/brief.json handoff/proposal/proposal.json
+      - name: Advance only an accepted brief
+        if: steps.gate.outputs.decision == 'accept'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node experiments/planet-factory-c/stages.mjs stage planet:build
   construct:
     needs: gate-brief
+    if: needs.gate-brief.outputs.decision == 'accept'
     uses: ./.github/workflows/planet-c-build.lock.yml
     secrets:
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
   gate-spec:
     needs: construct
+    permissions:
+      contents: read
+      issues: write
+      actions: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - name: Download spec for this attempt
+        uses: actions/download-artifact@v4
         with:
-          pattern: "*planet-factory-spec"
-          path: handoff
-          merge-multiple: true
-      - run: node experiments/planet-factory-c/contract.mjs spec handoff/spec.json
+          name: planet-factory-spec-${{ github.run_attempt }}
+          path: handoff/spec
+      - run: node experiments/planet-factory-c/contract.mjs spec handoff/spec/spec.json
+      - name: Stage review
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node experiments/planet-factory-c/stages.mjs stage planet:review
   review:
     needs: gate-spec
     uses: ./.github/workflows/planet-c-review.lock.yml
@@ -58,15 +122,78 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - name: Download spec for this attempt
+        uses: actions/download-artifact@v4
         with:
-          pattern: "*planet-factory-spec"
-          path: spec
-          merge-multiple: true
-      - uses: actions/download-artifact@v4
+          name: planet-factory-spec-${{ github.run_attempt }}
+          path: handoff/spec
+      - name: Download review for this attempt
+        uses: actions/download-artifact@v4
         with:
-          pattern: "*planet-factory-review"
-          path: review
-          merge-multiple: true
-      - run: node experiments/planet-factory-c/contract.mjs review spec/spec.json review/review.json
-      - run: echo "Synthetic candidate approved; no publication" >> "$GITHUB_STEP_SUMMARY"
+          name: planet-factory-review-${{ github.run_attempt }}
+          path: handoff/review
+      - run: node experiments/planet-factory-c/contract.mjs review handoff/spec/spec.json handoff/review/review.json
+      - run: echo "Candidate validated; live publication requires separate App job" >> "$GITHUB_STEP_SUMMARY"
+  publish:
+    needs: gate-review
+    if: github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download proposal for this attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: planet-factory-proposal-${{ github.run_attempt }}
+          path: handoff/proposal
+      - name: Download brief for this attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: planet-factory-brief-${{ github.run_attempt }}
+          path: handoff/brief
+      - name: Download spec for this attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: planet-factory-spec-${{ github.run_attempt }}
+          path: handoff/spec
+      - name: Download review for this attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: planet-factory-review-${{ github.run_attempt }}
+          path: handoff/review
+      - name: Mint existing triage App token (publication only)
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.ACADEMYVERSO_TRIAGE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ACADEMYVERSO_TRIAGE_APP_PRIVATE_KEY }}
+          permission-issues: write
+      - name: Publish exact reviewed candidate through trusted App
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          APP_BOT: ${{ steps.app.outputs.app-slug }}[bot]
+          EXPECTED_BOT: ${{ vars.ACADEMYVERSO_TRIAGE_BOT }}
+        run: node experiments/planet-factory-c/stages.mjs publish
+  terminal:
+    needs: [prepare, design, gate-brief, construct, gate-spec, review, gate-review, publish]
+    if: always() && github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true' && needs.prepare.result != 'skipped' && needs.publish.result != 'success'
+    permissions:
+      contents: read
+      issues: write
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Mark explicit rejection or held (never publish)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DECISION: ${{ needs.gate-brief.outputs.decision }}
+        run: |
+          if [ "$DECISION" = reject ]; then
+            node experiments/planet-factory-c/stages.mjs stage planet:rejected
+          else
+            node experiments/planet-factory-c/stages.mjs stage planet:held
+          fi

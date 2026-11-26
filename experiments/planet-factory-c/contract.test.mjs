@@ -19,3 +19,36 @@ test('review must approve exact hash and contain no findings',()=>{
  assert.throws(()=>review({decision:'reject',spec_sha256:h,findings:[]},h));
  assert.throws(()=>review({decision:'approve',spec_sha256:h,findings:['missing moon']},h));
 });
+
+import {prepareProposal} from './prepare.mjs';
+import {labelPlan,publication} from './stages.mjs';
+import {classifyBrief} from './contract.mjs';
+import {issueBody,parseIssue} from '../../worker/src/validation.mjs';
+test('fixture selection and deterministic preparation',()=>{
+ assert.equal(prepareProposal(null,'reject').source,'fixture');
+ assert.throws(()=>prepareProposal(null,'../../secret'));
+ const data={type:'planeta',alias:'QA',name:'Nexus',description:'[GTA:VICE-NEBULA] Planeta oceánico con tres lunas'};
+ const event={action:'opened',issue:{number:42,state:'open',body:issueBody(data)}};
+ const p=prepareProposal(event);assert.equal(p.description,data.description);
+ assert.throws(()=>prepareProposal({...event,issue:{...event.issue,body:event.issue.body+'\n### Tipo de objeto\nplaneta'}}));
+ assert.throws(()=>classifyBrief({decision:'accept',concept:'Sin marcador',requirements:[]},p));
+ assert.equal(classifyBrief({decision:'reject',concept:'No apta',requirements:[]},p),'reject');
+});
+test('labels are a projection, never a way to bypass sequencing',()=>{
+ assert.deepEqual(labelPlan(['cosmic-object','planet:admission'],'planet:design'),{add:'planet:design',remove:['planet:admission']});
+ assert.throws(()=>labelPlan(['planet:design'],'planet:ready'));
+ assert.deepEqual(labelPlan(['planet:ready'],'planet:held'),{add:null,remove:[]});
+ assert.throws(()=>labelPlan(['planet:build','planet:review'],'planet:ready'));
+});
+test('publication binds exact candidate, issue snapshot, curated text and review',()=>{
+ const data={type:'planeta',alias:'QA',name:'Nexus',description:'Planeta oceánico con tres lunas'};
+ const body=issueBody(data),p=prepareProposal({action:'opened',issue:{number:42,state:'open',body}});
+ const value=fallbackWorldSpec({issue_number:42,...data}),bytes=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ const candidate={value,bytes,digest:hash(bytes)},design={decision:'accept',concept:'Planeta oceánico con tres lunas.',requirements:['tres lunas']},verdict={decision:'approve',spec_sha256:candidate.digest,findings:[]};
+ const pub=publication(p,design,candidate,verdict,body);
+ assert.equal(parseIssue(pub.body).description,design.concept);
+ assert.ok(pub.comment.includes(candidate.digest));
+ assert.ok(pub.comment.includes(bytes.toString('base64url')));
+ assert.throws(()=>publication(p,design,candidate,verdict,body+'edit'));
+ assert.throws(()=>publication(p,design,candidate,{...verdict,spec_sha256:hash('other')},body));
+});

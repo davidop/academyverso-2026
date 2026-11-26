@@ -12,6 +12,7 @@ on:
   reaction: eyes
   roles: [admin, maintainer, write, triage, read]
 if: >-
+  vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED != 'true' &&
   !github.event.issue.pull_request &&
   contains(github.event.issue.body, '### Tipo de objeto') &&
   contains(github.event.issue.body, '### Alias del explorador') &&
