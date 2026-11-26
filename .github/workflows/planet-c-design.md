@@ -9,7 +9,7 @@ permissions:
   contents: read
   actions: read
 engine: copilot
-model: gemini-3.8-flash
+model: mai-code-2-flash
 timeout-minutes: 5
 max-ai-credits: 1
 safe-outputs:
