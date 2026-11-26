@@ -66,3 +66,38 @@ test('pending admin block cannot be undone by replay or unhide; legacy row not m
  assert.equal((await ingest(env,makeEvent(45).event)).status,409);
  assert.equal((await objects(env)).length,0);db.close();
 });
+
+test('una Issue sin fila (abierta desde GitHub) se puede bloquear antes de publicarse; desocultar algo inexistente da 404',async()=>{
+ const {db,env}=setup();
+ assert.equal((await hide(env,46,false)).status,404);
+ assert.equal((await hide(env,46,true)).status,200);
+ assert.equal(db.prepare('SELECT factory_state,hidden FROM objects WHERE issue_number=46').get().factory_state,'blocked');
+ assert.equal((await ingest(env,makeEvent(46).event)).status,409);
+ assert.equal((await hide(env,46,false)).status,409);
+ assert.equal((await objects(env)).length,0);db.close();
+});
+test('un cuerpo editado después de publicar (nombre, alias o tipo) no se ingiere',async()=>{
+ const {db,env}=setup(),{event}=makeEvent(47);pending(db,47);
+ const edited={...event,issue:{...event.issue,body:event.issue.body.replace('### Nombre del objeto\n\nNexus','### Nombre del objeto\n\nOtro nombre')}};
+ assert.notEqual(edited.issue.body,event.issue.body);
+ assert.equal((await ingest(env,edited)).status,400);
+ assert.equal((await objects(env)).length,0);
+ assert.equal((await ingest(env,event)).status,200);db.close();
+});
+test('con la factoría activa, evolve/rollback no tocan un mundo publicado por la factoría',async()=>{
+ const {db,env}=setup(),{event}=makeEvent(48);pending(db,48);
+ assert.equal((await ingest(env,event)).status,200);
+ const r=await worker.fetch(new Request('https://worker.test/api/worlds/48/evolve',{method:'POST',headers:{authorization:'Bearer '+'a'.repeat(43)},body:JSON.stringify({instruction:'volcanes'})}),env,{waitUntil(){}});
+ assert.equal(r.status,409);
+ assert.equal(db.prepare('SELECT world_version FROM objects WHERE issue_number=48').get().world_version,1);db.close();
+});
+test('una combinación de flags sin WorldGen sirve el universo clásico y lo avisa en /api/health',async()=>{
+ const {db,env}=setup();pending(db,49,'legacy');db.prepare('UPDATE objects SET hidden=0 WHERE issue_number=49').run();
+ const off={...env,WORLDGEN_ENABLED:'false'};
+ const r=await worker.fetch(new Request('https://worker.test/api/objects'),off,{});
+ assert.equal(r.status,200);assert.equal((await r.json()).objects.length,1);
+ const h=await (await worker.fetch(new Request('https://worker.test/api/health'),off,{})).json();
+ assert.equal(h.factory_enabled,true);assert.equal(h.factory_ready,false);
+ const h2=await (await worker.fetch(new Request('https://worker.test/api/health'),env,{})).json();
+ assert.equal(h2.factory_ready,true);db.close();
+});

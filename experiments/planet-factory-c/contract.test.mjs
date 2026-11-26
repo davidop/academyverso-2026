@@ -56,5 +56,38 @@ test('publication binds exact candidate, issue snapshot, curated text and review
 test('raw HTML and links fail deterministic admission rather than being cleaned away',()=>{
  const body=issueBody({type:'planeta',alias:'QA',name:'Nexus',description:'Planeta oceánico con tres lunas'});
  const event={action:'opened',issue:{number:42,state:'open',body:body.replace('tres lunas','tres lunas <span>oculto</span>')}};
- assert.throws(()=>prepareProposal(event));
+ assert.throws(()=>prepareProposal(event),ProposalRejected);
+});
+
+import {ProposalRejected} from './prepare.mjs';
+function publishFor(body,n=42){
+ const p=prepareProposal({action:'opened',issue:{number:n,state:'open',body}});
+ const data={type:p.type,name:p.name,alias:p.alias,description:p.description};
+ const value=fallbackWorldSpec({issue_number:n,...data}),bytes=Buffer.from(JSON.stringify(value,null,2)+'\n');
+ const candidate={value,bytes,digest:hash(bytes)},design={decision:'accept',concept:'Planeta azul con tres lunas.',requirements:['tres lunas']};
+ return publication(p,design,candidate,{decision:'approve',spec_sha256:candidate.digest,findings:[]},body);
+}
+test('publication replaces a multi-line description (LF y CRLF) entera, sin perder la sección siguiente',()=>{
+ const lf=issueBody({type:'planeta',alias:'QA',name:'Nexus',description:'Planeta azul\ncon tres lunas visibles'});
+ for(const body of [lf,lf.replace(/\n/g,'\r\n'),lf.split('\n\n---')[0]]){
+  const pub=publishFor(body);
+  assert.equal(parseIssue(pub.body).description,'Planeta azul con tres lunas.');
+  assert.doesNotMatch(pub.body,/con tres lunas visibles/);
+  assert.equal(parseIssue(pub.body).name,'Nexus');
+ }
+});
+test('el comentario ata la publicación al cuerpo exacto que se publica',()=>{
+ const pub=publishFor(issueBody({type:'planeta',alias:'QA',name:'Nexus',description:'Planeta azul con tres lunas'}));
+ assert.match(pub.comment,new RegExp('^factory-body-sha256: '+hash(pub.body)+'$','m'));
+});
+test('el estado terminal se puede aplicar aunque la admisión no llegara a etiquetarse',()=>{
+ assert.deepEqual(labelPlan(['cosmic-object'],'planet:held'),{add:'planet:held',remove:[]});
+ assert.deepEqual(labelPlan([],'planet:rejected'),{add:'planet:rejected',remove:[]});
+ assert.throws(()=>labelPlan([],'planet:ready'));
+});
+test('los rechazos de contenido son deterministas (rejected); un evento inválido no',()=>{
+ const body=issueBody({type:'planeta',alias:'QA',name:'Nexus',description:'Planeta azul con tres lunas'});
+ assert.throws(()=>prepareProposal({action:'opened',issue:{number:42,state:'open',body:body.replace('planeta','script')}}),ProposalRejected);
+ assert.throws(()=>prepareProposal({action:'opened',issue:{number:42,state:'open',body:body+'\n### Nombre del objeto\nOtro'}}),ProposalRejected);
+ assert.throws(()=>prepareProposal({action:'edited',issue:{number:42,state:'open',body}}),e=>!(e instanceof ProposalRejected));
 });

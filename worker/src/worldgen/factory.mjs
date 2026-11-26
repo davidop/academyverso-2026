@@ -30,6 +30,9 @@ export async function parseFactoryCandidate(incoming,data,env){
  const original=parseIssue(issue.body);
  for(const k of ['type','name','alias','description'])if(original[k]!==data[k])fail();
  if(onlyField(body,'factory-issue')!==String(issue.number))fail();
+ // Tipo, nombre y alias salen del cuerpo del evento: solo valen si es exactamente el cuerpo que publicó la factoría.
+ const bodyHash=onlyField(body,'factory-body-sha256');
+ if(!HEX.test(bodyHash)||await sha256(String(issue.body))!==bodyHash)fail();
  const expected=onlyField(body,'factory-spec-sha256'),encoded=onlyField(body,'factory-spec-base64');
  if(!HEX.test(expected)||!encoded||encoded.length>21846||!/^[A-Za-z0-9_-]+$/.test(encoded))fail();
  let bytes,raw;

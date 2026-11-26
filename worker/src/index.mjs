@@ -28,6 +28,13 @@ async function upsert(env,issue,data,visibility='keep'){
  const publish=visibility==='approved'?',hidden=0':'';
  await env.DB.prepare(`INSERT INTO objects(issue_number,type,name,alias,description,issue_url,created_at,hidden,enriched) VALUES(?,?,?,?,?,?,datetime('now'),?,0) ON CONFLICT(issue_number) DO UPDATE SET type=excluded.type,name=excluded.name,alias=excluded.alias,description=excluded.description,issue_url=excluded.issue_url${publish}`).bind(issue.number,data.type,data.name,data.alias,data.description,issue.html_url,hiddenOnInsert).run()
 }
+// Con la factoría activa, un mundo que no es legacy solo cambia por una nueva revisión de la
+// factoría: evolve/rollback guardarían un spec sin revisar. Ante cualquier duda, bloquear.
+async function factoryLocked(env,id){
+ if(!factoryEnabled(env))return false;
+ try{const row=await env.DB.prepare('SELECT factory_state FROM objects WHERE issue_number=?').bind(id).first();return !row||row.factory_state!=='legacy';}
+ catch(_){return true}
+}
 async function enrich(env,issueNo,data){if(!env.AI)return;try{const text=await env.AI.run('@cf/meta/llama-3.1-8b-instruct',{messages:[{role:'system',content:'Eres un asistente de diseño de mundos infantiles. Reescribe la descripción dada en una frase positiva y apta para todos los públicos, 100 caracteres máximo. No inventes funciones técnicas. Devuelve SOLO una frase.'},{role:'user',content:data.description}]});const description=String(text.response||'').trim().slice(0,100);if(description)await env.DB.prepare('UPDATE objects SET enriched=1, ai_detail=? WHERE issue_number=?').bind(description,issueNo).run()}catch(e){console.warn('Enrichment skipped',e?.message)}}
 async function rateLimit(env,ip){const since=Date.now()-3600_000;const key=`ip:${ip}`;const prior=await env.DB.prepare('SELECT last_at,count FROM rates WHERE key=?').bind(key).first();if(prior&&prior.last_at>since&&prior.count>=5)throw new Error('Límite de 5 creaciones por hora alcanzado');await env.DB.prepare('INSERT INTO rates(key,last_at,count) VALUES(?,?,1) ON CONFLICT(key) DO UPDATE SET last_at=excluded.last_at,count=CASE WHEN rates.last_at<? THEN 1 ELSE rates.count+1 END').bind(key,Date.now(),since).run()}
 async function verifyHmac(request,raw,secret){const sig=request.headers.get('x-academyverso-signature')||'';const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const bytes=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(raw));const expected='sha256='+Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');return sig.length===expected.length&&[...sig].reduce((a,ch,i)=>a|(ch.charCodeAt(0)^expected.charCodeAt(i)),0)===0}
@@ -38,25 +45,27 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
    try{
      const check=await env.DB.prepare("SELECT COUNT(*) AS total FROM sqlite_master WHERE type='table' AND name IN ('objects','rates')").first();
      const ready=Number(check?.total||0)===2;
-     let worldgenReady=false;
+     let worldgenReady=false,factoryReady=false;
      if(ready&&worldgenEnabled(env)){
        try{
          const versions=await env.DB.prepare("SELECT COUNT(*) AS total FROM sqlite_master WHERE type='table' AND name='world_revisions'").first();
          const columns=(await env.DB.prepare('PRAGMA table_info(objects)').all()).results||[];
          const names=new Set(columns.map(x=>x.name));
          worldgenReady=Number(versions?.total||0)===1&&['world_spec','world_status','world_version','world_owner_token_hash'].every(x=>names.has(x));
-       }catch(_){worldgenReady=false}
+         factoryReady=worldgenReady&&factoryEnabled(env)&&['factory_state','factory_hash'].every(x=>names.has(x));
+       }catch(_){worldgenReady=false;factoryReady=false}
      }
-     return respond({ok:ready,database_connected:ready,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI,create_enabled:!!env.GITHUB_TOKEN,worldgen_enabled:worldgenReady},ready?200:503);
+     // Una flag de factoría mal combinada o sin migrar se informa aquí; /api/objects sigue sirviendo el universo.
+     const factory=factoryEnabled(env)?{factory_enabled:true,factory_ready:factoryReady}:{};
+     return respond({ok:ready,database_connected:ready,repo:env.GITHUB_REPO||'davidop/academyverso-2026',ai_enabled:!!env.AI,create_enabled:!!env.GITHUB_TOKEN,worldgen_enabled:worldgenReady,...factory},ready?200:503);
    }catch(err){console.warn('D1 health check failed',err?.message);return respond({ok:false,database_connected:false,error:'D1 no disponible'},503)}
  }
  if(url.pathname==='/api/objects'&&request.method==='GET'){
-    if(factoryEnabled(env)&&!worldgenEnabled(env))return respond({error:'Factoría sin WorldGen'},503);
    const legacy='issue_number,type,name,alias,description,issue_url,ai_detail,enriched,created_at';
    let result;
    if(worldgenEnabled(env)){
      try{result=await env.DB.prepare('SELECT '+legacy+',world_spec,world_status,world_version FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all()}
-     catch(error){if(factoryEnabled(env))return respond({error:'Esquema WorldGen no disponible'},503);console.warn('WorldGen columns unavailable; serving legacy objects')}
+     catch(error){console.warn('WorldGen columns unavailable; serving legacy objects')}
    }
    if(!result)result=await env.DB.prepare('SELECT '+legacy+' FROM objects WHERE hidden=0 ORDER BY issue_number DESC LIMIT 200').all();
    return respond({objects:result.results||[]});
@@ -73,6 +82,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
  if(worldMutation&&request.method==='POST'){
   if(!worldgenEnabled(env))return respond({error:'Evolución de mundos desactivada'},503);
   const id=Number(worldMutation[1]),op=worldMutation[2];
+  if(await factoryLocked(env,id))return respond({error:'Este mundo lo gestiona la factoría de planetas'},409);
   const token=(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'');
   if(!/^[A-Za-z0-9_-]{43}$/.test(token))return respond({error:'Identificación necesaria'},401);
   const candidate=await env.DB.prepare('SELECT world_owner_token_hash FROM objects WHERE issue_number=? AND hidden=0').bind(id).first();
@@ -119,6 +129,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
    if(!command)return respond({ignored:true});
    if(!authorizedWorldComment(incoming))return respond({error:'Solo el autor verificado de la Issue puede evolucionar o restaurar el mundo'},403);
    const id=Number(incoming.issue.number);
+   if(await factoryLocked(env,id))return respond({error:'Este mundo lo gestiona la factoría de planetas',code:'factory',issue_number:id},409);
    const result=command.action==='evolve'
      ? await evolveWorld(env,id,command.instruction)
      : await rollbackWorld(env,id,command.version);
@@ -157,8 +168,15 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   if(!env.ADMIN_TOKEN||request.headers.get('authorization')!==`Bearer ${env.ADMIN_TOKEN}`)return respond({error:'No autorizado'},401);
   const {issue_number,hidden=true}=await request.json();const n=Number(issue_number);if(!Number.isInteger(n)||n<1)return respond({error:'Número de Issue inválido'},400);
   if(factoryEnabled(env)){
+   // Una Issue abierta desde GitHub no tiene fila hasta que se publica: al ocultarla se crea una
+   // fila «blocked» para que la factoría no pueda publicarla después (persistFactoryCandidate
+   // solo actualiza filas «pending»).
+   if(hidden)await env.DB.prepare("INSERT INTO objects(issue_number,type,name,alias,description,issue_url,created_at,hidden,enriched,factory_state) VALUES(?,'planeta','(bloqueada)','-','(bloqueada por moderación)',?,datetime('now'),1,0,'blocked') ON CONFLICT(issue_number) DO NOTHING").bind(n,`https://github.com/${env.GITHUB_REPO}/issues/${n}`).run();
    const result=await env.DB.prepare("UPDATE objects SET hidden=?,factory_state=CASE WHEN factory_state='pending' AND ?=1 THEN 'blocked' ELSE factory_state END WHERE issue_number=? AND (?=1 OR factory_state NOT IN ('pending','blocked'))").bind(hidden?1:0,hidden?1:0,n,hidden?1:0).run();
-   if(!result.meta?.changes)return respond({error:'No se puede mostrar una propuesta sin publicar'},409);
+   if(!result.meta?.changes){
+    const exists=await env.DB.prepare('SELECT 1 AS found FROM objects WHERE issue_number=?').bind(n).first();
+    return exists?respond({error:'No se puede mostrar una propuesta sin publicar'},409):respond({error:'Objeto no encontrado'},404);
+   }
   }else await env.DB.prepare('UPDATE objects SET hidden=? WHERE issue_number=?').bind(hidden?1:0,n).run();
   return respond({ok:true,issue_number:n,hidden})
  }

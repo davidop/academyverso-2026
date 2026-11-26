@@ -38,6 +38,9 @@ jobs:
           gh aw compile .github/workflows/cosmic-object-triage.md
           test -s .github/workflows/cosmic-object-triage.lock.yml
           cp experiments/planet-factory-c/coordinator.yml .github/workflows/planet-factory-c.yml
+      - name: Committed locks and coordinator match their sources
+        # Lo que se ejecuta son los .lock.yml: si alguien edita el .md y no recompila, el CI debe fallar.
+        run: git diff --exit-code -- .github/workflows/
       - name: Inventory compiler-selected Action versions
         run: |
           grep -E 'uses: (actions/|github/)' .github/workflows/planet-c-*.lock.yml .github/workflows/cosmic-object-triage.lock.yml | sort -u || true

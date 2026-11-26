@@ -20,6 +20,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   prepare:
+    outputs:
+      admission: ${{ steps.proposal.outputs.admission }}
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa'))
     permissions:
       contents: read
@@ -35,21 +37,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node experiments/planet-factory-c/stages.mjs stage planet:admission
       - name: Prepare bounded proposal
+        id: proposal
         env:
           FIXTURE: ${{ inputs.fixture || 'valid' }}
         run: node experiments/planet-factory-c/prepare.mjs
       - uses: actions/upload-artifact@v7
+        if: steps.proposal.outputs.admission == 'accept'
         with:
           name: planet-factory-proposal-${{ github.run_attempt }}
           path: planet-input/proposal/proposal.json
           if-no-files-found: error
           retention-days: 1
       - name: Stage design
+        if: steps.proposal.outputs.admission == 'accept'
         env:
           GH_TOKEN: ${{ github.token }}
         run: node experiments/planet-factory-c/stages.mjs stage planet:design
   design:
     needs: prepare
+    if: needs.prepare.outputs.admission == 'accept'
     uses: ./.github/workflows/planet-c-design.lock.yml
     secrets:
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
@@ -196,8 +202,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DECISION: ${{ needs.gate-brief.outputs.decision }}
+          ADMISSION: ${{ needs.prepare.outputs.admission }}
         run: |
-          if [ "$DECISION" = reject ]; then
+          if [ "$DECISION" = reject ] || [ "$ADMISSION" = reject ]; then
             node experiments/planet-factory-c/stages.mjs stage planet:rejected
           else
             node experiments/planet-factory-c/stages.mjs stage planet:held

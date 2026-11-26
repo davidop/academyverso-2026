@@ -15,13 +15,18 @@ export function labelPlan(labels,target){
  if(current.length>1)throw Error('Ambiguous stage; manual reconciliation required');
  const from=current[0];
  if(from===target)return {add:null,remove:[]};
+ // Si la admisión falla antes de poner su etiqueta, el estado terminal debe poder aplicarse igualmente.
+ if(!from&&(target==='planet:held'||target==='planet:rejected'))return {add:target,remove:[]};
  if((!from&&target!=='planet:admission')||(from&&!next[from]?.includes(target)))throw Error('Invalid stage transition');
  return {add:target,remove:from?[from]:[]};
 }
 function issueBodyWithDescription(body,description){
  if(hasTriageMarker(body))throw Error('Existing publication marker');
- const changed=body.replace(/(^### Descripción creativa[ \t]*\r?\n+)[\s\S]*?(?=\n### |\n---|$)/m,(_m,header)=>header+description+'\n');
- if(changed===body&&!body.includes(description))throw Error('Missing description section');
+ // Sin flag m: $ es el final del cuerpo, así que se sustituye la descripción entera aunque
+ // tenga varias líneas o finales CRLF, y se conservan los saltos antes de la sección siguiente.
+ const section=/((?:^|\r?\n)### Descripción creativa[ \t]*(?:\r?\n)+)[\s\S]*?(?=(?:\r?\n)*(?:\r?\n### |\r?\n---)|\s*$)/;
+ if(!section.test(body))throw Error('Missing description section');
+ const changed=body.replace(section,(_m,header)=>header+description);
  return changed.trimEnd()+(changed.includes('\n---')?'\n\n':'\n\n---\n')+TRIAGE_MARKER+'\n';
 }
 export function publication(proposal,design,candidate,verdict,body){
@@ -31,7 +36,7 @@ export function publication(proposal,design,candidate,verdict,body){
  brief(design,proposal);spec(candidate.value,proposal);review(verdict,candidate.digest);
  if(hash(candidate.bytes)!==candidate.digest)throw Error('Candidate bytes changed');
  const updated=issueBodyWithDescription(body,design.concept);
- const comment='### Lo que hemos entendido\n\nPropuesta revisada por la factoría de planetas.\n\n### Descripción que aparecerá en el planeta\n\n'+design.concept+'\n\n'+TRIAGE_MARKER+'\n\n[academyverso-factory:ready:v1]\nfactory-issue: '+proposal.issue_number+'\nfactory-spec-sha256: '+candidate.digest+'\nfactory-spec-base64: '+Buffer.from(candidate.bytes).toString('base64url')+'\n';
+ const comment='### Lo que hemos entendido\n\nPropuesta revisada por la factoría de planetas.\n\n### Descripción que aparecerá en el planeta\n\n'+design.concept+'\n\n'+TRIAGE_MARKER+'\n\n[academyverso-factory:ready:v1]\nfactory-issue: '+proposal.issue_number+'\nfactory-body-sha256: '+hash(updated)+'\nfactory-spec-sha256: '+candidate.digest+'\nfactory-spec-base64: '+Buffer.from(candidate.bytes).toString('base64url')+'\n';
  if(parseTriagedIssue(updated,comment).description!==design.concept||parseIssue(updated).description!==design.concept)throw Error('Curated body/comment mismatch');
  return {body:updated,comment};
 }
@@ -75,14 +80,21 @@ if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1]).href){
    if(proposal.issue_number!==no)throw Error('Proposal issue mismatch');
    const cand=read('handoff/spec/spec.json');
    const pub=publication(proposal,read('handoff/brief/brief.json').value,cand,read('handoff/review/review.json').value,issue.body);
-   const result=await api('POST',path+'/comments',{body:pub.comment});
-   if(result.user?.login!==process.env.EXPECTED_BOT)throw Error('Publication comment not from trusted App');
+   // Comprobar que la Issue no ha cambiado ANTES de escribir nada público.
    const fresh=await api('GET',path);
    if(fresh.state!=='open'||hash(fresh.body)!==proposal.body_sha256)throw Error('Issue edited during publication');
-   await api('PATCH',path,{body:pub.body});
-   const check=await api('GET',path);
-   if(check.state!=='open'||check.body!==pub.body)throw Error('Publication body mismatch');
-   await applyLabel(api,path,check.labels.map(x=>x.name),'planet:ready');
+   const result=await api('POST',path+'/comments',{body:pub.comment});
+   try{
+    if(result.user?.login!==process.env.EXPECTED_BOT)throw Error('Publication comment not from trusted App');
+    await api('PATCH',path,{body:pub.body});
+    const check=await api('GET',path);
+    if(check.state!=='open'||check.body!==pub.body)throw Error('Publication body mismatch');
+    await applyLabel(api,path,check.labels.map(x=>x.name),'planet:ready');
+   }catch(e){
+    // No dejar un comentario con marcador válido en una Issue que acabará retenida.
+    if(result?.id)await api('DELETE','/issues/comments/'+result.id,null,true).catch(()=>{});
+    throw e;
+   }
   }else throw Error('Unknown command');
  }
 }
