@@ -21,7 +21,7 @@ function issueFields(body){
  const text=String(body||'');
  for(const [title,field] of [['Tipo de objeto','type'],['Alias del explorador','alias'],['Nombre del objeto','name'],['Descripción creativa','description']]){
   const match=text.match(new RegExp('(?:^|\\n)### '+title+'\\s*\\n+([\\s\\S]*?)(?=\\n### |\\n---|$)'));
-  if(match)fields[field]=match[1].replace(/\s+/g,' ').trim();
+  if(match)fields[field]=unescapeMarkdown(match[1]).replace(/\s+/g,' ').trim();
  }
  return fields;
 }
