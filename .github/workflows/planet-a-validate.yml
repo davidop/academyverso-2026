@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install gh-aw compiler
@@ -31,7 +31,7 @@ jobs:
       - name: Reject unexpected write permissions in generated workflows
         run: |
           ruby -ryaml -e 'ARGV.each { |p| d=YAML.safe_load_file(p, aliases: true); d.fetch("jobs",{}).merge("workflow"=>d).each { |name,j| perms=j["permissions"]; abort("Unexpected write permission in #{p} job #{name}: #{perms}") if perms=="write-all" || (perms.is_a?(Hash) && perms.values.include?("write")) } }' .github/workflows/planet-a-*.lock.yml
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: planet-a-compiled-preview
