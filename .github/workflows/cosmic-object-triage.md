@@ -23,8 +23,13 @@ permissions:
   issues: read
 engine: copilot
 tools:
+  # Shell explícita de solo lectura (exigida por strict con min-integrity: none).
+  bash: ["cat", "ls", "find", "grep", "head", "tail", "wc"]
   github:
     toolsets: [issues]
+    # Las aportaciones vienen del público (sin permisos en el repo); el agente
+    # las trata como datos hostiles y solo escribe vía safe-outputs.
+    min-integrity: none
 safe-outputs:
   # GITHUB_TOKEN cannot trigger another issues workflow; use a dedicated App
   # identity so the label event can wake ingestion and its author is verifiable.
