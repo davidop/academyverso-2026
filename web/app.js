@@ -1,5 +1,4 @@
 import {advanceMission,emptyMissionState,missionProgress} from './missions.mjs';
-import {webMcpEnabled,registerWebMcp} from './webmcp.mjs';
 import {portalChoices,selectPortalPair,portalFlightPose,portalColor} from './portal.mjs';
 import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
 import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
@@ -684,11 +683,19 @@ const webMcpAdapter={
     return null;
   }
 };
-void registerWebMcp({
-  enabled:webMcpEnabled(location.search,EMBED||window.top!==window),
-  document,adapter:webMcpAdapter
-}).then(status=>{
-  if(status==='failed')console.warn('AcademyVerso: registro WebMCP no disponible; la interfaz normal sigue activa.');
-});
+// El módulo solo se descarga si se pide ?webmcp=1 fuera de un iframe: la app normal
+// no depende de él y un fallo al cargarlo no la tumba.
+const webMcpEmbedded=EMBED||window.top!==window;
+if(!webMcpEmbedded&&new URLSearchParams(location.search).get('webmcp')==='1'){
+  import('./webmcp.mjs')
+    .then(({webMcpEnabled,registerWebMcp})=>registerWebMcp({
+      enabled:webMcpEnabled(location.search,webMcpEmbedded),
+      document,adapter:webMcpAdapter
+    }))
+    .then(status=>{
+      if(status==='failed')console.warn('AcademyVerso: registro WebMCP no disponible; la interfaz normal sigue activa.');
+    })
+    .catch(()=>console.warn('AcademyVerso: no se pudo cargar WebMCP; la interfaz normal sigue activa.'));
+}
 if(API){$('connection').textContent='Conectando…';sync();setInterval(sync,Math.max(3000,Number(config.POLL_MS)||5000));}
 else{$('connection').textContent='Modo demostración';$('last-sync').textContent='6 objetos de ejemplo · Backend pendiente';}
