@@ -5,10 +5,10 @@ workers_dev = true
 
 [vars]
 GITHUB_REPO = "davidop/academyverso-2026"
-# Keep disabled until migration and live model are validated.
-WORLDGEN_ENABLED = "false"
-# Requires migration 0003 and coordinated activation. Keep off.
-PLANET_FACTORY_ENABLED = "false"
+# Activado el 26/11/2026: migraciones 0001-0003 aplicadas y modelos validados con fixtures.
+WORLDGEN_ENABLED = "true"
+# Va junto con la variable de Actions ACADEMYVERSO_PLANET_FACTORY_ENABLED; no activar por separado.
+PLANET_FACTORY_ENABLED = "true"
 ALLOWED_ORIGIN = "https://davidop.github.io"
 # Login exacto de la GitHub App de triage: mismo valor que la variable de
 # Actions ACADEMYVERSO_TRIAGE_BOT, terminado en [bot]. Va aquí y no en el panel
