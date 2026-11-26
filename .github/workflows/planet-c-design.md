@@ -9,7 +9,7 @@ permissions:
   contents: read
   actions: read
 engine: copilot
-model: mai-code-2-flash
+model: claude-sonnet-5.5
 timeout-minutes: 5
 max-ai-credits: 1
 safe-outputs:
