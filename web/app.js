@@ -579,7 +579,7 @@ function updateCreateUI(){
  $('submit-object').textContent=createEnabled?'Lanzar al universo 🚀':'Continuar en GitHub ↗';
  const hint=$('create-form').querySelector('.micro');
  if(hint)hint.textContent=createEnabled
-   ? 'Tu creación se registrará como GitHub Issue pública y aparecerá en el universo. Evita datos personales.'
+   ? 'Tu creación se registrará como GitHub Issue pública y aparecerá en el universo cuando la apruebe el agente de curaduría. Evita datos personales.'
    : 'El universo ya consulta Cloudflare D1, pero crear Issues desde la web requiere activar GITHUB_TOKEN. Puedes continuar en GitHub con los campos precargados.';
 }
 async function checkCreateCapability(){
@@ -625,7 +625,9 @@ $('create-form').addEventListener('submit',async e=>{
    issueLink.target='_blank';
    issueLink.rel='noopener noreferrer';
    issueLink.textContent=`Ver Issue #${registeredIssue} en GitHub ↗`;
-   status.replaceChildren(document.createTextNode('¡Registrado! Tu creación ya forma parte de AcademyVerso. '),issueLink);
+   status.replaceChildren(document.createTextNode(data.pending_triage
+     ? '¡Recibido! El agente de curaduría está revisando tu propuesta: aparecerá en el universo en unos minutos si la aprueba. '
+     : '¡Registrado! Tu creación ya forma parte de AcademyVerso. '),issueLink);
    if(typeof data.edit_token==='string'&&/^[A-Za-z0-9_-]{43}$/.test(data.edit_token)){
     storeWorldToken(registeredIssue,data.edit_token);
     const notice=document.createElement('p');

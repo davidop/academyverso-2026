@@ -19,7 +19,14 @@ function equalConstantTime(actual,expected){
 }
 
 const originHeaders=(origin,env)=>{const allowed=String(env.ALLOWED_ORIGIN||'');return origin&&origin===allowed?{'access-control-allow-origin':origin,'access-control-allow-methods':'GET,POST,OPTIONS','access-control-allow-headers':'content-type,authorization','vary':'origin'}:{'vary':'origin'}};
-async function upsert(env,issue,data){await env.DB.prepare(`INSERT INTO objects(issue_number,type,name,alias,description,issue_url,created_at,hidden,enriched) VALUES(?,?,?,?,?,?,datetime('now'),0,0) ON CONFLICT(issue_number) DO UPDATE SET type=excluded.type,name=excluded.name,alias=excluded.alias,description=excluded.description,issue_url=excluded.issue_url`).bind(issue.number,data.type,data.name,data.alias,data.description,issue.html_url).run()}
+// visibility: 'pending' = formulario web, se guarda oculto hasta que el triage
+// lo apruebe; 'approved' = ingesta con comentario de triage verificado, se
+// publica; 'keep' = ruta legacy, inserta visible y no toca la visibilidad.
+async function upsert(env,issue,data,visibility='keep'){
+ const hiddenOnInsert=visibility==='pending'?1:0;
+ const publish=visibility==='approved'?',hidden=0':'';
+ await env.DB.prepare(`INSERT INTO objects(issue_number,type,name,alias,description,issue_url,created_at,hidden,enriched) VALUES(?,?,?,?,?,?,datetime('now'),?,0) ON CONFLICT(issue_number) DO UPDATE SET type=excluded.type,name=excluded.name,alias=excluded.alias,description=excluded.description,issue_url=excluded.issue_url${publish}`).bind(issue.number,data.type,data.name,data.alias,data.description,issue.html_url,hiddenOnInsert).run()
+}
 async function enrich(env,issueNo,data){if(!env.AI)return;try{const text=await env.AI.run('@cf/meta/llama-3.1-8b-instruct',{messages:[{role:'system',content:'Eres un asistente de diseño de mundos infantiles. Reescribe la descripción dada en una frase positiva y apta para todos los públicos, 100 caracteres máximo. No inventes funciones técnicas. Devuelve SOLO una frase.'},{role:'user',content:data.description}]});const description=String(text.response||'').trim().slice(0,100);if(description)await env.DB.prepare('UPDATE objects SET enriched=1, ai_detail=? WHERE issue_number=?').bind(description,issueNo).run()}catch(e){console.warn('Enrichment skipped',e?.message)}}
 async function rateLimit(env,ip){const since=Date.now()-3600_000;const key=`ip:${ip}`;const prior=await env.DB.prepare('SELECT last_at,count FROM rates WHERE key=?').bind(key).first();if(prior&&prior.last_at>since&&prior.count>=5)throw new Error('Límite de 5 creaciones por hora alcanzado');await env.DB.prepare('INSERT INTO rates(key,last_at,count) VALUES(?,?,1) ON CONFLICT(key) DO UPDATE SET last_at=excluded.last_at,count=CASE WHEN rates.last_at<? THEN 1 ELSE rates.count+1 END').bind(key,Date.now(),since).run()}
 async function verifyHmac(request,raw,secret){const sig=request.headers.get('x-academyverso-signature')||'';const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const bytes=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(raw));const expected='sha256='+Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');return sig.length===expected.length&&[...sig].reduce((a,ch,i)=>a|(ch.charCodeAt(0)^expected.charCodeAt(i)),0)===0}
@@ -81,7 +88,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   const raw=await request.text();if(raw.length>2400)return respond({error:'Solicitud demasiado grande'},413);
   const data=validate(JSON.parse(raw));const ip=request.headers.get('cf-connecting-ip')||'unverified';await rateLimit(env,ip);
   const result=await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues`,{method:'POST',headers:{'accept':'application/vnd.github+json','authorization':`Bearer ${env.GITHUB_TOKEN}`,'x-github-api-version':'2022-11-28','user-agent':'AcademyVerso-Worker','content-type':'application/json'},body:JSON.stringify({title:`${data.type}: ${data.name}`,body:issueBody(data)})});
-  if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();await upsert(env,issue,data);
+  if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();await upsert(env,issue,data,'pending');
   let edit_token;
   if(worldgenEnabled(env)){
    try{
@@ -90,7 +97,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
    }catch(err){console.warn('Owner token not persisted',err?.name);edit_token=undefined}
   }
   ctx.waitUntil(enrich(env,issue.number,data));if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,issue,data));
-  return respond({issue_number:issue.number,issue_url:issue.html_url,...(edit_token?{edit_token}:{})},201)
+  return respond({issue_number:issue.number,issue_url:issue.html_url,pending_triage:true,...(edit_token?{edit_token}:{})},201)
  }
  if(url.pathname==='/api/ingest'&&request.method==='POST'){
   const raw=await request.text();if(!env.INGEST_SECRET||!await verifyHmac(request,raw,env.INGEST_SECRET))return respond({error:'Firma incorrecta'},401);
@@ -122,7 +129,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   }else{
    data=parseIssue(incoming.issue.body);
   }
-  await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data);
+  await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data,incoming.triage_comment?'approved':'keep');
   ctx.waitUntil(enrich(env,incoming.issue.number,data));
   if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,{...incoming.issue,worldgen_action:incoming.action},data));
   return respond({ok:true,issue_number:incoming.issue.number})

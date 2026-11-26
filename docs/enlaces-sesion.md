@@ -30,7 +30,7 @@
 | Revisar backend | [Worker health](https://academyverso-api.david-oliva-paredes.workers.dev/api/health) |
 | Revisar datos | [D1 vía API pública](https://academyverso-api.david-oliva-paredes.workers.dev/api/objects) |
 | Mostrar viaje de cámara de referencia | [PR #9 fusionada](https://github.com/davidop/academyverso-2026/pull/9) |
-| Presentación visual alternativa en borrador | [PR #1](https://github.com/davidop/academyverso-2026/pull/1) |
+| Presentación con el kit de movimiento sobre la plantilla oficial (en revisión) | [PR #1](https://github.com/davidop/academyverso-2026/pull/1) |
 | Viaje Vice Nebula (ensayo equipo) | [Issue #10](https://github.com/davidop/academyverso-2026/issues/10) |
 | Viaje Colonia Centinela (ensayo equipo) | [Issue #11](https://github.com/davidop/academyverso-2026/issues/11) |
 | Gestionar permisos agentes | [Guía Copilot/Claude/Codex](https://github.com/davidop/academyverso-2026/blob/main/docs/activar-agentes.md) |

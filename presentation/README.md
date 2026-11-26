@@ -18,7 +18,7 @@ Requiere Node.js 22.12+ y npm.
 3. npm run dev
 4. npm run build
 
-22 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS. Las notas están dentro de slides.md (modo presentador).
+19 diapositivas 16:9 · animaciones de clic · componentes Vue · QR SVG generados sin servicios externos · universo 3D embebido · logos oficiales por HTTPS. Las notas están dentro de slides.md (modo presentador).
 
 ### Plantilla oficial
 
@@ -32,14 +32,58 @@ El diseño sigue `Template Academyverso.potx` (tema Eventekki):
 
 La presentación se aloja en /presentation/ dentro del mismo GitHub Pages, sin reemplazar la app Three.js de la raíz. El pipeline despliega ambas superficies.
 
+## Rediseño en revisión
+
+- [Guion de la charla y demo](storytelling.md)
+- [Sistema de diseño](DESIGN.md)
+- [Plan visual y de movimiento por escena](plan-visual.md)
+
+Son documentos de trabajo; por sí solos no cambian las diapositivas publicadas. El guion y la narrativa del evento son los de `main`; estos documentos describen cómo se aplica el kit de movimiento sobre la plantilla oficial.
+
+### Kit reutilizable sobre la plantilla
+
+- [Archivo de maquetas](../docs/design/academyverso-mockups/README.md): referencias para revisión, nunca se importan al bundle.
+- `ContributionPortal.vue` (S04): QR de Issue inmóvil con apertura reversible de ~950 ms y tres destellos SVG. Usa `clicks` de Slidev y respeta `prefers-reduced-motion`.
+- `LiveUniverse.vue` (S07): iframe con estado de carga, `aria-live` y enlace de respaldo permanente. Apunta a `/?embed=1#universe`, que en la web oculta cabecera, portada, panel del portal y galería: solo queda el lienzo 3D.
+- `MissionTrace.vue` (S10): recorrido de cinco pasos —GitHub Mobile, Issues, Actions, Worker + D1, Three.js— con progreso por clic y aviso de integración pendiente.
+- `SpeakerPortrait.vue` (S02): retratos WebP locales dentro del marco `.speaker-photo` de la plantilla; el handle `@davidop` / `@svg153` se mantiene.
+- El resto de escenas usa el HTML y las clases de la plantilla (`style.css`), no componentes propios.
+
+Reglas al añadir una escena: reservar los 100 px del `AvFooter`, no tapar los logos de patrocinadores, no usar `position: absolute` a sangre sobre `.slidev-layout`, y no introducir colores fuera de los tokens `--av-*`.
+
+Para revisar: abre /#/1, avanza y vuelve con el mando, prueba a 1280 × 720 y en móvil, y activa movimiento reducido.
+
 ## Riesgos y plan de respaldo
 
-La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva 18 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.
+La galaxia mostrará objetos de ejemplo hasta que esté configurado el Worker y Cloudflare D1. No afirmar que las nuevas Issues aparecen en tiempo real antes de una prueba E2E. Los agentes Claude y Codex requieren acceso/políticas habilitados. Los resultados de consola de la diapositiva S15 son ilustrativos: el CI real debe consultarse. Tener abiertas las capturas/PR preparados y la web en una pestaña independiente si falla el iframe.
 
 Guía de agentes: ../docs/activar-agentes.md  
 Guion: ../docs/guion-demo.md
 
 Branding original: materiales de Academyverso, fuera de la licencia MIT del repositorio.
+
+## Pruebas visuales reproducibles
+
+En el PR, el workflow CI usa Google Chrome preinstalado y ejecuta `npm run test:visual`, comprobando las escenas S01, S02, S04, S06, S07, S10, S12, S17 y S19 con Playwright y capturando además las 19 escenas. Comprueba los pasos del formulario, navegación reversible por teclado, enlaces, decodificación real de ambos QR (Issue y hub de sesión), retratos locales de los ponentes, el panel manual de la sesión, los logos de patrocinadores, movimiento reducido y una captura móvil. Las capturas se adjuntan al workflow como artifact `academyverso-visual-<run_id>` y pueden descargarse para inspección antes de fusionar.
+
+Para ejecutarlo localmente:
+
+```bash
+cd presentation
+npm install
+npx playwright install chrome   # solo si no tienes Google Chrome instalado
+npm run test:visual
+```
+
+La configuración usa `channel: 'chrome'` (Google Chrome, igual que en CI), así que el Chromium empaquetado de Playwright no sirve. Los informes se generan en `test-results/` y `playwright-report/`, que están ignorados por git.
+
+**Importante:** el navegador automatizado no reemplaza una prueba con proyector, mando y dos móviles físicos. No mover este PR fuera de Draft antes del visto bueno de ambos ponentes.
+
+[Checklist del ensayo con proyector y mando](ensayo-sala.md)
+
+La diapositiva S07 usa el componente LiveUniverse.vue con indicador de carga y enlace de respaldo permanente a la galaxia en otra pestaña. El test visual captura también los estados revelados por clic de las escenas narrativas.
+
+Las fotografías de S02 se importan localmente desde las imágenes de los ponentes incluidas en la presentación original (PPTX), optimizadas a WebP y servidas desde el propio bundle; no dependen de GitHub ni de una CDN externa.
 
 ## GTA VII: Grand Terraforming Agents
 
@@ -51,7 +95,7 @@ La charla de 55 minutos conserva el título oficial, la experiencia móvil y el 
 
 - 15:00–15:05 introducción y QR.
 - 15:05–15:15 creaciones del público y elección de dos mundos.
-- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (una sola Issue #37 con relevo de agentes; respaldos #23–#25).
+- 15:15–15:40 Copilot construye, Claude mejora, Codex verifica (una sola Issue de misión con relevo de agentes; respaldos escritos con ChatGPT).
 - 15:40–15:50 portal entre los mundos elegidos.
 - 15:50–15:55 conclusiones y preguntas.
 

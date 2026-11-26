@@ -11,9 +11,11 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
-  deploy:
-    environment:
-      name: github-pages
+  # Build and deploy run as separate jobs. With both in one job, deploy-pages
+  # asked for the artifact ~3 s after the upload and kept finding none
+  # ("No artifacts named github-pages"); a job boundary gives the artifact
+  # time to be registered, as in GitHub's reference Pages workflow.
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,5 +39,12 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -18,10 +18,23 @@ fonts:
 <div class="cover-kicker">ACADEMYVERSO 2026 · MISIÓN INTERACTIVA</div>
 <h1 class="cover-title">Programa<br>con IA desde<br>tu <span class="lime">móvil</span></h1>
 <div class="cover-sub">Un móvil. Tres agentes. Un universo creado por todos.</div>
-<div class="cover-platforms"><span>◈ GitHub Mobile</span><span>◉ Copilot</span><span>✳ Claude</span><span>◎ Codex</span></div>
+<div class="cover-platforms"><span>◈ GitHub Mobile</span><span>◉ Copilot</span><span>✳ Claude</span><span>Codex</span></div>
 <div class="cover-stamp">DAVID OLIVA + SERGIO VALVERDE · 26 NOVIEMBRE · 15:00</div>
 
 <!-- David abre preguntando quién ha programado desde el móvil. Sergio anuncia que juntos poblaremos una galaxia. -->
+
+---
+transition: fade
+---
+
+<div class="kicker">APERTURA · TRIPULACIÓN</div>
+<div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
+<div class="speaker-grid">
+ <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="david" name="David Oliva"/></div><div><h2>DAVID OLIVA</h2><img class="speaker-company" src="./assets/logos/knowmad-mood.svg" alt="Knowmad mood"/><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
+ <div class="speaker"><div class="speaker-photo"><SpeakerPortrait person="sergio" name="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><p>GitHub Star · GitHub Community Spain</p><div class="speaker-handle"><i><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
+</div>
+
+<!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->
 
 ---
 layout: space
@@ -33,7 +46,7 @@ transition: fade
  <div><div class="gta-roman">GTA <span>VII</span></div>
  <div class="gta-subtitle">GRAND<br>TERRAFORMING<br>AGENTS</div>
  <p>Todos hablan del próximo gran mundo abierto.<br>¿Y si esta vez <strong>no lo jugáramos, sino que lo construyéramos</strong> con IA desde el móvil?</p>
- <div class="gta-mini">📱 GITHUB MOBILE　·　🤖 COPILOT　·　✳ CLAUDE　·　◎ CODEX</div></div>
+ <div class="gta-mini">📱 GITHUB MOBILE　·　🤖 COPILOT　·　✳ CLAUDE　·　CODEX</div></div>
  <div class="gta-orbital" aria-hidden="true"><div class="gta-sphere"></div><div class="gta-orbit o1"></div><div class="gta-orbit o2"></div><img class="gta-astronaut" src="./assets/template/astronauta-volando.svg" alt="" /></div>
 </div>
 <div class="footnote">GTA VII: Grand Terraforming Agents es un concepto paródico propio, no afiliado a Rockstar Games. Sin imágenes ni logotipos del videojuego.</div>
@@ -42,15 +55,14 @@ transition: fade
 
 
 ---
-transition: slide-left
+layout: space
+transition: fade
+clicks: 1
 ---
 
 <div class="kicker">PARTICIPA · ESCANEA EL QR</div>
 <div class="headline">Escanea. Imagina.<br><span class="gradient">Crea tu planeta.</span></div>
-<div class="qr-layout">
- <QrPortal url="https://github.com/davidop/academyverso-2026/issues/new?template=crear-objeto.yml" label="CREAR OBJETO EN GITHUB"/>
- <div class="qr-steps"><p v-click><b>1</b> Abre el QR en GitHub Mobile o navegador.</p><p v-click><b>2</b> Elige planeta, estrella, luna o estación.</p><p v-click><b>3</b> Escribe tu alias y una descripción.</p><p v-click><b>4</b> Envía la Issue: tu idea queda registrada.</p><small>La alternativa web sin cuenta usa un Cloudflare Worker. Abrir el escenario deseado desde la portada rellena la misión y su marcador.</small></div>
-</div>
+<ContributionPortal :clicks="$clicks" />
 
 <!-- Sergio facilita el QR. David revisa las Issues reales. Una Issue sí se crea aunque aún no esté desplegado el Worker. -->
 
@@ -88,8 +100,7 @@ transition: fade
 
 <div class="kicker">PARTICIPA · ACADEMYVERSO 3D</div>
 <div class="headline compact">Un universo<br><span class="gradient">que conectaremos con un portal.</span></div>
-<div class="live-frame"><iframe title="AcademyVerso 3D interactivo" src="https://davidop.github.io/academyverso-2026/?embed=1#universe" loading="lazy"></iframe><div class="live-flag">● APP REAL　<a href="https://davidop.github.io/academyverso-2026/" target="_blank">ABRIR EN PANTALLA COMPLETA ↗</a></div></div>
-<div class="live-note">Datos desde Cloudflare D1. Las nuevas Issues pueden tardar por la cola de GitHub Actions; verificar la URL y el estado real durante la demo.</div>
+<LiveUniverse />
 
 <!-- Enseñar navegación 3D. Aclarar estado demo vs. live. -->
 
@@ -101,69 +112,11 @@ transition: slide-left
 <div class="headline">No vamos a hablar de IA.<br><span class="gradient">Vamos a ponerla a trabajar.</span></div>
 <div class="two-up">
  <div class="glass dim"><div class="eyebrow">ANTES</div><div class="emoji">💬</div><h2>«Escríbeme código»</h2><p>Copiar. Pegar. Repetir.</p></div>
- <div class="glass highlight" v-click><div class="eyebrow">AHORA</div><div class="emoji">🚀</div><h2>«Hazte cargo de esta tarea»</h2><p>Repositorio · agente · PR · revisión.</p></div>
-</div>
-<div class="footnote">La ventaja que demostramos es el flujo de desarrollo integrado, no la superioridad universal de un modelo.</div>
-
-<!-- Sergio explica la diferencia entre preguntar a un chatbot y delegar un cambio real sobre GitHub. -->
-
----
-transition: slide-left
----
-
-<div class="kicker">CÓMO FUNCIONA · LA MISIÓN</div>
-<div class="headline">Un universo.<br><span class="mint">50 exploradores.</span></div>
-<div class="mission-layout">
- <GalaxyOrbit />
- <div class="stats"><div><b>25–50</b><span>personas en la sala</span></div><div><b>∞</b><span>ideas espaciales</span></div><div><b>3</b><span>agentes trabajando juntos</span></div></div>
-</div>
-<div class="footnote">Planetas, estrellas, lunas y estaciones espaciales: cada asistente imagina su propia creación.</div>
-
-<!-- David introduce AcademyVerso. El universo 3D está creado; la integración en directo requiere su backend. -->
-
----
-transition: fade
----
-
-<div class="kicker">CÓMO FUNCIONA · TRIPULACIÓN</div>
-<div class="headline">Dos ponentes.<br><span class="gradient">Una misión compartida.</span></div>
-<div class="speaker-grid">
- <div class="speaker"><div class="speaker-photo"><img src="https://avatars.githubusercontent.com/u/7433346?v=4" alt="David Oliva"/></div><div><h2>DAVID OLIVA</h2><img class="speaker-company" src="./assets/logos/knowmad-mood.svg" alt="Knowmad mood"/><p>Microsoft MVP · Microsoft Specialist</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>davidop</span></div><small>ARQUITECTURA · AGENTES · DEMO</small></div></div>
- <div class="speaker" v-click><div class="speaker-photo"><img src="https://github.com/svg153.png?size=360" alt="Sergio Valverde"/></div><div><h2>SERGIO VALVERDE</h2><img class="speaker-company" src="./assets/logos/accenture.svg" alt="Accenture"/><p>Platform Engineer · GitHub Star</p><div class="speaker-handle"><i><img src="https://cdn.simpleicons.org/github/DBD6FC" alt=""/></i><span>svg153</span></div><small>GITHUB · EXPERIENCIA · DEMO</small></div></div>
-</div>
-
-<!-- Sergio y David se presentan brevemente. Alternarán explicaciones y demostraciones. -->
-
----
-transition: slide-left
----
-
-<div class="kicker">CÓMO FUNCIONA · EL MÓVIL COMO CONSOLA</div>
-<div class="headline">Diriges trabajo.<br><span class="mint">No escribes cientos de líneas.</span></div>
-<div class="flow">
- <div class="node" v-click><div>📱</div><b>GitHub Mobile</b><small>Instrucciones</small></div><span class="arrow" v-after>→</span>
- <div class="node" v-click><div>🤖</div><b>Agente IA</b><small>Modifica el repo</small></div><span class="arrow" v-after>→</span>
- <div class="node" v-click><div>🔀</div><b>Pull request</b><small>Revisión humana</small></div><span class="arrow" v-after>→</span>
- <div class="node" v-click><div>✨</div><b>App mejorada</b><small>Validación</small></div>
+ <div class="glass highlight" v-click><div class="eyebrow">AHORA</div><div class="emoji">🚀</div><h2>«Hazte cargo de esta tarea»</h2><p>Desde el móvil: agente → PR → revisión humana.</p></div>
 </div>
 <div class="footnote">La IA propone cambios; las personas revisan permisos, pruebas y resultado.</div>
 
-<!-- David y Sergio avanzan las cuatro etapas con clics. -->
-
----
-transition: slide-left
----
-
-<div class="kicker">CÓMO FUNCIONA · TRES AGENTES / UN REPO</div>
-<div class="headline">Cada uno aporta<br><span class="gradient">algo diferente.</span></div>
-<div class="agent-grid">
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/githubcopilot/DBD6FC" alt="Logo GitHub Copilot"/><h2>COPILOT</h2><b>CONSTRUIR</b><p>Construir un portal entre dos mundos del público.</p></div>
- <div class="agent" v-click><img src="https://cdn.simpleicons.org/anthropic/DBD6FC" alt="Logo Anthropic"/><h2>CLAUDE</h2><b>MEJORAR</b><p>Dar energía y personalidad visual al portal.</p></div>
- <div class="agent" v-click><span class="agent-glyph" aria-hidden="true">◎</span><h2>CODEX</h2><b>VALIDAR</b><p>Validar cruce, accesibilidad y móvil.</p></div>
-</div>
-<div class="footnote warning">Un modelo Claude dentro del chat Copilot no es el agente independiente Claude Code.</div>
-
-<!-- Explicar que los agentes pueden requerir planes, políticas y habilitación específicos. -->
+<!-- Sergio explica la diferencia entre preguntar a un chatbot y delegar un cambio real sobre GitHub: desde GitHub Mobile se encarga la tarea, el agente modifica el repo y abre una PR, y una persona la revisa. La ventaja que demostramos es el flujo de desarrollo integrado, no la superioridad universal de un modelo. -->
 
 ---
 transition: fade
@@ -174,42 +127,64 @@ transition: fade
 <div class="stack">
  <div class="stack-row" v-click><b>01</b><div><strong>GitHub Mobile + repositorio</strong><p>Abre tu cuenta y selecciona academyverso-2026.</p></div><span>📱</span></div>
  <div class="stack-row" v-click><b>02</b><div><strong>Nueva sesión en la nube</strong><p>Selecciona rama, agente disponible y tarea.</p></div><span>☁️</span></div>
- <div class="stack-row" v-click><b>03</b><div><strong>Permisos y políticas</strong><p>Claude y Codex requieren acceso habilitado en GitHub.</p></div><span>🔐</span></div>
+ <div class="stack-row" v-click><b>03</b><div><strong>Permisos y políticas</strong><p>Claude y Codex requieren acceso habilitado. El modelo Claude del chat de Copilot no es el agente Claude Code.</p></div><span>🔐</span></div>
 </div>
 <div class="footnote"><a href="https://github.com/davidop/academyverso-2026/blob/main/docs/activar-agentes.md" target="_blank">Guía de activación y comprobación de agentes ↗</a></div>
 
-<!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. -->
+<!-- Sergio enseña la app real desde Android. Evitar confundir selector de modelos con selector de agentes. Los agentes pueden requerir planes, políticas y habilitación específicos. -->
 
 
 ---
-transition: slide-left
+layout: space
+transition: fade
+clicks: 4
 ---
 
 <div class="kicker">CÓMO FUNCIONA · DE LA ISSUE A LA GALAXIA</div>
 <div class="headline compact">Cada objeto tiene<br><span class="mint">una historia en GitHub.</span></div>
-<div class="architecture">
- <div class="arch" v-click><span>📱</span><b>GitHub Mobile</b><small>Formulario</small></div><em v-after>→</em>
- <div class="arch" v-click><span>📋</span><b>GitHub Issues</b><small>Trazabilidad</small></div><em v-after>→</em>
- <div class="arch" v-click><span>⚙️</span><b>GitHub Actions</b><small>Validación</small></div><em v-after>→</em>
- <div class="arch amber" v-click><span>☁️</span><b>Worker + D1</b><small>Registro persistente</small></div><em v-after>→</em>
- <div class="arch" v-click><span>🌌</span><b>Three.js</b><small>Visualización</small></div>
-</div>
-<div class="footnote">GitHub Pages sirve la experiencia 3D; Worker y D1 sincronizan las aportaciones. Cada propuesta queda trazada en una Issue pública.</div>
+<MissionTrace :clicks="$clicks" tone="space" />
+<div class="footnote">Un agente de IA revisa cada Issue: la modera, ajusta la descripción y la marca como lista. Solo entonces el Worker la guarda en D1 y aparece en la galaxia.</div>
 
-<!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. -->
+<!-- Explicar la arquitectura real sin prometer latencias fijas por la cola de Actions. El triage es un GitHub Agentic Workflow: comenta lo que entendió y etiqueta planet:ready, o planet:rejected si es spam o fuera de tema; sin aprobación humana. Solo planet:ready activa la ingesta firmada hacia el Worker. Ver docs/triage-agentico-planetas.md. -->
 
 ---
-transition: slide-left
+layout: space
+transition: fade
 ---
 
-<div class="kicker">MISIÓN · TRABAJO ENCADENADO</div>
-<div class="headline">Un escenario.<br><span class="gradient">Tres agentes. PRs revisados.</span></div>
-<div class="agent-chain">
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/githubcopilot/DBD6FC"/><b>COPILOT</b><p>Conecta dos mundos del público</p><small>TAREA 1</small></div><span v-after>→</span>
- <div class="chain" v-click><img src="https://cdn.simpleicons.org/anthropic/DBD6FC"/><b>CLAUDE</b><p>Convierte el enlace en portal de energía</p><small>TAREA 2</small></div><span v-after>→</span>
- <div class="chain" v-click><span class="agent-glyph" aria-hidden="true">◎</span><b>CODEX</b><p>Valida cruce, móvil y CI</p><small>TAREA 3</small></div>
+<div class="kicker">MISIÓN · EL RELEVO</div>
+<div class="headline">Una Issue.<br><span class="gradient">Tres PRs encadenados.</span></div>
+<div class="relay">
+ <div class="relay-issue">
+  <span class="relay-issue-tag">HILO ÚNICO</span>
+  <b>1 ISSUE</b>
+  <small>Los tres agentes trabajan en la misma Issue; cada fase abre su PR con «Refs» a ella.</small>
+ </div>
+ <ol class="relay-stops">
+  <li class="relay-stop" v-click>
+   <span class="relay-dot" aria-hidden="true"></span>
+   <b>COPILOT</b>
+   <em>Construir</em>
+   <p>Implementa el portal entre los dos mundos elegidos.</p>
+   <small>PR de la fase 1</small>
+  </li>
+  <li class="relay-stop" v-click>
+   <span class="relay-dot" aria-hidden="true"></span>
+   <b>CLAUDE</b>
+   <em>Mejorar</em>
+   <p>Energía, partículas y contraste sobre el portal ya integrado.</p>
+   <small>PR de la fase 2</small>
+  </li>
+  <li class="relay-stop" v-click>
+   <span class="relay-dot" aria-hidden="true"></span>
+   <b>CODEX</b>
+   <em>Verificar</em>
+   <p>Pruebas, accesibilidad, móvil y CI sobre la PR anterior.</p>
+   <small>PR de la fase 3</small>
+  </li>
+ </ol>
 </div>
-<div class="footnote">Cada nuevo agente parte de una versión revisada e integrada del trabajo anterior.</div>
+<div class="footnote">Cada agente parte de la versión revisada e integrada del anterior. Al terminar Codex, la Issue de la misión se cierra desde GitHub Mobile.</div>
 
 <!-- David y Sergio alternan GitHub Mobile y las explicaciones. Las ramas de referencia son de ChatGPT, no de coding agents. -->
 
@@ -310,7 +285,14 @@ transition: fade
 <div class="final-title">Esto no<br><span class="lime">termina hoy.</span></div>
 <div class="final-layout">
  <QrPortal url="https://davidop.github.io/academyverso-2026/sesion.html" label="ENLACES Y CÓDIGO"/>
- <div><p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p><a class="action-link" href="https://davidop.github.io/academyverso-2026/sesion.html" target="_blank">ENLACES DE LA SESIÓN ↗</a></div>
+ <div>
+  <p>Tu móvil puede dirigir agentes.</p><p>Tu idea puede convertirse en código.</p><p>Tu contribución puede quedarse en GitHub.</p>
+  <div class="final-links">
+   <a class="action-link" href="https://davidop.github.io/academyverso-2026/sesion.html" target="_blank" rel="noopener noreferrer">ENLACES DE LA SESIÓN ↗</a>
+   <a class="final-link" href="https://davidop.github.io/academyverso-2026/" target="_blank" rel="noopener noreferrer">Explorar el universo 3D ↗</a>
+   <a class="final-link" href="https://github.com/davidop/academyverso-2026" target="_blank" rel="noopener noreferrer">Código y documentación ↗</a>
+  </div>
+ </div>
 </div>
 <img class="final-astronaut" src="./assets/template/astronauta-capa.svg" alt="" />
 <div class="final-stamp">DAVID OLIVA × SERGIO VALVERDE · ACADEMYVERSO 2026</div>

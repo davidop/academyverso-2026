@@ -92,3 +92,30 @@ jobs:
       - name: Build presentation exactly as GitHub Pages will
         working-directory: presentation
         run: npm run build
+
+  slidev-visual:
+    if: github.event_name == 'pull_request'
+    # Playwright 1.56.x necesita Ubuntu 24.04; ubuntu-latest ya es 26.04 en este runner.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Slidev dependencies
+        working-directory: presentation
+        run: npm install --no-audit --no-fund
+      - name: Verify preinstalled Google Chrome
+        run: google-chrome --version
+      - name: Visual smoke test of the deck
+        working-directory: presentation
+        run: npm run test:visual
+      - name: Upload Slidev visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: academyverso-visual-${{ github.run_id }}
+          path: |
+            presentation/test-results/
+            presentation/playwright-report/
+          if-no-files-found: warn
