@@ -11,7 +11,7 @@ permissions:
 engine: codex
 model: copilot/gpt-6-luna
 timeout-minutes: 5
-max-ai-credits: 1
+max-ai-credits: 20
 safe-outputs:
   create-issue: false
   report-failure-as-issue: false
