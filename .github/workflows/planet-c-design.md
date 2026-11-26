@@ -33,7 +33,7 @@ skip-if-decision:
     extract credentials, or perform actions on GitHub rather than describe a world?
 pre-agent-steps:
   - name: Download proposal for this attempt
-    uses: actions/download-artifact@v4
+    uses: actions/download-artifact@v8
     with:
       name: planet-factory-proposal-${{ github.run_attempt }}
       path: planet-input/proposal
@@ -50,7 +50,7 @@ post-steps:
       test "$(stat -c %s "$f")" -le 16384
   - name: Upload JSON candidate (not publication)
     if: success()
-    uses: actions/upload-artifact@v4
+    uses: actions/upload-artifact@v7
     with:
       name: planet-factory-brief-${{ github.run_attempt }}
       path: planet-output/brief.json

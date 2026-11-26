@@ -27,7 +27,7 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Stage admission
@@ -38,7 +38,7 @@ jobs:
         env:
           FIXTURE: ${{ inputs.fixture || 'valid' }}
         run: node experiments/planet-factory-c/prepare.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: planet-factory-proposal-${{ github.run_attempt }}
           path: planet-input/proposal/proposal.json
@@ -63,16 +63,16 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Download proposal for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-proposal-${{ github.run_attempt }}
           path: handoff/proposal
       - name: Download brief for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-brief-${{ github.run_attempt }}
           path: handoff/brief
@@ -97,16 +97,16 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Download spec for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-spec-${{ github.run_attempt }}
           path: handoff/spec
       - name: Download proposal for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-proposal-${{ github.run_attempt }}
           path: handoff/proposal
@@ -124,16 +124,16 @@ jobs:
     needs: review
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Download spec for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-spec-${{ github.run_attempt }}
           path: handoff/spec
       - name: Download review for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-review-${{ github.run_attempt }}
           path: handoff/review
@@ -144,26 +144,26 @@ jobs:
     if: github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Download proposal for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-proposal-${{ github.run_attempt }}
           path: handoff/proposal
       - name: Download brief for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-brief-${{ github.run_attempt }}
           path: handoff/brief
       - name: Download spec for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-spec-${{ github.run_attempt }}
           path: handoff/spec
       - name: Download review for this attempt
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: planet-factory-review-${{ github.run_attempt }}
           path: handoff/review
@@ -189,7 +189,7 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Mark explicit rejection or held (never publish)
