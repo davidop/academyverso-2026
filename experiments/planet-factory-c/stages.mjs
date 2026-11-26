@@ -11,7 +11,7 @@ const next={
 export function labelPlan(labels,target){
  if(!STAGES.includes(target))throw Error('Unknown stage');
  const current=labels.filter(n=>STAGES.includes(n));
- if(current.includes('planet:ready')||current.includes('planet:rejected'))return {add:null,remove:[]};
+ if(current.includes('planet:ready')||current.includes('planet:rejected')){if(target==='planet:held'||target==='planet:rejected')return {add:null,remove:[]};throw Error('Terminal issue cannot enter another stage');}
  if(current.length>1)throw Error('Ambiguous stage; manual reconciliation required');
  const from=current[0];
  if(from===target)return {add:null,remove:[]};
@@ -28,7 +28,7 @@ export function publication(proposal,design,candidate,verdict,body){
  if(proposal.source!=='issue'||!Number.isSafeInteger(proposal.issue_number)||proposal.issue_number<1||hash(body)!==proposal.body_sha256)throw Error('Issue changed since admission');
  const original=parseIssue(body);
  for(const k of ['type','alias','name','description'])if(original[k]!==proposal[k])throw Error('Proposal mismatch');
- brief(design,proposal);spec(candidate.value);review(verdict,candidate.digest);
+ brief(design,proposal);spec(candidate.value,proposal);review(verdict,candidate.digest);
  if(hash(candidate.bytes)!==candidate.digest)throw Error('Candidate bytes changed');
  const updated=issueBodyWithDescription(body,design.concept);
  const comment='### Lo que hemos entendido\n\nPropuesta revisada por la factoría de planetas.\n\n### Descripción que aparecerá en el planeta\n\n'+design.concept+'\n\n'+TRIAGE_MARKER+'\n\n[academyverso-factory:ready:v1]\nfactory-issue: '+proposal.issue_number+'\nfactory-spec-sha256: '+candidate.digest+'\nfactory-spec-base64: '+Buffer.from(candidate.bytes).toString('base64url')+'\n';

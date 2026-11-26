@@ -1,16 +1,24 @@
-# Planet Factory C (#97) - opción principal
-PoC manual, aislada. Copilot/Gemini interpreta, modera y diseña; Claude Code/Haiku construye WorldSpecV1; Codex/Luna revisa. Modelo fijo candidato, disponibilidad y endpoint no comprobados. Los engines Claude/Codex usan el proveedor Copilot mediante prefijo copilot/. El token actual del triaje no prueba compatibilidad de esos endpoints. Verificar catálogo, crédito, engine y model.resolution de cada fase con gh aw audit/logs. Los modelos pueden fallar; no sustituirlos silenciosamente.
+# Planet Factory C (#97)
 
-No se cambia el triage en producción: al integrar, el primer engine reemplazará el rol de interpretación de cosmic-object-triage (conservar guardarraíles, autor de App y verificación HMAC). No disparar planet:ready hasta completar construcción/revisión y validación. Por ahora no hay eventos issues, ningún token D1/R2 ni publicación. El resultado es un candidato JSON temporal. Los artefactos post-steps son candidatos no fiables, no safe outputs de publicación; solo datos sintéticos sin datos privados. El coordinador ejecuta gates fuera del agente y no ejecuta código generado.
+Tres engines y fase 0 integrada: Luna Decisions (skip-if-decision) antes del Copilot/Gemini Flash de diseño; Claude/Haiku construye; Codex/Luna revisa. Los modelos son candidatos fijos, no disponibilidad verificada. El filtro de decisión experimental abstiene ante errores; Gemini conserva moderación completa. Si no hay brief, no hay construcción ni publicación: en vivo queda planet:held, no un rechazo inventado. Auditar harness.decision / retries.decisions y créditos reales. Foundry y Jev no son dependencias.
 
-## Activar preview
-El CI de la PR instala gh-aw v1.2.3 y genera los tres locks y coordinador como artefacto. No están versionados aún porque no disponemos del compilador en el entorno de edición; NO fabricarlos ni editar locks manualmente. En una rama aislada, descargar el artefacto validado o ejecutar:
-```sh
-gh extension install github/gh-aw --pin v1.2.3
-for f in .github/workflows/planet-c-{design,build,review}.md; do gh aw compile "$f"; done
-cp experiments/planet-factory-c/coordinator.yml .github/workflows/planet-factory-c.yml
-node --test experiments/planet-factory-c/contract.test.mjs
-```
-Revisar los locks, permisos, red, secrets y los nombres de artefactos de workflow_call (pueden llevar prefijo). Versionarlos en la rama y registrar el workflow manual en un repo de ensayo; GitHub exige que workflow_dispatch exista en default branch. No fusionar con main solo para habilitar el ensayo. Revisar que cada gate falla si el artefacto falta/está duplicado o no corresponde al run. El coordinador pasa explícitamente solo COPILOT_GITHUB_TOKEN; no hereda secretos. Se desactivan creación de issues y reportes automáticos de fallo/detección (sin desactivar la detección). CI comprueba que ningún lock solicite permisos write. Inspeccionar locks antes de ejecutar. Nunca usar contenido público real en esta PoC. 
+## Secuencia y estado
 
-El fixture exige fidelidad visual; V1 no permite color individual por elemento, aunque el anillo usa el color secundario global y puede aproximarse. Consultar builder.mjs. Un rechazo por limitaciones reales es un resultado válido. Para probar un rechazo inequívoco, usar en una rama de ensayo el fixture de reloj de arena y serpiente mecánica, no admitirlo artificialmente. Comparar modelos con mismo fixture y registrar coste/latencia. Siguiente paso #101: GLB exportado por sandbox y D1 para metadatos, R2 opcional para producción; no modificar app/Worker ahora.
+coordinator.yml es el único coordinador: prepare (validación determinista y snapshot), design (decisión + curaduría), gate-brief, construct, gate-spec, review, gate-review, publish. Los tres callee workflows no escriben Issues. needs y artefactos del mismo run/attempt controlan el relevo, no las labels. Las labels reflejan trabajo solicitado, no prueban que el modelo se ejecutara: admission durante prepare, design al invocar el workflow que contiene Luna Decisions, build/review tras superar gates, ready exclusivamente por la App final, rejected si el brief rechaza explícitamente, held si hay skip sin brief, fallo, edición o falta de evidencia. Añadir/retirar solo labels del sistema; una interrupción entre operaciones requiere reconciliación manual. Serializar por Issue. El evento planet:ready de la App activa el issue-to-universe.yml existente; su HMAC cubre el comentario con el spec exacto y hash. D1 confirma ese hash antes del cierre.
+
+## E0: WorldSpecV1, sin GLB/R2 (#101 solo dependencia futura)
+
+El constructor produce datos declarativos, no JavaScript. El publicador verifica snapshot, brief, SHA-256 y revisión, y publica comentario de App con marcador compatible y bytes base64url + hash. La rama añade ingesta específica y migración D1 0003, validación de App/etiqueta/Issue/hash/tipo y persistencia transaccional del spec exacto con revisión histórica. No llama a Foundry ni fallback para ese candidato. GET /api/objects entrega world_spec cuando WORLDGEN_ENABLED está activo; resolvedWorldSpec y buildWorld existentes lo consumen. Se añaden tests con SQLite y Worker real para contenido exacto, replay, firma, bloqueo administrativo y resolución sin fallback. El renderer no ejecuta JS de agentes. No se realiza migración ni despliegue desde la PR.
+
+## Preparar y ensayar
+
+CI compila los tres locks, el lock legacy con selector y copia coordinador a .github/workflows/planet-factory-c.yml; genera artefacto para versionar. No editar locks a mano. Confirmar nombres de artefactos, permisos y secretos de workflow_call. En un repo aislado, registrar workflows en default branch y ejecutar manualmente fixtures valid, unsupported, reject; las ejecuciones manuales NO escriben Issues/D1. Comprobar resolución de modelo, decisión nativa, proveedor Copilot para Claude/Codex, render, créditos y tiempos. Los reintentos parciales no reutilizan artefactos de otro run_attempt; repetir ejecución completa. Los tests de contrato no prueban inferencia real.
+
+## Activación posterior (no activar todavía)
+
+1. Versionar locks auténticos, resolver CI/lock drift y comprobar tres engines/gate en ensayo. Verificar threat detection y propagación de errores; no usar propuestas públicas sin ello. Confirmar presupuesto y límites por Issue/usuario.
+2. Ensayar camino App con Issue real y Worker/D1 de staging, firma y revisiones. Migrar 0001, 0002, 0003 una vez con backup, verificar schema y health.
+3. Drenar propuestas legacy/in-flight. Worker mantiene WORLDGEN_ENABLED y PLANET_FACTORY_ENABLED false hasta el cambio coordinado; para E0 habilitar ambas con DB migrada. Variable Actions ACADEMYVERSO_PLANET_FACTORY_ENABLED=true acepta issues.opened y desactiva triage legacy, solo con nuevo lock legacy versionado. Un mismatch puede dejar propuestas retenidas; no activar por separado. Validar rollback con propuestas en curso; no revertir ciegamente ni perder columnas.
+4. Verificar D1 exacto, GET, Three.js y cierre. Proteger contra ediciones concurrentes entre lectura/patch/label (GitHub API no ofrece transacción multioperación), comprobar reconciliación de fallos; limitar a una propuesta de ensayo antes de exposición pública. Si falta modelo o revisión, no publicar ni usar fallback automático. El fallback sigue para objetos legacy.
+
+#101 E1-E3 (WorldSpecV2, código aislado, GLB, R2) no se implementan aquí.

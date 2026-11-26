@@ -1,3 +1,4 @@
+import {factoryEnabled,hasFactoryMarker,parseFactoryCandidate,persistFactoryCandidate} from './worldgen/factory.mjs';
 import {parseWorldCommand,authorizedWorldComment,evolveWorld,rollbackWorld} from './worldgen/history.mjs';
 import {generateWorldForIssue,worldgenEnabled} from './worldgen/service.mjs';
 import {validate,parseIssue,parseTriagedIssue,issueBody,hasTriageMarker} from './validation.mjs';
@@ -84,11 +85,19 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   return respond({error:'Evolución no realizada',code:result.status},result.status==='conflict'?409:result.status==='limit'?429:400);
  }
  if(url.pathname==='/api/create'&&request.method==='POST'){
+  if(factoryEnabled(env)){
+   if(!worldgenEnabled(env))return respond({error:'Factoría pendiente de activar'},503);
+   const columns=(await env.DB.prepare('PRAGMA table_info(objects)').all()).results||[];
+   if(!columns.some(c=>c.name==='factory_state')||!columns.some(c=>c.name==='factory_hash'))return respond({error:'Factoría pendiente de migrar'},503);
+  }
   if(!env.GITHUB_TOKEN)return respond({error:'Creación web pendiente de activar en Cloudflare',code:'CREATE_NOT_READY'},503);
   const raw=await request.text();if(raw.length>2400)return respond({error:'Solicitud demasiado grande'},413);
   const data=validate(JSON.parse(raw));const ip=request.headers.get('cf-connecting-ip')||'unverified';await rateLimit(env,ip);
   const result=await fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues`,{method:'POST',headers:{'accept':'application/vnd.github+json','authorization':`Bearer ${env.GITHUB_TOKEN}`,'x-github-api-version':'2022-11-28','user-agent':'AcademyVerso-Worker','content-type':'application/json'},body:JSON.stringify({title:`${data.type}: ${data.name}`,body:issueBody(data)})});
-  if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();await upsert(env,issue,data,'pending');
+  if(!result.ok){console.error('GitHub create failed',result.status);return respond({error:'GitHub no pudo registrar la creación'},502)}const issue=await result.json();
+  if(factoryEnabled(env)){
+   await env.DB.prepare("INSERT INTO objects(issue_number,type,name,alias,description,issue_url,created_at,hidden,enriched,factory_state) VALUES(?,?,?,?,?,?,datetime('now'),1,0,'pending') ON CONFLICT(issue_number) DO NOTHING").bind(issue.number,data.type,data.name,data.alias,data.description,issue.html_url).run();
+  }else await upsert(env,issue,data,'pending');
   let edit_token;
   if(worldgenEnabled(env)){
    try{
@@ -96,7 +105,7 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
     await env.DB.prepare('UPDATE objects SET world_owner_token_hash=? WHERE issue_number=?').bind(await tokenDigest(edit_token),issue.number).run();
    }catch(err){console.warn('Owner token not persisted',err?.name);edit_token=undefined}
   }
-  ctx.waitUntil(enrich(env,issue.number,data));if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,issue,data));
+  if(!factoryEnabled(env)){ctx.waitUntil(enrich(env,issue.number,data));if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,issue,data));}
   return respond({issue_number:issue.number,issue_url:issue.html_url,pending_triage:true,...(edit_token?{edit_token}:{})},201)
  }
  if(url.pathname==='/api/ingest'&&request.method==='POST'){
@@ -129,6 +138,14 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
   }else{
    data=parseIssue(incoming.issue.body);
   }
+  if(hasFactoryMarker(incoming.triage_comment?.body)){
+   if(!factoryEnabled(env)||!worldgenEnabled(env))return respond({error:'Factoría no habilitada'},503);
+   let candidate;
+   try{candidate=await parseFactoryCandidate(incoming,data,env)}catch(_){return respond({error:'Texto de factoría no verificado'},400)}
+   if(!await persistFactoryCandidate(env,incoming.issue,data,candidate))return respond({error:'Publicación retenida o incompatible'},409);
+   return respond({ok:true,issue_number:incoming.issue.number,spec_sha256:candidate.specHash});
+  }
+  if(factoryEnabled(env))return respond({error:'Se requiere candidato revisado de la factoría'},409);
   await upsert(env,{number:incoming.issue.number,html_url:incoming.issue.html_url},data,incoming.triage_comment?'approved':'keep');
   ctx.waitUntil(enrich(env,incoming.issue.number,data));
   if(worldgenEnabled(env))ctx.waitUntil(generateWorldForIssue(env,{...incoming.issue,worldgen_action:incoming.action},data));
@@ -137,7 +154,11 @@ export default {async fetch(request,env,ctx){const url=new URL(request.url);cons
  if(url.pathname==='/api/admin/hide'&&request.method==='POST'){
   if(!env.ADMIN_TOKEN||request.headers.get('authorization')!==`Bearer ${env.ADMIN_TOKEN}`)return respond({error:'No autorizado'},401);
   const {issue_number,hidden=true}=await request.json();const n=Number(issue_number);if(!Number.isInteger(n)||n<1)return respond({error:'Número de Issue inválido'},400);
-  await env.DB.prepare('UPDATE objects SET hidden=? WHERE issue_number=?').bind(hidden?1:0,n).run();return respond({ok:true,issue_number:n,hidden})
+  if(factoryEnabled(env)){
+   const result=await env.DB.prepare("UPDATE objects SET hidden=?,factory_state=CASE WHEN factory_state='pending' AND ?=1 THEN 'blocked' ELSE factory_state END WHERE issue_number=? AND (?=1 OR factory_state NOT IN ('pending','blocked'))").bind(hidden?1:0,hidden?1:0,n,hidden?1:0).run();
+   if(!result.meta?.changes)return respond({error:'No se puede mostrar una propuesta sin publicar'},409);
+  }else await env.DB.prepare('UPDATE objects SET hidden=? WHERE issue_number=?').bind(hidden?1:0,n).run();
+  return respond({ok:true,issue_number:n,hidden})
  }
  return respond({error:'Ruta no encontrada'},404);
  }catch(e){console.error(e);return respond({error:/^(Tipo|name:|alias:|description:|Texto|Límite)/.test(e.message)?e.message:'Error al procesar la solicitud'},/^(Tipo|name:|alias:|description:|Texto|Límite)/.test(e.message)?400:500)}

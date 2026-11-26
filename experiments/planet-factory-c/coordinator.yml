@@ -105,7 +105,12 @@ jobs:
         with:
           name: planet-factory-spec-${{ github.run_attempt }}
           path: handoff/spec
-      - run: node experiments/planet-factory-c/contract.mjs spec handoff/spec/spec.json
+      - name: Download proposal for this attempt
+        uses: actions/download-artifact@v4
+        with:
+          name: planet-factory-proposal-${{ github.run_attempt }}
+          path: handoff/proposal
+      - run: node experiments/planet-factory-c/contract.mjs spec handoff/spec/spec.json handoff/proposal/proposal.json
       - name: Stage review
         env:
           GH_TOKEN: ${{ github.token }}

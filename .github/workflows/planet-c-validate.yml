@@ -20,7 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test experiments/planet-factory-c/contract.test.mjs
+      - run: node --test experiments/planet-factory-c/contract.test.mjs worker/test/factory-ingest.test.mjs
+      - run: python scripts/test_d1_migrations.py
       - name: Install pinned compiler
         env:
           GH_TOKEN: ${{ github.token }}

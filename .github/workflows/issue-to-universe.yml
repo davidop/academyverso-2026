@@ -32,7 +32,7 @@ jobs:
           GH_EVENT: ${{ toJSON(github.event) }}
         run: |
           python - <<'PY'
-          import os,json,hashlib,hmac,urllib.request,urllib.error
+          import os,json,hashlib,hmac,re,urllib.request,urllib.error
           url=os.getenv('WORKER_URL','').rstrip('/')
           secret=os.getenv('INGEST_SECRET','')
           if not (url and secret):
@@ -56,6 +56,29 @@ jobs:
                   expected=event['issue']['number']
                   if not reply.get('ok') or reply.get('issue_number')!=expected:
                       raise SystemExit('Respuesta de ingesta no confirmada; no se cerrará la Issue')
+                  comment=event.get('triage_comment',{}).get('body','')
+                  if 'academyverso-factory:ready:v1' in comment:
+                      hashes=re.findall(r'^factory-spec-sha256: ([0-9a-f]{64})
+          except urllib.error.HTTPError as e:
+              # Only print the public HTTP status and a short, bounded error body.
+              # Never print the signature, payload, or configured secret.
+              print('ingest failed status',e.code,'server',e.headers.get('server','unknown'))
+              print('response',e.read(350).decode('utf-8',errors='replace'))
+              raise SystemExit(1)
+          PY
+      - name: Close Issue after confirmed D1 ingestion
+        if: ${{ github.event_name == 'issues' && github.event.issue.state == 'open' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh api --method PATCH "repos/${GH_REPO}/issues/${ISSUE_NUMBER}" \
+            --field state=closed --field state_reason=completed \
+            --jq '{number: .number, state: .state, state_reason: .state_reason}'
+,comment,re.M)
+                      if len(hashes)!=1 or reply.get('spec_sha256')!=hashes[0]:
+                          raise SystemExit('WorldSpec no confirmado; no se cerrará la Issue')
                   print('ingest status',r.status,'issue_number',expected,'confirmed',True)
           except urllib.error.HTTPError as e:
               # Only print the public HTTP status and a short, bounded error body.
