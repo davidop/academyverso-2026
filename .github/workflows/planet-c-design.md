@@ -2,6 +2,12 @@
 description: Planet Factory C - brief (isolated candidate stage)
 on:
   workflow_call:
+    inputs:
+      stage:
+        description: Distingue artefactos entre llamadas del mismo run (prefijo gh-aw)
+        type: string
+        required: false
+        default: design
     secrets:
       COPILOT_GITHUB_TOKEN:
         required: true
