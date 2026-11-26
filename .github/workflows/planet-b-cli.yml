@@ -14,10 +14,10 @@ jobs:
   syntax:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: node --check experiments/planet-factory-b/run.mjs
@@ -27,10 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: npm install -g @github/copilot@1.0.103
@@ -48,7 +48,7 @@ jobs:
         run: |
           test -n "$COPILOT_GITHUB_TOKEN"
           node experiments/planet-factory-b/run.mjs "$RUNNER_TEMP/planet-output-b"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: planet-b-synthetic
