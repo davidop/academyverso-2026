@@ -1,0 +1,5 @@
+{
+  "interpret": "claude-haiku-5.5",
+  "generate": "gemini-3.8-flash",
+  "review": "gpt-6-luna"
+}

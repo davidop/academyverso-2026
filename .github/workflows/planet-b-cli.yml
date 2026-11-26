@@ -1,0 +1,72 @@
+name: Planet Factory B CLI preview
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'experiments/planet-factory-b/**'
+      - '.github/workflows/planet-b-cli.yml'
+      - 'web/worlds/spec.mjs'
+permissions:
+  contents: read
+concurrency:
+  # Por evento y rama: un PR no desplaza a un preview manual pendiente ni a otros PRs.
+  group: planet-factory-b-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node --check experiments/planet-factory-b/run.mjs
+      # Los tests importan run.mjs, así que también comprueban que sus imports resuelven.
+      - run: node --test experiments/planet-factory-b/run.test.mjs
+  preview:
+    if: github.event_name == 'workflow_dispatch'
+    needs: syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install pinned Copilot CLI with integrity check
+        # Mismo CLI que el engine de gh-aw; el paquete se verifica contra un hash fijado antes de
+        # instalarlo, porque después se ejecuta con COPILOT_GITHUB_TOKEN.
+        env:
+          EXPECTED_INTEGRITY: sha512-wj2x08GpqPtNEbUDTlxX+RPjSEd2rTdD+Am0oH70xopdgcQoGufW+pnIW123pBqJ9U5m/cZv1eFk8owo/yZATw==
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          tgz=$(npm pack @github/copilot@1.0.103 --silent)
+          actual="sha512-$(openssl dgst -sha512 -binary "$tgz" | base64 -w0)"
+          if [ "$actual" != "$EXPECTED_INTEGRITY" ]; then echo "Integridad inesperada de @github/copilot: $actual"; exit 1; fi
+          npm install -g "./$tgz"
+      - name: Check CLI flags before any inference
+        run: |
+          set -euo pipefail
+          copilot --version
+          copilot --help > "$RUNNER_TEMP/copilot-help"
+          for flag in --model --silent --no-ask-user --deny-tool --disable-builtin-mcps; do
+            grep -q -- "$flag" "$RUNNER_TEMP/copilot-help"
+          done
+      - name: Generate synthetic candidate
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          test -n "$COPILOT_GITHUB_TOKEN"
+          node experiments/planet-factory-b/run.mjs "$RUNNER_TEMP/planet-output-b"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: planet-b-synthetic
+          path: ${{ runner.temp }}/planet-output-b/*.json
+          if-no-files-found: ignore
+          retention-days: 1
