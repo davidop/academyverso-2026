@@ -1,7 +1,7 @@
 import {ARCHETYPES,FEATURES,validateWorldSpec} from '../../../web/worlds/spec.mjs';
 // Strict JSON Schema; the server enforces numeric bounds and rejects extra fields afterward.
 const color={type:'string'};
-const featureSchema={type:'object',additionalProperties:false,properties:{kind:{type:'string',enum:FEATURES},count:{type:'integer'}},required:['kind','count']};
+const featureSchema={type:'object',additionalProperties:false,properties:{kind:{type:'string',enum:FEATURES},count:{type:'integer'},glow:{type:'string',enum:['dawn']},finish:{type:'string',enum:['gold']}},required:['kind','count']};
 export const WORLD_SCHEMA={
  type:'object',additionalProperties:false,
  properties:{

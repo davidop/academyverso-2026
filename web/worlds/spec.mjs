@@ -15,7 +15,10 @@ export function fallbackWorldSpec(obj){
  add('floating_city',/ciudad|rascaciel|colonia|metropol|edifici|avenida|city/.test(description),/ciudades|multiple|varias/.test(description)?2:1);
  add('moon',/luna|satelite natural|moon/.test(description),/tres luna|3 luna/.test(description)?3:/dos luna|2 luna/.test(description)?2:1);
  add('dome',/cupula|domo|invernadero|dome/.test(description),2);
- add('ring',/anillo|ring/.test(description));
+ const hasRing=/anillo|ring/.test(description);
+ const ringGlow=hasRing&&/brilla|brillante|glow|luminous/.test(description)&&/amanecer|alba|dawn|sunrise/.test(description);
+ const ringFinish=hasRing&&/dorado|dorada|oro|golden|gold/.test(description);
+ if(hasRing&&!features.some(f=>f.kind==='ring'))features.push({kind:'ring',count:1,...(ringFinish?{finish:'gold'}:{}),...(ringGlow?{glow:'dawn'}:{})});
  add('craters',/crater|meteorito/.test(description),3);
  add('satellite',/nave|dron|orbital|antena/.test(description),2);
  add('aurora',/aurora|atmosfera violeta|neon/.test(description));
@@ -27,7 +30,7 @@ export function fallbackWorldSpec(obj){
  if(type==='estrella')features.splice(0,features.length,{kind:'aurora',count:1});
  const archetype=type==='planeta'?(/hielo|glaciar|nieve/.test(description)?'ice':features.some(f=>f.kind==='volcano')?'volcanic':features.some(f=>f.kind==='ocean')?'ocean':'terrestrial'):({estrella:'star',luna:'moon',estacion:'station',asteroide:'asteroid','agujero-negro':'black_hole'})[type];
  const primary=/rojo|carmesi/.test(description)?'#DB626E':/verde|bosque/.test(description)?'#58B58C':p[0];
- return {schemaVersion:1,seed,archetype,palette:{primary,secondary:p[1],emissive:p[2]},features:features.slice(0,12),atmosphere:{color:p[1],intensity:type==='planeta'?0.45:0.25},animation:'slow-orbit'};
+ return {schemaVersion:1,seed,archetype,palette:{primary,secondary:p[1],emissive:p[2]},features:features.slice(0,12),atmosphere:{color:p[1],intensity:type==='planeta'?0.45:0.25},animation:'static'};
 }
 export function validateWorldSpec(value){
  const x=typeof value==='string'?JSON.parse(value):value;
@@ -36,7 +39,13 @@ export function validateWorldSpec(value){
  if(x.schemaVersion!==1||!Number.isSafeInteger(x.seed)||x.seed<0||x.seed>4294967295||!ARCHETYPES.includes(x.archetype))throw Error('Invalid metadata');
  if(!x.palette||Object.keys(x.palette).some(k=>!['primary','secondary','emissive'].includes(k))||!['primary','secondary','emissive'].every(k=>HEX.test(x.palette[k])))throw Error('Invalid palette');
  if(!Array.isArray(x.features)||x.features.length>12)throw Error('Invalid feature array');
- for(const f of x.features){if(!f||Object.keys(f).some(k=>!['kind','count'].includes(k))||!FEATURES.includes(f.kind)||!Number.isInteger(f.count)||f.count<1||f.count>4)throw Error('Invalid feature')}
+ // A ring may opt into a dawn halo; keep all render effects finite and explicit.
+ for(const f of x.features){
+  const keys=f?.kind==='ring'?['kind','count','glow','finish']:['kind','count'];
+  if(!f||Object.keys(f).some(k=>!keys.includes(k))||!FEATURES.includes(f.kind)||!Number.isInteger(f.count)||f.count<1||f.count>4)throw Error('Invalid feature');
+  if(Object.hasOwn(f,'glow')&&f.glow!=='dawn')throw Error('Invalid feature glow');
+  if(Object.hasOwn(f,'finish')&&f.finish!=='gold')throw Error('Invalid feature finish');
+ }
  if(!x.atmosphere||Object.keys(x.atmosphere).some(k=>!['color','intensity'].includes(k))||!HEX.test(x.atmosphere.color)||!Number.isFinite(x.atmosphere.intensity)||x.atmosphere.intensity<0||x.atmosphere.intensity>1)throw Error('Invalid atmosphere');
  if(!['slow-orbit','static'].includes(x.animation))throw Error('Invalid animation');
  return x;

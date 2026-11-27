@@ -9,7 +9,7 @@ const reject=m=>{throw new ProposalRejected(m)};
 export function prepareProposal(event,kind='valid'){
  if(event){
   const i=event.issue;
-  if(event.action!=='opened'||!i||i.pull_request||i.state!=='open'||!Number.isSafeInteger(i.number)||i.number<1||typeof i.body!=='string')throw Error('Invalid issue event');
+  if(!['opened','reopened'].includes(event.action)||!i||i.pull_request||i.state!=='open'||!Number.isSafeInteger(i.number)||i.number<1||typeof i.body!=='string')throw Error('Invalid issue event');
   if(i.body.length>2400)reject('Proposal too long');
   for(const heading of ['Tipo de objeto','Alias del explorador','Nombre del objeto','Descripción creativa']){
    if(i.body.split(/\r?\n/).filter(l=>l.trim()==='### '+heading).length!==1)reject('Missing or repeated cosmic field');

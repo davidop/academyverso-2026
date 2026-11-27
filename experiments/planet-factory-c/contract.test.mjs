@@ -12,6 +12,11 @@ test('spec rejects unknown executable fields',()=>{
  assert.doesNotThrow(()=>spec(valid));
  assert.throws(()=>spec({...valid,script:'alert(1)'}));
 });
+test('factory candidate accepts only validated declarative ring glow',()=>{
+ const value=fallbackWorldSpec({issue_number:130,type:'planeta',name:'Marea Azul',description:'Anillo dorado que brilla al amanecer'});
+ assert.equal(value.features.find(f=>f.kind==='ring').glow,'dawn');
+ assert.doesNotThrow(()=>spec(value,{type:'planeta'}));
+});
 test('review must approve exact hash and contain no findings',()=>{
  const h=hash('candidate');
  assert.doesNotThrow(()=>review({decision:'approve',spec_sha256:h,findings:[]},h));
@@ -30,6 +35,7 @@ test('fixture selection and deterministic preparation',()=>{
  const data={type:'planeta',alias:'QA',name:'Nexus',description:'[GTA:VICE-NEBULA] Planeta oceánico con tres lunas'};
  const event={action:'opened',issue:{number:42,state:'open',body:issueBody(data)}};
  const p=prepareProposal(event);assert.equal(p.description,data.description);
+ assert.equal(prepareProposal({...event,action:'reopened'}).issue_number,42);
  assert.throws(()=>prepareProposal({...event,issue:{...event.issue,body:event.issue.body+'\n### Tipo de objeto\nplaneta'}}));
  assert.throws(()=>classifyBrief({decision:'accept',concept:'Sin marcador',requirements:[]},p));
  assert.equal(classifyBrief({decision:'reject',concept:'No apta',requirements:[]},p),'reject');
@@ -39,6 +45,11 @@ test('labels are a projection, never a way to bypass sequencing',()=>{
  assert.throws(()=>labelPlan(['planet:design'],'planet:ready'));
  assert.deepEqual(labelPlan(['planet:ready'],'planet:held'),{add:null,remove:[]});
  assert.throws(()=>labelPlan(['planet:build','planet:review'],'planet:ready'));
+});
+test('only a deliberately reopened held issue can restart at admission',()=>{
+ assert.deepEqual(labelPlan(['planet:held'],'planet:admission',{allowHeldRetry:true}),{add:'planet:admission',remove:['planet:held']});
+ assert.throws(()=>labelPlan(['planet:held'],'planet:admission'));
+ assert.throws(()=>labelPlan(['planet:ready'],'planet:admission',{allowHeldRetry:true}));
 });
 test('publication binds exact candidate, issue snapshot, curated text and review',()=>{
  const data={type:'planeta',alias:'QA',name:'Nexus',description:'Planeta oceánico con tres lunas'};

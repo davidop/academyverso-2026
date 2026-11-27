@@ -4,6 +4,7 @@ import {evolutionComment,worldUrl,mutateWorld} from './worlds/evolution-ui.mjs';
 import {initialQuality,adaptiveQuality,pixelRatioFor} from './worlds/quality.mjs';
 import {resolvedWorldSpec} from './worlds/spec.mjs';
 import {buildWorld} from './worlds/builder.mjs';
+import {advanceWorldMotion} from './worlds/animation.mjs';
 import {birthProgress,birthScale,createBirthParticles} from './worlds/birth.mjs';
 import {disposeGroup} from './worlds/dispose.mjs';
 import {listPois,cameraPoseForPoi} from './worlds/poi.mjs';
@@ -81,7 +82,7 @@ function makeBody(obj,i){
  const {group,size,clickables:targets}=buildWorld(THREE,obj,spec,mission,quality);
  group.position.set(coords.x,coords.y,coords.z);
  for(const mesh of targets){mesh.userData={...mesh.userData,obj,group};clickables.push(mesh)}
- const entry={obj,group,size,targets,baseY:coords.y,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20};
+ const entry={obj,group,size,targets,animation:group.userData.animation,baseY:coords.y,phase:numberHash(String(obj.issue_number)+'-'+obj.name)%100/20};
  meshes.push(entry);scene.add(group);return entry;
 }
 function disposeWorld(m){disposeGroup(scene,m.group)}
@@ -472,8 +473,7 @@ function animate(){
     const now=performance.now();
     portalArt.forEach((gate,i)=>{gate.rotation.z+=i%2===0?.004:-.004;});
     meshes.forEach(m=>{
-      if(String(m.obj.issue_number)!==poiFocusWorldId)m.group.rotation.y+=.0025;
-      m.group.position.y=m.baseY+Math.sin(now/1100+m.phase)*.14;
+      advanceWorldMotion(m,now,String(m.obj.issue_number)===poiFocusWorldId);
       if(m.birthStartedAt!==undefined){
        const elapsed=now-m.birthStartedAt,t=birthProgress(elapsed);
        m.group.scale.setScalar(birthScale(elapsed));

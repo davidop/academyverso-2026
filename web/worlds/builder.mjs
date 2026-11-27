@@ -4,6 +4,7 @@ function vecOnSphere(THREE,r,theta,phi){return new THREE.Vector3(Math.sin(theta)
 function rand(seed,n){let x=(seed^(n*0x9e3779b9))>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296}
 export function buildWorld(THREE,obj,spec,mission=null,quality='high'){
  const group=new THREE.Group(),clickables=[],seed=spec.seed>>>0;
+ group.userData.animation=spec.animation;
  const detail=quality==='low'?.55:quality==='medium'?.78:1;
  const sphere=(r,w=32,h=24,...args)=>new THREE.SphereGeometry(r,Math.max(12,Math.round(w*detail)),Math.max(8,Math.round(h*detail)),...args);
  const archetype=spec.archetype,size=archetype==='star'?7:archetype==='station'?4:archetype==='asteroid'?3.7:archetype==='moon'?3.8:6;
@@ -17,8 +18,9 @@ export function buildWorld(THREE,obj,spec,mission=null,quality='high'){
  function glow(radius,color,opacity){
   add(sphere(radius,24,16),new THREE.MeshBasicMaterial({color,side:THREE.BackSide,transparent:true,opacity,depthWrite:false}));
  }
- function ring(radius,tube,color,rot=1.12){
-  const m=add(new THREE.TorusGeometry(radius,tube,8,64),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72,side:THREE.DoubleSide,depthWrite:false}));
+ function ring(radius,tube,color,rot=1.12,glow=false){
+  if(glow){const aura=add(new THREE.TorusGeometry(radius,tube*2.2,8,64),new THREE.MeshBasicMaterial({color:'#FFCC66',transparent:true,opacity:.22,side:THREE.DoubleSide,depthWrite:false}));aura.rotation.x=rot;}
+  const m=add(new THREE.TorusGeometry(radius,tube,8,64),new THREE.MeshBasicMaterial({color:glow?'#D4AF37':color,transparent:true,opacity:.72,side:THREE.DoubleSide,depthWrite:false}));
   m.rotation.x=rot;return m;
  }
  function pillarSurface(kind,index,total){
@@ -89,7 +91,7 @@ export function buildWorld(THREE,obj,spec,mission=null,quality='high'){
    if(['volcano','floating_city','dome','forest'].includes(f.kind)){for(let i=0;i<count;i++)pillarSurface(f.kind,i+f.kind.length*10,count)}
    else if(f.kind==='moon'){
     for(let i=0;i<count;i++){const body=add(sphere(.9+i*.13,12,8),std('#B8C8E2',{roughness:1}),group,true);const a=2*pi*i/count+.3;body.position.set(Math.cos(a)*size*(2.3+i*.17),Math.sin(a*2)*size*.33,Math.sin(a)*size*(2.3+i*.17))}
-   }else if(f.kind==='ring')ring(size*1.45,.2,secondary);
+   }else if(f.kind==='ring')ring(size*1.45,.2,f.finish==='gold'?'#D4AF37':secondary,1.12,f.glow==='dawn');
    else if(f.kind==='aurora')ring(size*1.23,.08,emissive,.9);
    else if(f.kind==='satellite'){
     for(let i=0;i<count;i++){const satellite=add(new THREE.BoxGeometry(.4,.28,.55),std('#8AB3D3',{metalness:.6}),group,true);satellite.position.set(size*1.75*(i%2?1:-1),size*.3*i,size*1.1);const panel=add(new THREE.BoxGeometry(1.8,.04,.55),std('#3D83B1',{metalness:.4}),satellite);panel.position.x=.9}

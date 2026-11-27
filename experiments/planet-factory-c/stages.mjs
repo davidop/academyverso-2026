@@ -8,13 +8,14 @@ const next={
  'planet:build':['planet:review','planet:held'],
  'planet:review':['planet:held','planet:rejected','planet:ready']
 };
-export function labelPlan(labels,target){
+export function labelPlan(labels,target,{allowHeldRetry=false}={}){
  if(!STAGES.includes(target))throw Error('Unknown stage');
  const current=labels.filter(n=>STAGES.includes(n));
  if(current.includes('planet:ready')||current.includes('planet:rejected')){if(target==='planet:held'||target==='planet:rejected')return {add:null,remove:[]};throw Error('Terminal issue cannot enter another stage');}
  if(current.length>1)throw Error('Ambiguous stage; manual reconciliation required');
  const from=current[0];
  if(from===target)return {add:null,remove:[]};
+ if(allowHeldRetry&&from==='planet:held'&&target==='planet:admission')return {add:target,remove:[from]};
  // Si la admisión falla antes de poner su etiqueta, el estado terminal debe poder aplicarse igualmente.
  if(!from&&(target==='planet:held'||target==='planet:rejected'))return {add:target,remove:[]};
  if((!from&&target!=='planet:admission')||(from&&!next[from]?.includes(target)))throw Error('Invalid stage transition');
@@ -55,8 +56,8 @@ async function ensureLabel(api,name){
  try{await api('POST','/labels',{name,color:name==='planet:ready'?'0E8A16':name==='planet:rejected'?'B60205':'1D76DB',description:'AcademyVerso planet factory stage'});}
  catch(e){if(!await api('GET','/labels/'+encodeURIComponent(name),null,true))throw e;}
 }
-async function applyLabel(api,path,labels,target){
- const plan=labelPlan(labels,target);
+async function applyLabel(api,path,labels,target,options){
+ const plan=labelPlan(labels,target,options);
  if(!plan.add)return;
  await ensureLabel(api,plan.add);
  await api('POST',path+'/labels',{labels:[plan.add]});
@@ -67,12 +68,12 @@ if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1]).href){
  if(process.env.GITHUB_EVENT_NAME!=='issues'){console.log('Preview only; no GitHub label or publication write');}
  else{
   const event=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH,'utf8'));
-  if(event.action!=='opened'||event.issue?.pull_request)throw Error('Not a cosmic issue opened event');
+  if(!['opened','reopened'].includes(event.action)||event.issue?.pull_request)throw Error('Not a cosmic issue opened or reopened event');
   const no=event.issue.number,path='/issues/'+no;
   const api=apiFactory(process.env.GH_TOKEN,process.env.GITHUB_REPOSITORY,no);
   const issue=await api('GET',path),labels=issue.labels.map(x=>x.name);
   if(issue.state!=='open'){if(command==='publish')throw Error('Issue closed');}
-  else if(command==='stage')await applyLabel(api,path,labels,target);
+  else if(command==='stage')await applyLabel(api,path,labels,target,{allowHeldRetry:event.action==='reopened'});
   else if(command==='publish'){
    if(process.env.APP_BOT!==process.env.EXPECTED_BOT||!process.env.APP_BOT?.endsWith('[bot]'))throw Error('Wrong publication App');
    if(labels.includes('planet:ready')||!labels.includes('planet:review'))throw Error('Not in publishable state');
