@@ -15,7 +15,7 @@ User request: “cuando veas que están funcionando y ya se han creado y arregla
 
 ## Tasks
 
-- T1 — S1-S3; inline; in progress; Risk: item 3 (WorldSpec is consumed by the factory, worker, and renderer), item 5 (GitHub Actions reopen trigger/state transition), item 6 (existing tests did not cover the renderer output for these visuals); commit pending.
+- T1 — S1-S3; inline; partial; Risk: item 3 (WorldSpec is consumed by the factory, worker, and renderer), item 5 (GitHub Actions reopen trigger/state transition), item 6 (existing tests did not cover the renderer output for these visuals); local work-unit commit `c88b54e0aa45e94c90676dc011892b4bfc949bf0`; PR #132. Live issue progression and production rendering remain pending after user-authorized merge/deployment.
 
 ## Log
 
@@ -48,5 +48,12 @@ The targeted design/renderer/contract tests passed 25/25 before reopen support. 
 - Live progression cannot be triggered safely from this PR branch: the actual issues are open/held (not reopened), the issue workflow runs from the default branch, and changing state or deploying from the draft PR would exceed the no-main/no-deploy constraint. Do not close/reopen the live issues as a test. Re-run actual gate and production-page verification only after the PR is reviewed and merged by the user.
 - Main remains untouched; no commit, remote branch, PR, issue edit, deployment, or reviewer request has yet been made.
 
+### L7 — Draft PR and deployed-site check (2026-11-27)
+- Committed the scoped implementation and tests on `codex/planet-factory-gate-130-131`: local commit `c88b54e0aa45e94c90676dc011892b4bfc949bf0` (`fix(planet-factory): render requested demo rings`). Using the authorized connected GitHub session, created the same-tree remote commit `1ecd097b33562d853df7f0f915aff8d27f3775e1` and branch `codex/planet-factory-gate-130-131` from `ecbc31d9bebb62f6fdfc320859793cacdf78aae7`.
+- Opened draft PR [#132](https://github.com/davidop/academyverso-2026/pull/132), targeting `main`, explicitly referencing #130 and #131; requested reviewer `davidop` (David). PR remains draft and unmerged.
+- The production page `https://davidop.github.io/academyverso-2026/` was opened read-only; it currently reports 8 D1-backed objects and does not include #130 or #131. The issues remain open with `cosmic-object` + `planet:held`; no issue body, labels, or state were changed.
+- Cannot run the issue-triggered candidate workflow against the real issues from this draft: the live workflow definition comes from the default branch and the issues are currently open/held, not newly reopened. The available GitHub connector exposes no workflow-dispatch operation. No main change, merge, issue close/reopen, D1 write, or deployment was performed.
+- The GitHub PR body cross-references #130/#131 and documents current limits. Actual gate progression and D1-backed browser confirmation remain pending a separate decision to merge/deploy; issue state stays untouched meanwhile.
+
 ## Next
-Commit this feature unit, publish it as a draft PR and request David's review through the authorized connected GitHub session; link the PR from #130/#131 without changing their state/labels. Do not modify main or merge/deploy. Local fixture rendering is verified, but live issue progression and production page validation remain pending until the user's separate merge/deployment decision. Keep the Project/Issue Types PRD out of this feature.
+Wait for David's review and the user's separate merge/deployment decision. Only after that, replay the held issues through the gate using an approved event, then verify their rendered worlds against production D1-backed data. Do not modify main directly or merge/deploy on the user's behalf. Local fixture rendering is verified, but live issue progression and production page validation remain pending. Keep the Project/Issue Types PRD out of this feature.
