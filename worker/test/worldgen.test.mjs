@@ -19,6 +19,24 @@ test('strict output schema and server seed enforcement',async()=>{
  const spec=await requestWorldSpec(env,'Ocean world',base,mock);
  assert.equal(spec.seed,base.seed);assert.equal(count,1);
 });
+
+test('strict output schema permits only validated dawn glow on a ring',async()=>{
+ const featureSchema=WORLD_SCHEMA.properties.features.items;
+ assert.deepEqual(featureSchema.properties.glow.enum,['dawn']);
+ assert.ok(!featureSchema.required.includes('glow'));
+ const candidate={...base,features:[...base.features,{kind:'ring',count:1,glow:'dawn'}]};
+ const spec=await requestWorldSpec(env,'golden ring at dawn',base,async()=>response(candidate));
+ assert.deepEqual(spec.features.at(-1),{kind:'ring',count:1,glow:'dawn'});
+});
+
+test('strict output schema permits only the gold finish on a ring',async()=>{
+ const featureSchema=WORLD_SCHEMA.properties.features.items;
+ assert.deepEqual(featureSchema.properties.finish.enum,['gold']);
+ assert.ok(!featureSchema.required.includes('finish'));
+ const candidate={...base,features:[...base.features,{kind:'ring',count:1,finish:'gold'}]};
+ const spec=await requestWorldSpec(env,'a gold ring',base,async()=>response(candidate));
+ assert.deepEqual(spec.features.at(-1),{kind:'ring',count:1,finish:'gold'});
+});
 test('reject unsafe extra fields and unsupported object types',async()=>{
  const unsafe={...base,sourceCode:'alert(1)'};
  await assert.rejects(requestWorldSpec(env,'Dangerous',base,async()=>response(unsafe)));

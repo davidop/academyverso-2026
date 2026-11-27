@@ -8,7 +8,7 @@ on:
         options: [valid, unsupported, reject]
         default: valid
   issues:
-    types: [opened]
+    types: [opened, reopened]
 permissions:
   contents: read
   actions: read
@@ -22,7 +22,7 @@ jobs:
   prepare:
     outputs:
       admission: ${{ steps.proposal.outputs.admission }}
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true' && !github.event.issue.pull_request && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa'))
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issues' && vars.ACADEMYVERSO_PLANET_FACTORY_ENABLED == 'true' && !github.event.issue.pull_request && (github.event.action == 'opened' || (github.event.action == 'reopened' && contains(github.event.issue.labels.*.name, 'planet:held'))) && contains(github.event.issue.body, '### Tipo de objeto') && contains(github.event.issue.body, '### Alias del explorador') && contains(github.event.issue.body, '### Nombre del objeto') && contains(github.event.issue.body, '### Descripción creativa'))
     permissions:
       contents: read
       issues: write

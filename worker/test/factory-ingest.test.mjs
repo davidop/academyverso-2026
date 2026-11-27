@@ -20,11 +20,11 @@ function setup(){
  },async batch(statements){db.exec('BEGIN');try{const result=[];for(const s of statements)result.push(await s.run());db.exec('COMMIT');return result}catch(e){db.exec('ROLLBACK');throw e}}};
  return {db,env:{DB,GITHUB_REPO:repo,TRIAGE_BOT:bot,INGEST_SECRET:secret,WORLDGEN_ENABLED:'true',PLANET_FACTORY_ENABLED:'true',ADMIN_TOKEN:'test-only-admin'}};
 }
-function makeEvent(n=42){
- const body=issueBody(data),proposal=prepareProposal({action:'opened',issue:{number:n,state:'open',body}});
- const value={...fallbackWorldSpec({issue_number:n,...data}),palette:{primary:'#AA12EF',secondary:'#FFCC00',emissive:'#112233'}};
+function makeEvent(n=42,issueData=data){
+ const body=issueBody(issueData),proposal=prepareProposal({action:'opened',issue:{number:n,state:'open',body}});
+ const value={...fallbackWorldSpec({issue_number:n,...issueData}),palette:{primary:'#AA12EF',secondary:'#FFCC00',emissive:'#112233'}};
  const raw=JSON.stringify(value,null,2)+'\n',bytes=Buffer.from(raw),digest=createHash('sha256').update(bytes).digest('hex');
- const design={decision:'accept',concept:'Planeta oceánico con tres lunas.',requirements:['tres lunas']};
+ const design={decision:'accept',concept:issueData.description,requirements:['preservar los detalles de diseño']};
  const pub=publication(proposal,design,{value,bytes,digest},{decision:'approve',spec_sha256:digest,findings:[]},body);
  return {event:{action:'labeled',label:{name:'planet:ready'},sender:{login:bot},repository:{full_name:repo},issue:{number:n,state:'open',html_url:'https://github.com/'+repo+'/issues/'+n,body:pub.body},triage_comment:{user:{login:bot},body:pub.comment}},value,raw,digest};
 }
@@ -47,6 +47,15 @@ test('signed reviewed bytes flow through real SQL, GET and existing resolver, no
  assert.equal((await hide(env,42,true)).status,200);
  assert.equal((await ingest(env,event)).status,200);
  assert.equal((await objects(env)).length,0);db.close();
+});
+test('dawn ring glow survives signed publication, D1 persistence and the public objects resolver',async()=>{
+ const {db,env}=setup(),input={type:'planeta',alias:'QA',name:'Marea Azul',description:'Planeta oceánico con anillo dorado que brilla al amanecer'};
+ const {event}=makeEvent(50,input);pending(db,50);
+ const response=await ingest(env,event);assert.equal(response.status,200);
+ const [object]=await objects(env),spec=JSON.parse(object.world_spec);
+ assert.deepEqual(spec.features.find(f=>f.kind==='ring'),{kind:'ring',count:1,finish:'gold',glow:'dawn'});
+ assert.equal(resolvedWorldSpec(object).source,'persisted');
+ assert.deepEqual(resolvedWorldSpec(object).spec,spec);db.close();
 });
 test('direct issue inserts, invalid signature, sender, spec and flags fail closed',async()=>{
  const {db,env}=setup(),{event}=makeEvent(43);

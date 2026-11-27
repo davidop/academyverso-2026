@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {buildWorld} from '../worlds/builder.mjs';
 import {fallbackWorldSpec,resolvedWorldSpec} from '../worlds/spec.mjs';
+import {advanceWorldMotion} from '../worlds/animation.mjs';
 
 const cases=[
  ['planeta','Planeta océano con tres lunas, dos ciudades flotantes, volcanes y cúpulas'],
@@ -64,4 +65,43 @@ test('persisted factory WorldSpec drives actual geometry instead of description 
  assert.ok(actual.clickables.some(x=>x.userData.poi?.kind==='floating_city'));
  assert.ok(!legacy.clickables.some(x=>x.userData.poi?.kind==='floating_city'));
  assert.ok(stats(actual.group).meshes>stats(legacy.group).meshes);
+});
+
+test('a dawn ring spec renders an additional golden halo around the ring',()=>{
+ const o=object('planeta','Planeta oceánico con un anillo dorado que brilla al amanecer',130);
+ const spec=fallbackWorldSpec(o),ring=spec.features.find(f=>f.kind==='ring');
+ assert.equal(ring.glow,'dawn');
+ const {group}=buildWorld(THREE,o,spec);
+ const rings=[];group.traverse(x=>{if(x.isMesh&&x.geometry.type==='TorusGeometry')rings.push(x)});
+ assert.equal(rings.length,2);
+ assert.ok(rings.some(x=>x.material.opacity>.5&&x.material.color.getHexString()==='d4af37'));
+ assert.ok(rings.some(x=>x.material.opacity<.4&&x.material.color.getHexString()==='ffcc66'));
+});
+
+test('issue 131 keeps its requested ocean, moon and ring while the declared animation reaches the renderer',()=>{
+ const o=object('planeta','Planeta oceánico con una luna plateada y un anillo dorado',131);
+ const spec=fallbackWorldSpec(o),features=new Set(spec.features.map(f=>f.kind));
+ assert.ok(features.has('ocean'));
+ assert.ok(features.has('moon'));
+ assert.ok(features.has('ring'));
+ assert.equal(spec.features.find(f=>f.kind==='ring').finish,'gold');
+ assert.equal(spec.animation,'static');
+ const {group,clickables}=buildWorld(THREE,o,spec);
+ assert.equal(group.userData.animation,spec.animation);
+ const ring=[];group.traverse(x=>{if(x.isMesh&&x.geometry.type==='TorusGeometry')ring.push(x)});
+ assert.equal(ring.length,1);
+ assert.equal(ring[0].material.color.getHexString(),'d4af37');
+ assert.equal(clickables.length,2);
+});
+
+test('slow-orbit animates and static WorldSpec remains still',()=>{
+ const spinning={group:{rotation:{y:0},position:{y:0}},animation:'slow-orbit',baseY:3,phase:0};
+ advanceWorldMotion(spinning,0);
+ assert.equal(spinning.group.rotation.y,.0025);
+ assert.equal(spinning.group.position.y,3);
+
+ const still={group:{rotation:{y:0},position:{y:3}},animation:'static',baseY:3,phase:0};
+ advanceWorldMotion(still,500);
+ assert.equal(still.group.rotation.y,0);
+ assert.equal(still.group.position.y,3);
 });
